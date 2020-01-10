@@ -1,0 +1,20 @@
+bootstrap: docker
+from: ubuntu:18.04
+
+
+
+%environment
+  export PSITURK_GLOBAL_CONFIG_LOCATION=$HOME
+
+%runscript
+  cd psiturk
+  exec psiturk
+  cd ..
+
+%post
+ apt-get update
+ apt-get install -y  python-pip
+ apt-get clean
+
+ pip install psiturk
+ 
