@@ -78,8 +78,6 @@ var make_img = function(imgname, is_intro, freeze) {
   if (freeze) {
     r += "onload=\"cut2black()\" "
   }
-  // r += "class=\"" + mcl + "\" src=\"static/data/" + imgname +
-  //   "\" alt=\"Movie\" width=>"
   r += `class="${mcl}" src="static/data/${imgname}" alt="Movie" style="height: auto; width: ${PAGESIZE}">`
   return r
 };
@@ -91,9 +89,10 @@ var make_mov = function(movname, is_intro, has_ctr) {
   var ctr = "";
   var fmovnm = "static/data/movies/" + movname;
   var foggnm = fmovnm.substr(0, fmovnm.lastIndexOf('.')) + ".ogg";
-  var ret = "<video id=\"thisvideo\" class=\"" + mcl + "\"" + ctr + "><source src=\"" + fmovnm;
-  ret += "\" type=\"video/mp4\"><source src=\"" + foggnm + "\" type=\"video/ogg\">";
-  ret += "Your browser does not support HTML5 mp4 video.</video>";
+  var ret = `<video id="thisvideo" class="${mcl}\${ctr}" width="${PAGESIZE}px" height="${PAGESIZE}px">` +
+      `<source src="${fmovnm}" type="video/mp4">` +
+      `<source src="${foggnm}" type="video/ogg">` +
+      `Your browser does not support HTML5 mp4 video.</video>`;
   return ret;
 };
 
@@ -208,7 +207,7 @@ class Page {
     var scale_img = document.getElementById("thisimg");
     slider_value.oninput = function(e) {
       PAGESIZE = (e.target.value / 50.0) * 500;
-      console.log(PAGESIZE)
+      scale_img.width = `${PAGESIZE}px`;
       scale_img.style.width = `${PAGESIZE}px`;
     }
 
@@ -238,6 +237,7 @@ class Page {
     this.next.disabled = true;
     var sc = document.getElementById(MOVIESCREEN);
     var mov = document.getElementById('thisvideo');
+
     let me = this;
 
     // The "next" botton will only activate after recording a response
@@ -291,6 +291,9 @@ var InstructionRunner = function(condlist) {
   var instructions = [
     ["Instructions go here.",
       "scale", "test.png", false
+    ],
+    ["Instructions go here.",
+      "movie", "test.mp4", false
     ],
     // ["In this task, you will observe <b>three</b> colored balls interact on a ramp.<br>" +
     //   "The color of each ball indicates its weight. " +
