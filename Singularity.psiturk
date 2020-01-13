@@ -13,8 +13,9 @@ from: ubuntu:18.04
 
 %post
  apt-get update
- apt-get install -y  python-pip
+ apt-get install -y  python-pip \
+                     git
  apt-get clean
 
- pip install psiturk
- 
+ pip install psiturk \
+             python-Levenshtein
