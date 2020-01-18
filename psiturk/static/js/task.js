@@ -107,24 +107,32 @@ var make_mov = function(movname, is_intro, has_ctr) {
  ********************/
 
 function allowNext() {
-  console.log("here");
   document.getElementById(NEXTBUTTON).disabled = false;
   console.log(document.getElementById(NEXTBUTTON).disable);
 }
 
 function makeCheckBox() {
 
-  return "<form action=\"\" method=\"post\" id=\"trial_response\">" +
-    "<input type=\"radio\" name=\"yes_box\" value=true onClick=\"allowNext()\"/> Yes" +
-    "<input type=\"radio\" name=\"nay_box\" value=false onClick=\"allowNext()\"/> No" +
-    "</form>"
+  return "<div id=\"trial_response\">" +
+    "Is the blue dot a target?" +
+    "<input class=\"css-checkbox\" type=\"radio\" id=\"yes_box\"/>" +
+    "<label for=\"radio3\" class=\"css-label radGroup1\">Option 1</label>" +
+    "<input class=\"css-checkbox\" type=\"radio\" id=\"nay_box\"/> No" +
+    "</div>"
 
 };
 
-function makeSlider() {
+function scaleSlider() {
   return "<span id=\"qspan\">Move the slider to match your card</span>"+
     "<input id=\"scale_slider\" type=\"range\" min=\"0\" max=\"100\" default=\"50\" width=\"1500\"/>";
-}
+};
+
+
+function responseSlider() {
+  return "<span id=\"qspan\">How difficult is this trial? </span>"+
+    "<input id=\"scale_slider\" type=\"range\" min=\"0\" max=\"100\" default=\"50\" width=\"1500\"/>" +
+    "<div id=\"lab-left\"><i>Easy</i></div><div id=\"lab-right\"><i>I Guessed</i></div>";
+};
 
 
 class Page {
@@ -214,13 +222,27 @@ class Page {
   }
 
   addResponse() {
+    // this.response.innerHTML = makeCheckBox() + responseSlider();
     this.response.innerHTML = makeCheckBox();
   }
 
   // The form will automatically enable the next button
   enableResponse() {
     var form = document.getElementById("trial_response");
-    form.disabled = false;
+    var yes = document.getElementById("yes_box");
+    yes.value = true;
+    yes.onclick = function() {
+      form.value = true;
+      allowNext();
+    }
+    var no = document.getElementById("nay_box");
+    no.value = false;
+    no.onclick = function() {
+      form.value = false;
+      allowNext();
+    }
+    // var form = document.getElementById("trial_response");
+    // form.disabled = false;
   }
 
   disableResponse() {
@@ -246,6 +268,7 @@ class Page {
         if (me.mask) {
           cut2black();
         }
+        me.addResponse();
         me.enableResponse();
       };
     } else {
@@ -289,75 +312,50 @@ var InstructionRunner = function(condlist) {
 
 
   var instructions = [
-    ["Instructions go here.",
-      "scale", "test.png", false
+    [
+      "In this task, you will observe a series of dots move on the screen.<br>" +
+        "(show a movie with no labels?)",
+      "image", "test.png", false
     ],
-    ["Instructions go here.",
+    [
+      "At the beginning of each trial, you will see <b>4</b> of the <b>8</b> dots highlighted <span style=\"color:red;\">red</span> "+
+        "designating them as <b>targets</b>.<br>" +
+        "Shortly after, the <span style=\"color:red;\">red</span> labels will dissapear and the dots will begin to move.<br>" +
+        "Your task is to keep track of the <b>targets</b> as they move throughout the scene.<br>",
       "movie", "test.mp4", false
     ],
-    // ["In this task, you will observe <b>three</b> colored balls interact on a ramp.<br>" +
-    //   "The color of each ball indicates its weight. " +
-    //   "In other words, two balls with the <b>same</b> color have the same mass.<br>" +
-    //   "Your job is to compare the weight of each ball in association with its color.",
-    //   "none", "none", []
-    // ],
+    [
+      "At the end of each trial, <b>1</b> of the <b>8</b> dots will be highlighted in <span style=\"color:red;\">red</span>" +
+        ".<br> You will be asked if that dot was one of the <b>targets</b>.",
+      "movie", "test.mp4", false
+    ],
+    [
+      "You will be able to record your response by clicking on one of the two check boxes shown below. <br>" +
+        "<hr /><i>Note</i>: You will <b>NOT</b> be able to record your response until the video has <b>completed</b> and" +
+        " you will <b>NOT</b> be able to progress to the next trial until you have submitted a response.",
+      "text", "", true
+    ],
+    [
+      "You will be able to record your response by clicking on one of the two check boxes shown below. <br>" +
+        "<hr /><i>Note</i>: You will <b>NOT</b> be able to record your response until the video has <b>completed</b> and" +
+        " you will <b>NOT</b> be able to progress to the next trial until you have submitted a response.",
+      "movie", "test.mp4", true
+    ],
+    [
+      "Before we begin, please follow the proceding instructions to setup your display.<br>" +
+        "Please sit comfortably in front of you monitor and outstretch your arm holding a credit card <br>." +
+        "Move the slider below until the template on the screen matches the size of your card.",
+      "scale", "generic_cc.png", false
+    ],
+    [
+      "Please do not move from this position for the duration of the experiment (~20 minutes).",
+      "text", "", false
+    ],
+    ["After a short check to make sure that you have understood the instructions, " +
+      "you will have to make your judgments about " + nTrials + " trials.<br>",
+      "none", "none", []
+    ],
 
-    // ["A ball can be colored either <span style=\"color:red;\">red</span>, <span style=\"color:blue;\">blue</span>, or <span style=\"color:green;\">green</span>.<br>" +
-    //   "However, the relationship between a particular color and weight can change between scenes.<br>" +
-    //   "<br>For example, the <span style=\"color:red;\">red</span> ball on the left is heavier than <span style=\"color:blue;\">blue</span>.<br>" +
-    //   "<hr /><i>Note</i>: After the video ends, please press the 'Next' button at the bottom of the screen to move on.",
-    //   "movie", "intro_1_t-900.mp4", []
-    // ],
-
-    // ["In this case, the <span style=\"color:blue;\">blue</span> ball is heavier than the <span style=\"color:red;\">red</span> one.",
-    //   "movie", "intro_2_t-700.mp4", []
-    // ],
-
-    // ["To register your decision you will see a scale, like the one below, that will ask you to order the weight of each color<br> " +
-    //   "<b>You must drag all the colors into the scale in order to progress.</b><br>" +
-    //   "Please try this out before continuing.",
-    //   "none", "none", ["red", "blue", "green"]
-    // ],
-
-    // ["<b>Not</b> all trials will have all three colors.<br>" +
-    //   "The slider will reflect the number of unique colors present in the movie.",
-    //   "none", "none", ["blue", "green"]
-    // ],
-
-    // ["As soon as the movie ends, the scale will appear beneath it.<br>" +
-    //   "You can then drag the balls onto the scale to make your judgments of their weight.<br>" +
-    //   "After you are done, press `Next' to move on.",
-    //   "movie", "intro_1_t-335.mp4", ["red", "blue", "green"]
-    // ],
-
-    // ["Finally, the lights will shut off during or after objects are in motion.<br>" +
-    //   "Here, the light go dark after the first collision.<br>" +
-    //   "<hr /><i>Note</i>: Do <b>NOT</b> refresh your page. In each trial, you will only observe the video once",
-    //   "movie", "intro_1_t-335.mp4", ["red", "blue", "green"], true
-    // ],
-
-    // ["To help you keep track of balls associated with each color, the left most ball will always" +
-    //   " be <span style=\"color:red;\">red</span>, followed by <span style=\"color:blue;\">blue</span>" +
-    //   " and finally, <span style=\"color:green;\">green</span><br>" +
-    //   "In addition, the scale will also match this order except from top to bottom" +
-    //   "<hr /><i>Note</i>: In the experiment, the video will cut to black, not freeze.",
-    //   "movie", "intro_1_t-335.mp4", ["red", "blue", "green"]
-    // ],
-
-    // ["Here is the same movie but with the lights shutting off.",
-    //   "movie", "intro_1_t-335.mp4", ["red", "blue", "green"], true
-    // ],
-
-    // ["If there are several balls with the same color it is possible to have a  <span style=\"color:red;\">red</span>" +
-    //   " ball after a <span style=\"color:blue;\">blue</span> one, however, the slider will still preserve the order" +
-    //   " showing the <span style=\"color:red;\">red</span> at the top",
-    //   "movie", "intro_2_t-700.mp4", ["red", "blue"], true
-    // ],
-
-    // ["After a short check to make sure that you have understood the instructions, " +
-    //   "you will have to make your judgments about " + nTrials + " trials.<br>",
-    //   "none", "none", []
-    // ],
   ];
   var ninstruct = instructions.length;
 
