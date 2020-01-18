@@ -222,8 +222,8 @@ class Page {
   }
 
   addResponse() {
-    // this.response.innerHTML = makeCheckBox() + responseSlider();
-    this.response.innerHTML = makeCheckBox();
+    this.response.innerHTML = makeCheckBox() + responseSlider();
+    // this.response.innerHTML = makeCheckBox();
   }
 
   // The form will automatically enable the next button
@@ -310,6 +310,11 @@ var InstructionRunner = function(condlist) {
   var reloadbtn = document.getElementById(RELOAD);
   var nTrials = condlist.length;
 
+  // each instruction is an array of 4 elements
+  // 1: The text to be shown (if any)
+  // 2: The type of format (image, movie, text, scale)
+  // 3: Any media needed (can be an empty string)
+  // 4: Whether to show the response div (true/false)
 
   var instructions = [
     [
