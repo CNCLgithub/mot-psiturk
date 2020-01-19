@@ -113,11 +113,16 @@ function allowNext() {
 
 function makeCheckBox() {
 
-  return "<form id=\"trial_response\">" +
+  return "<div class=\"card\"" +
+    "<form id=\"trial_response\" action=\"#\">" +
     "Is the highlighted dot a target?" +
-    "<label class=\"block\"><input type=\"radio\" name=\"radgroup\" id=\"yes_box\">Yes</label>" +
-    "<label class=\"block\"><input type=\"radio\" name=\"radgroup\" id=\"nay_box\">No</label>" +
-    "</form>"
+    "<label class=\"radio\"><input id=\"yes_box\" type=\"radio\" name=\"radios\">" +
+    "<span class=\"outer\"><span class=\"inner\"></span></span>Yes</label>" +
+    "<label class=\"radio\"><input id=\"nay_box\" type=\"radio\" name=\"radios\">" +
+    "<span class=\"outer\"><span class=\"inner\"></span></span>No</label>" +
+    "</form>" +
+    "</div>" +
+    "<hr />"
 };
 
 function scaleSlider() {
