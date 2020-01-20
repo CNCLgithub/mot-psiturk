@@ -320,23 +320,23 @@ var InstructionRunner = function(condlist) {
   // 4: Whether to show the response div (true/false)
 
   var instructions = [
-    // [
-    //   "In this task, you will observe a series of dots move on the screen.<br>" +
-    //     "(show a movie with no labels?)",
-    //   "image", "test.png", false
-    // ],
-    // [
-    //   "At the beginning of each trial, you will see <b>4</b> of the <b>8</b> dots highlighted <span style=\"color:red;\">red</span> "+
-    //     "designating them as <b>targets</b>.<br>" +
-    //     "Shortly after, the <span style=\"color:red;\">red</span> labels will dissapear and the dots will begin to move.<br>" +
-    //     "Your task is to keep track of the <b>targets</b> as they move throughout the scene.<br>",
-    //   "movie", "test.mp4", false
-    // ],
-    // [
-    //   "At the end of each trial, <b>1</b> of the <b>8</b> dots will be highlighted in <span style=\"color:red;\">red</span>" +
-    //     ".<br> You will be asked if that dot was one of the <b>targets</b>.",
-    //   "movie", "test.mp4", false
-    // ],
+    [
+      "In this task, you will observe a series of dots move on the screen.<br>" +
+        "(show a movie with no labels?)",
+      "image", "test.png", false
+    ],
+    [
+      "At the beginning of each trial, you will see <b>4</b> of the <b>8</b> dots highlighted <span style=\"color:red;\">red</span> "+
+        "designating them as <b>targets</b>.<br>" +
+        "Shortly after, the <span style=\"color:red;\">red</span> labels will dissapear and the dots will begin to move.<br>" +
+        "Your task is to keep track of the <b>targets</b> as they move throughout the scene.<br>",
+      "movie", "test.mp4", false
+    ],
+    [
+      "At the end of each trial, <b>1</b> of the <b>8</b> dots will be highlighted in <span style=\"color:red;\">red</span>" +
+        ".<br> You will be asked if that dot was one of the <b>targets</b>.",
+      "movie", "test.mp4", false
+    ],
     [
       "You will be able to record your response by clicking on one of the two check boxes shown below. <br>" +
         "<hr /><i>Note</i>: You will <b>NOT</b> be able to record your response until the video has <b>completed</b> and" +
