@@ -126,7 +126,7 @@ function makeCheckBox() {
 };
 
 function scaleSlider() {
-  return "<span id=\"qspan\">Move the slider to match your card</span>"+
+  return "<span id=\"qspan\">Move the slider to match the width of your card</span>"+
     "<input id=\"scale_slider\" type=\"range\" min=\"0\" max=\"100\" default=\"50\" width=\"1500\"/>";
 };
 
@@ -154,6 +154,7 @@ class Page {
     this.pageSize = PAGESIZE;
     // html elements
     this.instruct = document.getElementById(INS_INSTRUCTS);
+    this.scale_region = document.getElementById("scale_region");
     this.response = document.getElementById("response_region");
     this.showResponse = show_response;
     this.next = document.getElementById(NEXTBUTTON);
@@ -205,7 +206,6 @@ class Page {
     } else if (this.mediatype == 'scale'){
       this.mvsc.innerHTML = make_img(this.mediapath, true, false) + "<br>";
       this.scalePage();
-
     } else {
       this.mvsc.innerHTML = "";
       this.showImage();
@@ -213,7 +213,7 @@ class Page {
   };
 
   scalePage() {
-    this.response.innerHTML = makeSlider();
+    this.scale_region.innerHTML = scaleSlider();
     var slider_value = document.getElementById("scale_slider");
     var scale_img = document.getElementById("thisimg");
     slider_value.oninput = function(e) {
@@ -254,6 +254,7 @@ class Page {
 
   clearResponse() {
     this.response.innerHTML = "";
+    this.scale_region.innerHTML = "";
   }
 
   // plays movie
@@ -320,48 +321,52 @@ var InstructionRunner = function(condlist) {
   // 4: Whether to show the response div (true/false)
 
   var instructions = [
+    // [
+    //   "In this task, you will observe a series of dots move on the screen.<br>",
+    //   "image", "test.png", false
+    // ],
+    // // image with target labels (red)
+    // [
+    //   "At the beginning of each trial, you will see <b>4</b> of the <b>8</b> dots highlighted <span style=\"color:red;\">red</span> "+
+    //     "designating them as <b>targets</b>.<br>" +
+    //     "Shortly after, the <span style=\"color:red;\">red</span> labels will dissapear and the dots will begin to move.<br>" +
+    //   "image", "test.png", false
+    // ],
+    // [
+    //   "Your task is to keep track of the <b>targets</b> as they move throughout the scene.<br>",
+    //   "movie", "test.mp4", false
+    // ],
+    // [
+    //   "At the end of each trial, <b>1</b> of the <b>8</b> dots will be highlighted in <span style=\"color:blue;\">blue</span>" +
+    //     ".<br> Your job is to judge whether that dot was one of the <b>targets</b>.",
+    //   "movie", "test.mp4", false
+    // ],
+    // [
+    //   "You will be able to record your response by clicking on one of the two check boxes shown below. <br>",
+    //     "<hr /><i>Note</i>: You will <b>NOT</b> be able to progress to the next trial until you have submitted a response.",
+    //   "text", "", true
+    // ],
+    // [
+    //   "You will be able to record your response by clicking on one of the two check boxes shown below. <br>" +
+    //     "<hr /><i>Note</i>: You will <b>NOT</b> be able to record your response until the video has <b>completed</b>",
+    //   "movie", "test.mp4", true
+    // ],
+
+
+
     [
-      "In this task, you will observe a series of dots move on the screen.<br>" +
-        "(show a movie with no labels?)",
-      "image", "test.png", false
-    ],
-    [
-      "At the beginning of each trial, you will see <b>4</b> of the <b>8</b> dots highlighted <span style=\"color:red;\">red</span> "+
-        "designating them as <b>targets</b>.<br>" +
-        "Shortly after, the <span style=\"color:red;\">red</span> labels will dissapear and the dots will begin to move.<br>" +
-        "Your task is to keep track of the <b>targets</b> as they move throughout the scene.<br>",
-      "movie", "test.mp4", false
-    ],
-    [
-      "At the end of each trial, <b>1</b> of the <b>8</b> dots will be highlighted in <span style=\"color:red;\">red</span>" +
-        ".<br> You will be asked if that dot was one of the <b>targets</b>.",
-      "movie", "test.mp4", false
-    ],
-    [
-      "You will be able to record your response by clicking on one of the two check boxes shown below. <br>" +
-        "<hr /><i>Note</i>: You will <b>NOT</b> be able to record your response until the video has <b>completed</b> and" +
-        " you will <b>NOT</b> be able to progress to the next trial until you have submitted a response.",
-      "text", "", true
-    ],
-    [
-      "You will be able to record your response by clicking on one of the two check boxes shown below. <br>" +
-        "<hr /><i>Note</i>: You will <b>NOT</b> be able to record your response until the video has <b>completed</b> and" +
-        " you will <b>NOT</b> be able to progress to the next trial until you have submitted a response.",
-      "movie", "test.mp4", true
-    ],
-    [
-      "Before we begin, please follow the proceding instructions to setup your display.<br>" +
-        "Please sit comfortably in front of you monitor and outstretch your arm holding a credit card <br>." +
-        "Move the slider below until the template on the screen matches the size of your card.",
+      "<b>Before we begin, follow the instructions below to setup your display.</b><br><hr />" +
+        "<p>Please sit comfortably in front of you monitor and outstretch your arm holding a credit card (or a similary sized ID card). <br>" +
+        "<p>Adjust the size of the image using the slider until its <strong>width</strong> matches the width of your credit card (or ID card).",
       "scale", "generic_cc.png", false
     ],
     [
-      "Please do not move from this position for the duration of the experiment (~20 minutes).",
+      "Please maintain this arm-length distance from your monitor for the duration of this experiment (20-25 minutes).",
       "text", "", false
     ],
     ["After a short check to make sure that you have understood the instructions, " +
       "you will have to make your judgments about " + nTrials + " trials.<br>",
-      "none", "none", []
+      "", "", false
     ],
 
   ];
