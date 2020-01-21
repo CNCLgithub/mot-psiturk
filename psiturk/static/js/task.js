@@ -19,6 +19,8 @@ var PAGESIZE = 500;
 
 var IMG_TIME = 100 // time to display images in ms
 
+var SCALE_COMPLETE = false; // users do not need to repeat scaling
+
 // All pages to be loaded
 var pages = [
   "instructions/instructions.html",
@@ -212,15 +214,26 @@ class Page {
   };
 
   scalePage() {
-    this.scale_region.innerHTML = scaleSlider();
-    var slider_value = document.getElementById("scale_slider");
-    var scale_img = document.getElementById("thisimg");
-    slider_value.oninput = function(e) {
-      PAGESIZE = (e.target.value / 50.0) * 500;
-      scale_img.width = `${PAGESIZE}px`;
-      scale_img.style.width = `${PAGESIZE}px`;
-    }
+    if (SCALE_COMPLETE) {
+      this.mvsc.innerHTML = "";
+      this.instruct.innerHTML = "You have already scaled your monitor";
+      this.showImage();
 
+    } else {
+      var next = this.next
+      next.disabled = true;
+      this.scale_region.innerHTML = scaleSlider();
+      var slider_value = document.getElementById("scale_slider");
+      var scale_img = document.getElementById("thisimg");
+      slider_value.oninput = function(e) {
+        PAGESIZE = (e.target.value / 50.0) * 500;
+        scale_img.width = `${PAGESIZE}px`;
+        scale_img.style.width = `${PAGESIZE}px`;
+        next.disabled = false;
+        SCALE_COMPLETE = true;
+        console.log(SCALE_COMPLETE);
+      }
+    }
   }
 
   addResponse() {
@@ -345,27 +358,27 @@ var InstructionRunner = function(condlist) {
     //     ".<br> Your job is to judge whether that dot was one of the <b>targets</b>.",
     //   "movie", "test.mp4", false
     // ],
-    [
-      "You will be able to record your response by clicking on one of the two check boxes shown below." +
-        " In addition, you will be asked to rate the difficulty of the trial on a slider." +
-        "<hr /><i>Note</i>: You will <b>NOT</b> be able to progress to the next trial until you have submitted both responses.",
-      "", "", true
-    ],
+    // [
+    //   "You will be able to record your response by clicking on one of the two check boxes shown below." +
+    //     " In addition, you will be asked to rate the difficulty of the trial on a slider." +
+    //     "<hr /><i>Note</i>: You will <b>NOT</b> be able to progress to the next trial until you have submitted both responses.",
+    //   "", "", true
+    // ],
     // [
     //   "You will be able to record your response by clicking on one of the two check boxes shown below. <br>" +
     //     "<hr /><i>Note</i>: You will <b>NOT</b> be able to record your response until the video has <b>completed</b>",
     //   "movie", "test.mp4", true
     // ],
-    // [
-    //   "<b>Before we begin, follow the instructions below to setup your display.</b><br><hr />" +
-    //     "<p>Please sit comfortably in front of you monitor and outstretch your arm holding a credit card (or a similary sized ID card). <br>" +
-    //     "<p>Adjust the size of the image using the slider until its <strong>width</strong> matches the width of your credit card (or ID card).",
-    //   "scale", "generic_cc.png", false
-    // ],
-    // [
-    //   "Please maintain this arm-length distance from your monitor for the duration of this experiment (20-25 minutes).",
-    //   "text", "", false
-    // ],
+    [
+      "<b>Before we begin, follow the instructions below to setup your display.</b><br><hr />" +
+        "<p>Please sit comfortably in front of you monitor and outstretch your arm holding a credit card (or a similary sized ID card). <br>" +
+        "<p>Adjust the size of the image using the slider until its <strong>width</strong> matches the width of your credit card (or ID card).",
+      "scale", "generic_cc.png", false
+    ],
+    [
+      "Please maintain this arm-length distance from your monitor for the duration of this experiment (20-25 minutes).",
+      "text", "", false
+    ],
     // ["After a short check to make sure that you have understood the instructions, " +
     //   "you will have to make your judgments about " + nTrials + " trials.<br>",
     //   "", "", false
