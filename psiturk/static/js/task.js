@@ -181,7 +181,9 @@ class Page {
   // Returns the placement of each color scaled from [0, 1]
   retrieveResponse() {
     var form = document.getElementById("trial_response");
-    return form.value
+    var slider = document.getElementById("response_slider");
+    var rep = [form.value, slider.value]
+    return rep
   }
 
 
@@ -237,6 +239,7 @@ class Page {
   }
 
   addResponse() {
+    console.log(this.response);
     this.response.innerHTML = makeCheckBox() + responseSlider();
   }
 
@@ -270,8 +273,8 @@ class Page {
   }
 
   clearResponse() {
-    this.response.innerHTML = "";
     this.scale_region.innerHTML = "";
+    this.response.innerHTML = "";
   }
 
   // plays movie
@@ -338,37 +341,37 @@ var InstructionRunner = function(condlist) {
   // 4: Whether to show the response div (true/false)
 
   var instructions = [
-    // [
-    //   "In this task, you will observe a series of dots move on the screen.<br>",
-    //   "image", "test.png", false
-    // ],
-    // // image with target labels (red)
-    // [
-    //   "At the beginning of each trial, you will see <b>4</b> of the <b>8</b> dots highlighted <span style=\"color:red;\">red</span> "+
-    //     "designating them as <b>targets</b>.<br>" +
-    //     "Shortly after, the <span style=\"color:red;\">red</span> labels will dissapear and the dots will begin to move.<br>" +
-    //   "image", "test.png", false
-    // ],
-    // [
-    //   "Your task is to keep track of the <b>targets</b> as they move throughout the scene.<br>",
-    //   "movie", "test.mp4", false
-    // ],
-    // [
-    //   "At the end of each trial, <b>1</b> of the <b>8</b> dots will be highlighted in <span style=\"color:blue;\">blue</span>" +
-    //     ".<br> Your job is to judge whether that dot was one of the <b>targets</b>.",
-    //   "movie", "test.mp4", false
-    // ],
-    // [
-    //   "You will be able to record your response by clicking on one of the two check boxes shown below." +
-    //     " In addition, you will be asked to rate the difficulty of the trial on a slider." +
-    //     "<hr /><i>Note</i>: You will <b>NOT</b> be able to progress to the next trial until you have submitted both responses.",
-    //   "", "", true
-    // ],
-    // [
-    //   "You will be able to record your response by clicking on one of the two check boxes shown below. <br>" +
-    //     "<hr /><i>Note</i>: You will <b>NOT</b> be able to record your response until the video has <b>completed</b>",
-    //   "movie", "test.mp4", true
-    // ],
+    [
+      "In this task, you will observe a series of dots move on the screen.<br>",
+      "movie", "test.mp4", false
+    ],
+    // image with target labels (red)
+    [
+      "At the beginning of each trial, you will see <b>4</b> of the <b>8</b> dots highlighted <span style=\"color:red;\">red</span> "+
+        "designating them as <b>targets</b>.<br>" +
+        "Shortly after, the <span style=\"color:red;\">red</span> labels will dissapear and the dots will begin to move.<br>" +
+      "image", "labelled_targets.png", false
+    ],
+    [
+      "Your task is to keep track of the <b>targets</b> as they move throughout the scene.<br>",
+      "movie", "intro_target_label.mp4", false
+    ],
+    [
+      "At the end of each trial, <b>1</b> of the <b>8</b> dots will be highlighted in <span style=\"color:blue;\">blue</span>" +
+        ".<br> Your job is to judge whether that dot was one of the <b>targets</b>.",
+      "movie", "intro_full.mp4", false
+    ],
+    [
+      "You will be able to record your response by clicking on one of the two check boxes shown below." +
+        " In addition, you will be asked to rate the difficulty of the trial on a slider." +
+        "<hr /><i>Note</i>: You will <b>NOT</b> be able to progress to the next trial until you have submitted both responses.",
+      "", "", true
+    ],
+    [
+      "You will be able to record your response by clicking on one of the two check boxes shown below. <br>" +
+        "<hr /><i>Note</i>: You will <b>NOT</b> be able to record your response until the video has <b>completed</b>",
+      "movie", "intro_full.mp4", true
+    ],
     [
       "<b>Before we begin, follow the instructions below to setup your display.</b><br><hr />" +
         "<p>Please sit comfortably in front of you monitor and outstretch your arm holding a credit card (or a similary sized ID card). <br>" +
@@ -379,10 +382,10 @@ var InstructionRunner = function(condlist) {
       "Please maintain this arm-length distance from your monitor for the duration of this experiment (20-25 minutes).",
       "text", "", false
     ],
-    // ["After a short check to make sure that you have understood the instructions, " +
-    //   "you will have to make your judgments about " + nTrials + " trials.<br>",
-    //   "", "", false
-    // ],
+    ["After a short check to make sure that you have understood the instructions, " +
+      "you will have to make your judgments about " + nTrials + " trials.<br>",
+      "", "", false
+    ],
 
   ];
   var ninstruct = instructions.length;
@@ -432,9 +435,9 @@ var quiz = function(goBack, goNext) {
         'question': this.id,
         'answer': this.value
       });
-      if (this.id === 'taskDef' && this.value != 'b') {
+      if (this.id === 'trueFalse1' && this.value != 'c') {
         allRight = false;
-      } else if (this.id === 'trueFalse' && this.value != 'b') {
+      } else if (this.id === 'trueFalse2' && this.value != 'c') {
         allRight = false;
       }
       // }else if(this.id==='densOrder' && this.value != 'second'){
@@ -487,18 +490,17 @@ var Experiment = function(triallist) {
     if (curIdx === triallist.length) {
       end();
     }
-    var curtrial = triallist[curIdx];
+    var flnm = triallist[curIdx];
     show_progress(curIdx);
-    var flnm = curtrial[0];
-    var colors = map_colors(curtrial[1]);
-
     starttime = new Date().getTime();
-    var pg = new Page("", "movie", flnm, colors, mask = true);
+    var pg = new Page("", "movie", flnm, true);
     // `Page` will record the subject responce when "next" is clicked
     // and go to the next trial
     pg.showPage(
       function() {
         register_response(pg, curIdx);
+        // Clears slider from screen
+        pg.clearResponse();
         runTrial(curIdx + 1);
       }
     );
@@ -507,17 +509,16 @@ var Experiment = function(triallist) {
   // Record the subject's response for a given trial.
   var register_response = function(trialPage, cIdx) {
     var rt = new Date().getTime() - starttime;
-    var ch = trialPage.responseValue();
+    var rep = trialPage.retrieveResponse();
     // Records as [trialname, choice of mass, reaction time]
     psiTurk.recordTrialData({
       'TrialName': triallist[cIdx][0],
-      'Rating': ch,
+      'Response': rep[0],
+      'Rating': rep[1],
       'ReactionTime': rt,
       'IsInstruction': false,
       'TrialOrder': cIdx
     });
-    // Clears slider from screen
-    trialPage.clearReponse();
   };
 
   var end = function() {
