@@ -341,14 +341,18 @@ var InstructionRunner = function(condlist) {
 
   var instructions = [
     [
+      "Welcome to the experiment. Please click on <b>Next</b> to continue with the instructions.",
+      "", "", false
+    ],
+    [
       "In this task, you will observe a series of dots move on the screen.<br>",
-      "image", "dots.png", false
+      "movie", "intro_no_label.mp4", false
     ],
     // image with target labels (red)
     [
       "At the beginning of each trial, you will see <b>4</b> of the <b>8</b> dots highlighted <span style=\"color:red;\">red</span> "+
         "designating them as <b>targets</b>.<br>" +
-        "Shortly after, the <span style=\"color:red;\">red</span> labels will dissapear and the dots will begin to move.<br>" +
+        "Shortly after, the <span style=\"color:red;\">red</span> labels will dissapear and the dots will begin to move.<br>",
       "image", "labelled_targets.png", false
     ],
     [

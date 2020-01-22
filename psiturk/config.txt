@@ -16,8 +16,7 @@ database_url = sqlite:///participants.db
 table_name = mot_DEBUG
 
 [Server Parameters]
-host = localhost
-# host = 0.0.0.0
+host = 0.0.0.0
 port = 22362
 cutoff_time = 30
 logfile = server.log
@@ -32,7 +31,7 @@ secret_key = 'this is my secret key which is hard to guess, i should change this
 
 [Task Parameters]
 experiment_code_version = 1.0
-num_conds = 5
+num_conds = 8
 num_counters = 1
 
 [Shell Parameters]
