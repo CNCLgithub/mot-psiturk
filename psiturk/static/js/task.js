@@ -239,7 +239,6 @@ class Page {
   }
 
   addResponse() {
-    console.log(this.response);
     this.response.innerHTML = makeCheckBox() + responseSlider();
   }
 
@@ -343,7 +342,7 @@ var InstructionRunner = function(condlist) {
   var instructions = [
     [
       "In this task, you will observe a series of dots move on the screen.<br>",
-      "movie", "test.mp4", false
+      "image", "dots.png", false
     ],
     // image with target labels (red)
     [
