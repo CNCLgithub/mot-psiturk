@@ -80,7 +80,7 @@ var make_img = function(imgname, is_intro, freeze) {
   if (freeze) {
     r += "onload=\"cut2black()\" "
   }
-  r += `class="${mcl}" src="static/data/${imgname}" alt="Movie" style="height: auto; width: ${PAGESIZE}">`
+  r += `class="${mcl}" src="static/data/${imgname}" alt="Movie" style="height: auto; width: ${PAGESIZE}px">`
   return r
 };
 
