@@ -513,9 +513,8 @@ var Experiment = function(triallist) {
   var register_response = function(trialPage, cIdx) {
     var rt = new Date().getTime() - starttime;
     var rep = trialPage.retrieveResponse();
-    // Records as [trialname, choice of mass, reaction time]
     psiTurk.recordTrialData({
-      'TrialName': triallist[cIdx][0],
+      'TrialName': triallist[cIdx],
       'Response': rep[0],
       'Rating': rep[1],
       'ReactionTime': rt,
@@ -621,7 +620,7 @@ $(window).load(function() {
       url: "static/data/condlist.json",
       async: false,
       success: function(data) {
-        condlist = shuffle(data[0]);
+        condlist = shuffle(data[condition]);
         InstructionRunner(condlist);
       },
       error: function() {
