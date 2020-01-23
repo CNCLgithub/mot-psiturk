@@ -229,8 +229,6 @@ class Page {
       this.showImage();
 
     } else {
-      var next = this.next
-      next.disabled = true;
       this.scale_region.innerHTML = scaleSlider();
       var slider_value = document.getElementById("scale_slider");
       var scale_img = document.getElementById("thisimg");
@@ -238,9 +236,7 @@ class Page {
         PAGESIZE = (e.target.value / 50.0) * 500;
         scale_img.width = `${PAGESIZE}px`;
         scale_img.style.width = `${PAGESIZE}px`;
-        next.disabled = false;
         SCALE_COMPLETE = true;
-        console.log(SCALE_COMPLETE);
       }
     }
   }
