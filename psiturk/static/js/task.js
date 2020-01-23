@@ -390,12 +390,6 @@ var InstructionRunner = function(condlist) {
       "scale", "generic_cc.png", false
     ],
     [
-      "You will be able to record your response by clicking on one of the two check boxes shown below." +
-        " In addition, you will be asked to rate the difficulty of the trial on a slider." +
-        "<hr /><i>Note</i>: You will <b>NOT</b> be able to progress to the next trial until you have submitted both responses.",
-      "", "", true
-    ],
-    [
       "Please maintain this arm-length distance from your monitor for the duration of this experiment (20-25 minutes).",
       "text", "", false
     ],
