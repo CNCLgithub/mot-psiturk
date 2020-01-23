@@ -71,6 +71,7 @@ def read_db(db_path, codeversions):
 
 def parse_rawname(trialname):
     fullname = os.path.splitext(trialname)[0]
+    print(trialname)
     scene, dot = fullname.split('_')
     return {
         'scene': scene,
@@ -92,8 +93,8 @@ def main():
     qs = qs.rename(index=str, columns={'uniqueid': 'WID'})
 
 
-    trs = trs.merge(trs.TrialName.apply(lambda s: pd.Series(parse_rawname(s))),
-                    left_index=True, right_index=True)
+    # trs = trs.merge(trs.TrialName.apply(lambda s: pd.Series(parse_rawname(s))),
+    #                 left_index=True, right_index=True)
     trs = trs.dropna()
 
     trs = trs.rename(index=str, columns={'ReactionTime':'RT', 'uniqueid':'WID'})
@@ -101,7 +102,7 @@ def main():
     """Make sure we have 150 observations per participant"""
     trialsbyp = trs.WID.value_counts()
     # trialsbyp = trialsbyp[trialsbyp == 150]
-    trialsbyp = trialsbyp[trialsbyp > 0]
+    trialsbyp = trialsbyp[trialsbyp == 128]
     good_wids = trialsbyp.index
     trs = trs[trs.WID.isin(good_wids)]
     # good_wids = trs.index
