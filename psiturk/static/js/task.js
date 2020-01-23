@@ -135,12 +135,12 @@ function scaleSlider() {
 
 function responseSlider() {
   return `<div style="width:${PAGESIZE * 1.15}px;margin:auto;text-align:center">` +
-    "<span id=\"qspan\">How difficult was it to track all 4 targets? </span>" +
+    "<span id=\"qspan\">How much effort did it take to track all 4 targets? </span>" +
     "<br>" +
     `<input id=\"response_slider\" type=\"range\" min=\"0\" max=\"100\" default=\"50\" style="width:${PAGESIZE}px;margin:auto;"/>` +
-    `<label class="pull-left"><i>Easy</i></label>` +
-    `<label class="pull-center"><i>Medium</i></label>` +
-    `<label class="pull-right"><i>Hard</i></label>` +
+    `<label class="pull-left"><i>None</i></label>` +
+    `<label class="pull-center"><Somewhat></i></label>` +
+    `<label class="pull-right"><i>Allot</i></label>` +
     "</div>";
     // "<div id=\"lab-left\"><i>Easy</i></div><div id=\"lab-right\"><i>I Guessed</i></div>";
 };
