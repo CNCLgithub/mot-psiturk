@@ -251,7 +251,6 @@ class Page {
 
   // The form will automatically enable the next button
   enableResponse() {
-    this.next.style.display = "inline-block";
     var slider = document.getElementById("response_slider");
     slider.disabled = true;
     slider.onmousedown = function() {
@@ -288,7 +287,6 @@ class Page {
   showMovie() {
 
     this.next.disabled = true;
-    this.next.style.display = "none";
     var sc = document.getElementById(MOVIESCREEN);
     var mov = document.getElementById('thisvideo');
 
@@ -350,7 +348,7 @@ var InstructionRunner = function(condlist) {
 
   var instructions = [
     [
-      "In this task, you will observe a series of dots move on the screen<br>." +
+      "In this task, you will observe a series of dots move on the screen.<br>" +
         "Click <b>Next</b> to give it a try.",
       "", "", false
     ],
