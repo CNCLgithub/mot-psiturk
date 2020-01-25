@@ -140,9 +140,8 @@ function responseSlider() {
     `<input id=\"response_slider\" type=\"range\" min=\"0\" max=\"100\" default=\"50\" style="width:${PAGESIZE}px;margin:auto;"/>` +
     `<label class="pull-left"><i>None</i></label>` +
     `<label class="pull-center"><Somewhat></i></label>` +
-    `<label class="pull-right"><i>Allot</i></label>` +
+    `<label class="pull-right"><i>A lot</i></label>` +
     "</div>";
-    // "<div id=\"lab-left\"><i>Easy</i></div><div id=\"lab-right\"><i>I Guessed</i></div>";
 };
 
 
