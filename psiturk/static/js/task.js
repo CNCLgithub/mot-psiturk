@@ -139,7 +139,7 @@ function responseSlider() {
     "<br>" +
     `<input id=\"response_slider\" type=\"range\" min=\"0\" max=\"100\" default=\"50\" style="width:${PAGESIZE}px;margin:auto;"/>` +
     `<label class="pull-left"><i>None</i></label>` +
-    `<label class="pull-center"><Somewhat></i></label>` +
+    `<label class="pull-center"><i>Somewhat</i></label>` +
     `<label class="pull-right"><i>A lot</i></label>` +
     "</div>";
 };
@@ -355,11 +355,12 @@ var InstructionRunner = function(condlist) {
     [
       "At the beginning of each trial, you will see <b>4</b> of the <b>8</b> dots highlighted <span style=\"color:red;\">red</span> "+
         "designating them as <b>targets</b>.<br>" +
-        "Shortly after, the <span style=\"color:red;\">red</span> labels will dissapear and the dots will begin to move.<br>",
+        "Shortly after, the <span style=\"color:red;\">red</span> labels will dissapear and the dots will begin to move.<br>" +
+        "Your task is to keep track of the targets as they move.",
       "image", "labelled_targets.png", false
     ],
     [
-      "Your task is to keep track of the <b>targets</b> as they move throughout the scene.<br>",
+      "Here is an example of a dynamic scene with targets.<br>",
       "movie", "intro_target_label.mp4", false
     ],
     [
