@@ -91,7 +91,7 @@ var make_mov = function(movname, is_intro, has_ctr) {
   var ctr = "";
   var fmovnm = "static/data/movies/" + movname;
   var foggnm = fmovnm.substr(0, fmovnm.lastIndexOf('.')) + ".ogg";
-  var ret = `<video id="thisvideo" class="${mcl}\${ctr}" width="${PAGESIZE}px" height="${PAGESIZE}px">` +
+  var ret = `<video id="thisvideo" class="${mcl}\${ctr}" width="${PAGESIZE*1.05}px" height="${PAGESIZE*1.05}px">` +
       `<source src="${fmovnm}" type="video/mp4">` +
       `<source src="${foggnm}" type="video/ogg">` +
       `Your browser does not support HTML5 mp4 video.</video>`;
@@ -135,7 +135,7 @@ function scaleSlider() {
 
 function responseSlider() {
   return `<div style="width:${PAGESIZE * 1.15}px;margin:auto;text-align:center">` +
-    "<span id=\"qspan\">How much effort did it take to track all 4 targets? </span>" +
+    "<span id=\"qspan\">How hard was it to track all 4 targets? </span>" +
     "<br>" +
     `<input id=\"response_slider\" type=\"range\" min=\"0\" max=\"100\" default=\"50\" style="width:${PAGESIZE}px;margin:auto;"/>` +
     `<label class="pull-left"><i>None</i></label>` +
@@ -365,18 +365,17 @@ var InstructionRunner = function(condlist) {
     ],
     [
       "At the end of each trial, <b>1</b> of the <b>8</b> dots will be highlighted in <span style=\"color:blue;\">blue</span>" +
-        ".<br> Your job is to judge whether that dot was one of the <b>targets</b>.",
+        ".<br> Your first task is to judge whether <i>that dot</i> was one of the <b>targets</b>.<br>" +
+        "Your second task is to rate <b>how hard</b> it was to track <i>all four</i> targets.",
       "movie", "intro_full.mp4", false
     ],
     [
-      "You will be able to record your response by clicking on one of the two check boxes shown below." +
-        " In addition, you will be asked to rate the difficulty of the trial on a slider." +
+      "You will be able to record your response by clicking on one of the two check boxes and by adjusting the slider shown below.<br>" +
         "<hr /><i>Note</i>: You will <b>NOT</b> be able to progress to the next trial until you have submitted both responses.",
       "", "", true
     ],
     [
-      "You will be able to record your response by clicking on one of the two check boxes shown below. <br>" +
-        "<hr /><i>Note</i>: You will <b>NOT</b> be able to record your response until the video has <b>completed</b>",
+      "You will <b>NOT</b> be able to record your response until the video has <b>completed</b>",
       "movie", "intro_full.mp4", true
     ],
     [
