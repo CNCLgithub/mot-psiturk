@@ -111,6 +111,7 @@ var make_mov = function(movname, is_intro, has_ctr) {
 function allowNext() {
   var button = document.getElementById(NEXTBUTTON)
   button.disabled = false;
+  button.style.display = "inline-block";
 }
 
 function makeCheckBox() {
@@ -289,6 +290,7 @@ class Page {
 
     // The "next" botton will only activate after recording a response
     if (this.showResponse) {
+      this.next.style.display = "none";
       var movOnEnd = function() {
         if (me.mask) {
           cut2black();
@@ -365,8 +367,14 @@ var InstructionRunner = function(condlist) {
     ],
     [
       "At the end of each trial, <b>1</b> of the <b>8</b> dots will be highlighted in <span style=\"color:blue;\">blue</span>" +
-        ".<br> Your first task is to judge whether <i>that dot</i> was one of the <b>targets</b>.<br>" +
-        "Your second task is to rate <b>how hard</b> it was to track <i>all four</i> targets.",
+        ".<br>-> Your first task is to judge whether <i>that dot</i> was one of the <b>targets</b>.<br>" +
+        "-> Your second task is to rate <b>how hard</b> it was to track <i>all four</i> targets.",
+      "", "", false
+    ],
+    [
+      "At the end of each trial, <b>1</b> of the <b>8</b> dots will be highlighted in <span style=\"color:blue;\">blue</span>" +
+        ".<br>-> Your first task is to judge whether <i>that dot</i> was one of the <b>targets</b>.<br>" +
+        "-> Your second task is to rate <b>how hard</b> it was to track <i>all four</i> targets.",
       "movie", "intro_full.mp4", false
     ],
     [
