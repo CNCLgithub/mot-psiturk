@@ -1,6 +1,6 @@
-# Galileo-Ramp Psiturk
+# MOT Psiturk
 
-This is the psiturk component of Galileo-Ramp V3
+This is the psiturk component of MOT CogSci 2020
 
 ## Setup
 

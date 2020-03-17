@@ -8,7 +8,7 @@ from __future__ import division, print_function
 import os
 import json
 import sys
-# import h5py
+import h5py
 import argparse
 import numpy as np
 import pandas as pd
@@ -24,9 +24,9 @@ QOUT = "parsed_questions.csv"
 
 # Mostly from http://psiturk.readthedocs.io/en/latest/retrieving.html
 def read_db(db_path, codeversions):
-    table_name = "mot_DEBUG"
+    table_name = "mot_live"
     data_column_name = "datastring"
-    mode = "debug"
+    mode = "live"
     engine = create_engine("sqlite:///" + db_path)
     metadata = MetaData()
     metadata.bind = engine
@@ -69,14 +69,19 @@ def read_db(db_path, codeversions):
 
     return trialdata, questiondata
 
-def parse_rawname(trialname):
+def parse_rawname(trialname, f):
     fullname = os.path.splitext(trialname)[0]
-    print(trialname)
     scene, dot = fullname.split('_')
-    return {
-        'scene': scene,
-        'dot': dot
-    }
+    dataset = f['dataset']
+    params = {k:dataset[scene][k].value for k in ['inertia',
+                                      'spring',
+                                      'sigma_w',
+                                      'sigma_x',
+                                      'sigma_v',
+                                      'num_targets',
+                                      'num_observations']}
+    params.update({'scene': int(scene), 'dot': int(dot)})
+    return params
 
 def main():
 
@@ -93,11 +98,15 @@ def main():
     qs = qs.rename(index=str, columns={'uniqueid': 'WID'})
 
 
-    # trs = trs.merge(trs.TrialName.apply(lambda s: pd.Series(parse_rawname(s))),
-    #                 left_index=True, right_index=True)
+    h5f = h5py.File('exp_0.h5','r')
+    trs = trs.merge(trs.TrialName.apply(
+        lambda s: pd.Series(parse_rawname(s, h5f))),
+                    left_index=True, right_index=True)
     trs = trs.dropna()
 
-    trs = trs.rename(index=str, columns={'ReactionTime':'RT', 'uniqueid':'WID'})
+    trs = trs.rename(index=str,
+                     columns={'ReactionTime':'RT',
+                              'uniqueid':'WID'})
 
     """Make sure we have 150 observations per participant"""
     trialsbyp = trs.WID.value_counts()
@@ -120,7 +129,8 @@ def main():
     print(trs)
     cl_qs = qs[qs.WID.isin(good_wids)].copy()
     cl_qs["ID"] = cl_qs.WID.apply(lambda x: wid_translate[x])
-    cl_qs[["ID", "instructionloops", "strategies", "notice", "comments"]].to_csv(QOUT, index=False)
+    print(cl_qs)
+    cl_qs[["ID", "instructionloops", "comments"]].to_csv(QOUT, index=False)
 
 if __name__ == '__main__':
     main()
