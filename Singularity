@@ -1,21 +1,17 @@
 bootstrap: docker
-from: ubuntu:18.04
-
+from: frolvlad/alpine-miniconda2
 
 
 %environment
+  export PATH=$PATH:/opt/conda/bin
   export PSITURK_GLOBAL_CONFIG_LOCATION=$HOME
 
 %runscript
   cd psiturk
-  exec psiturk
-  cd ..
+  bash -c "source activate /conda_env && psiturk $@"
 
 %post
- apt-get update
- apt-get install -y  python3-pip \
-                     git
- apt-get clean
-
- pip3 install psiturk==2.3.3 \
-             python-Levenshtein
+  apk add --no-cache bash build-base linux-headers git procps
+  /opt/conda/bin/conda create --yes -p /conda_env python=2.7
+  export PATH=$PATH:/opt/conda/bin
+  bash -c 'source activate /conda_env && pip install psiturk python-Levenshtein'

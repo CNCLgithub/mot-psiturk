@@ -1,11 +1,42 @@
 <div id="full-container">
 	<br>
-        <div id ="scale_region" style="background-color: white;"></div>
-	  <div id="moviescreen">
-	  </div>
+    <div id="moviescreen">
+    </div>
+
 	  <div id="register">
-		  <br>
-		    <div id ="response_region" style="background-color: white; margin=auto; align-self:center;text-align:center"></div>
+		    <div id ="response_region" style="background-color: white; display: none; margin=auto; align-self:center; text-align:center">
+		        <br>
+                <div class="card">
+                    <form id="trial_response" action="#">
+                        <b>Is the highlighted dot a target?</b><br>
+                        <label class="radio">
+                            <input id="yes_box" type="radio" name="radios">
+                            <span class="outer">
+                                <span class="inner">
+                                </span>
+                            </span>
+                            Yes
+                        </label>
+                        <label class="radio">
+                            <input id="nay_box" type="radio" name="radios">
+                            <span class="outer">
+                                <span class="inner">
+                                </span>
+                            </span>
+                            No
+                        </label>
+                    </form>
+                </div>
+                <hr />
+                <div style="width:auto; margin:auto; text-align:center">
+                    <span id="qspan">How hard was it to track all 4 targets? </span>
+                    <br>
+                    <input id="response_slider" type="range" min="0" max="100" default="50" style="width:100%; margin:auto;"/>
+                    <label class="pull-left"><i>None</i></label>
+                    <label class="pull-center"><i>Somewhat</i></label>
+                    <label class="pull-right"><i>A lot</i></label>
+                </div>
+            </div>
 
 
 		    <hr />

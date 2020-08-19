@@ -4,6 +4,8 @@
  *     utils.js
  */
 
+// import { instructions } from './instructions.js';
+
 // Initalize psiturk object
 var psiTurk = new PsiTurk(uniqueId, adServerLoc, mode);
 
@@ -114,38 +116,6 @@ function allowNext() {
   button.style.display = "inline-block";
 }
 
-function makeCheckBox() {
-
-  return "<div class=\"card\"" +
-    "<form id=\"trial_response\" action=\"#\">" +
-    "<b>Is the highlighted dot a target?</b><br>" +
-    "<label class=\"radio\"><input id=\"yes_box\" type=\"radio\" name=\"radios\">" +
-    "<span class=\"outer\"><span class=\"inner\"></span></span>Yes</label>" +
-    "<label class=\"radio\"><input id=\"nay_box\" type=\"radio\" name=\"radios\">" +
-    "<span class=\"outer\"><span class=\"inner\"></span></span>No</label>" +
-    "</form>" +
-    "</div>" +
-    "<hr />"
-};
-
-function scaleSlider() {
-  return "<span id=\"qspan\">Move the slider to match the width of your card</span>"+
-    "<input id=\"scale_slider\" type=\"range\" min=\"0\" max=\"100\" default=\"50\" width=\"1500\"/>";
-};
-
-
-function responseSlider() {
-  return `<div style="width:${PAGESIZE * 1.15}px;margin:auto;text-align:center">` +
-    "<span id=\"qspan\">How hard was it to track all 4 targets? </span>" +
-    "<br>" +
-    `<input id=\"response_slider\" type=\"range\" min=\"0\" max=\"100\" default=\"50\" style="width:${PAGESIZE}px;margin:auto;"/>` +
-    `<label class="pull-left"><i>None</i></label>` +
-    `<label class="pull-center"><i>Somewhat</i></label>` +
-    `<label class="pull-right"><i>A lot</i></label>` +
-    "</div>";
-};
-
-
 class Page {
 
   // Handles media presentation and scale handling.
@@ -229,7 +199,7 @@ class Page {
       this.showImage();
 
     } else {
-      this.scale_region.innerHTML = scaleSlider();
+      document.getElementById("scale_region").style.display = 'block';
       var slider_value = document.getElementById("scale_slider");
       var scale_img = document.getElementById("thisimg");
       slider_value.oninput = function(e) {
@@ -242,7 +212,7 @@ class Page {
   }
 
   addResponse() {
-    this.response.innerHTML = makeCheckBox() + responseSlider();
+    document.getElementById("response_region").style.display = 'block';
   }
 
   // The form will automatically enable the next button
@@ -275,8 +245,13 @@ class Page {
   }
 
   clearResponse() {
-    this.scale_region.innerHTML = "";
-    this.response.innerHTML = "";
+    document.getElementById("response_region").style.display = 'none';
+    document.getElementById("yes_box").checked = false;
+    document.getElementById("nay_box").checked = false;
+    if (this.mediatype == 'scale') {
+        document.getElementById("scale_region").style.display = 'none';
+    }
+    document.getElementById("response_slider").value = document.getElementById("response_slider").defaultValue;
   }
 
   // plays movie
@@ -337,71 +312,6 @@ var InstructionRunner = function(condlist) {
   var reloadbtn = document.getElementById(RELOAD);
   var nTrials = condlist.length;
 
-  // each instruction is an array of 4 elements
-  // 1: The text to be shown (if any)
-  // 2: The type of format (image, movie, text, scale)
-  // 3: Any media needed (can be an empty string)
-  // 4: Whether to show the response div (true/false)
-
-  var instructions = [
-    [
-      "In this task, you will observe a series of dots move on the screen.<br>" +
-        "Click <b>Next</b> to give it a try.",
-      "", "", false
-    ],
-    [
-      "In this task, you will observe a series of dots move on the screen.<br>",
-      "movie", "intro_no_label.mp4", false
-    ],
-    // image with target labels (red)
-    [
-      "At the beginning of each trial, you will see <b>4</b> of the <b>8</b> dots highlighted <span style=\"color:red;\">red</span> "+
-        "designating them as <b>targets</b>.<br>" +
-        "Shortly after, the <span style=\"color:red;\">red</span> labels will dissapear and the dots will begin to move.<br>" +
-        "Your task is to keep track of the targets as they move.",
-      "image", "labelled_targets.png", false
-    ],
-    [
-      "Here is an example of a dynamic scene with targets.<br>",
-      "movie", "intro_target_label.mp4", false
-    ],
-    [
-      "At the end of each trial, <b>1</b> of the <b>8</b> dots will be highlighted in <span style=\"color:blue;\">blue</span>" +
-        ".<br>-> Your first task is to judge whether <i>that dot</i> was one of the <b>targets</b>.<br>" +
-        "-> Your second task is to rate <b>how hard</b> it was to track <i>all four</i> targets.",
-      "", "", false
-    ],
-    [
-      "At the end of each trial, <b>1</b> of the <b>8</b> dots will be highlighted in <span style=\"color:blue;\">blue</span>" +
-        ".<br>-> Your first task is to judge whether <i>that dot</i> was one of the <b>targets</b>.<br>" +
-        "-> Your second task is to rate <b>how hard</b> it was to track <i>all four</i> targets.",
-      "movie", "intro_full.mp4", false
-    ],
-    [
-      "You will be able to record your response by clicking on one of the two check boxes and by adjusting the slider shown below.<br>" +
-        "<hr /><i>Note</i>: You will <b>NOT</b> be able to progress to the next trial until you have submitted both responses.",
-      "", "", true
-    ],
-    [
-      "You will <b>NOT</b> be able to record your response until the video has <b>completed</b>",
-      "movie", "intro_full.mp4", true
-    ],
-    [
-      "<b>Before we begin, follow the instructions below to setup your display.</b><br><hr />" +
-        "<p>Please sit comfortably in front of you monitor and outstretch your arm holding a credit card (or a similary sized ID card). <br>" +
-        "<p>Adjust the size of the image using the slider until its <strong>width</strong> matches the width of your credit card (or ID card).",
-      "scale", "generic_cc.png", false
-    ],
-    [
-      "Please maintain this arm-length distance from your monitor for the duration of this experiment (20-25 minutes).",
-      "text", "", false
-    ],
-    ["After a short check to make sure that you have understood the instructions, " +
-      "you will have to make your judgments about " + nTrials + " trials.<br>",
-      "", "", false
-    ],
-
-  ];
   var ninstruct = instructions.length;
 
   // Plays next instruction or exits.
