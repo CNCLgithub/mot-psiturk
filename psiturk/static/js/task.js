@@ -4,8 +4,6 @@
  *     utils.js
  */
 
-// import { instructions } from './instructions.js';
-
 // Initalize psiturk object
 var psiTurk = new PsiTurk(uniqueId, adServerLoc, mode);
 
