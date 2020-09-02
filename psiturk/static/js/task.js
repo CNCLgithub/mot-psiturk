@@ -155,9 +155,9 @@ class Page {
 
   // Returns the placement of each color scaled from [0, 1]
   retrieveResponse() {
-    var form = document.getElementById("trial_response");
-    var slider = document.getElementById("response_slider");
-    var rep = [form.value, slider.value]
+    var target_form = document.getElementById("target_response");
+    var probe_form = document.getElementById("probe_response");
+    var rep = [target_form.value, probe_form.value]
     return rep
   }
 
@@ -215,26 +215,36 @@ class Page {
 
   // The form will automatically enable the next button
   enableResponse() {
-    var slider = document.getElementById("response_slider");
-    slider.disabled = true;
-    slider.onmousedown = function() {
+    var yes_probe = document.getElementById("yes_probe");
+    var no_probe = document.getElementById("no_probe");
+    yes_probe.disabled = true;
+    no_probe.disabled = true;
+
+    // getting target response
+    var target_form = document.getElementById("target_response");
+    var yes_target = document.getElementById("yes_target");
+    yes_target.onclick = function() {
+        target_form.value = true;
+        yes_probe.disabled = false;
+        no_probe.disabled = false;
+    }
+    var no_target = document.getElementById("no_target");
+    no_target.onclick = function() {
+        target_form.value = false;
+        yes_probe.disabled = false;
+        no_probe.disabled = false;
+    }
+
+    // getting probe response
+    var probe_form = document.getElementById("probe_response");
+    yes_probe.onclick = function() {
+      probe_form.value = true;
       allowNext();
-    };
-    var form = document.getElementById("trial_response");
-    var yes = document.getElementById("yes_box");
-    yes.value = true;
-    yes.onclick = function() {
-      form.value = true;
-      slider.disabled = false;
     }
-    var no = document.getElementById("nay_box");
-    no.value = false;
-    no.onclick = function() {
-      form.value = false;
-      slider.disabled = false;
+    no_probe.onclick = function() {
+      probe_form.value = false;
+      allowNext();
     }
-    // var form = document.getElementById("trial_response");
-    // form.disabled = false;
   }
 
   disableResponse() {
@@ -244,12 +254,14 @@ class Page {
 
   clearResponse() {
     document.getElementById("response_region").style.display = 'none';
-    document.getElementById("yes_box").checked = false;
-    document.getElementById("nay_box").checked = false;
+    document.getElementById("yes_target").checked = false;
+    document.getElementById("no_target").checked = false;
+    document.getElementById("yes_probe").checked = false;
+    document.getElementById("no_probe").checked = false;
     if (this.mediatype == 'scale') {
         document.getElementById("scale_region").style.display = 'none';
     }
-    document.getElementById("response_slider").value = document.getElementById("response_slider").defaultValue;
+    //document.getElementById("response_slider").value = document.getElementById("response_slider").defaultValue;
   }
 
   // plays movie
@@ -338,7 +350,7 @@ var InstructionRunner = function(condlist) {
   };
 
   // start the loop
-  do_page(0);
+  do_page(8); // CH
 };
 
 
@@ -434,8 +446,8 @@ var Experiment = function(triallist) {
     var rep = trialPage.retrieveResponse();
     psiTurk.recordTrialData({
       'TrialName': triallist[cIdx],
-      'Response': rep[0],
-      'Rating': rep[1],
+      'Target': rep[0],
+      'Probe': rep[1],
       'ReactionTime': rt,
       'IsInstruction': false,
       'TrialOrder': cIdx
