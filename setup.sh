@@ -32,7 +32,7 @@ fi
 
 if [ $SETUPDATA = true ]; then
     wget "https://yale.box.com/shared/static/783r6981qg1are1mgw408apx27au2bmn.gz" -O "data.tar.gz"
-    tar -xvzf "data.tar.gz" -C --strip-components=1 "psiturk/strip"
+    tar -xvzf "data.tar.gz" -C --strip-components=1 "psiturk/"
     rm "data.tar.gz"
     
     # getting the probe movies

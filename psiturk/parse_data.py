@@ -26,7 +26,7 @@ QOUT = "parsed_questions.csv"
 def read_db(db_path, codeversions):
     table_name = "mot_live"
     data_column_name = "datastring"
-    mode = "live"
+    mode = "debug"
     engine = create_engine("sqlite:///" + db_path)
     metadata = MetaData()
     metadata.bind = engine

@@ -550,9 +550,11 @@ $(window).load(function() {
   function do_load() {
     $.ajax({
       dataType: 'json',
+      // url: "static/data/condlist.json", // CHANGED
       url: "static/data/probe_movies/probes_condlist.json", // CHANGED
       async: false,
       success: function(data) {
+        console.log(condition)
         condlist = shuffle(data[condition]);
         //condlist = shuffle(data);
         InstructionRunner(condlist);
