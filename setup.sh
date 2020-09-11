@@ -6,7 +6,7 @@
 # For initial run, all should be set to true.
 # "pull" : Download from host
 # "build" : Build locally
-BUILDCONT="build"
+BUILDCONT="none"
 SETUPDATA=true
 
 
@@ -14,7 +14,6 @@ CONT="cont"
 
 # Download links
 CONTDOWNLOAD="https://www.dropbox.com/s/sk8wbw4yf32pxvu/cont?dl=0"
-DATADOWNLOAD="https://www.dropbox.com/sh/tdghgvcptt2q30h/AACe15My3RJq1_XNHc9ryC9pa?dl=0"
 # Path to put data
 DATAPATH="psiturk/static/data"
 
@@ -32,12 +31,14 @@ else
 fi
 
 if [ $SETUPDATA = true ]; then
-    wget "$DATADOWNLOAD" -O "data.zip"
-    if [ -d "$DATAPATH" ]; then
-        rm -r $DATAPATH/*
-    fi
-    unzip "data.zip" -d $DATAPATH
-    tar -xvzf "$DATAPATH/movies.tar.gz" -C "$DATAPATH"
-    mv "$DATAPATH/movies_mask_0" "$DATAPATH/movies"
-    rm "$DATAPATH/movies.tar.gz"
+    wget "https://yale.box.com/shared/static/783r6981qg1are1mgw408apx27au2bmn.gz" -O "data.tar.gz"
+    tar -xvzf "data.tar.gz" -C --strip-components=1 "psiturk/strip"
+    rm "data.tar.gz"
+    
+    # getting the probe movies
+    wget "https://yale.box.com/shared/static/nn6gzglvw19mx65kpf8nj4x71bng9r4c.xz" -O "probe_movies.tar.xz"
+    tar -xvf "probe_movies.tar.xz" -C "$DATAPATH"
+    rm "probe_movies.tar.xz"
 fi
+
+

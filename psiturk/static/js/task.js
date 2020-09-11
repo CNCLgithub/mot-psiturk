@@ -89,7 +89,9 @@ var make_mov = function(movname, is_intro, has_ctr) {
   if (typeof(has_ctr) === 'undefined') has_ctr = true;
   var mcl = "movieobj";
   var ctr = "";
-  var fmovnm = "static/data/movies/" + movname;
+  //var fmovnm = "static/data/movies/" + movname; CHANGED
+  var exp = "exp0_peak_att/"; // for testing purposes TODO remove
+  var fmovnm = "static/data/probe_movies/" + exp + movname;
   var foggnm = fmovnm.substr(0, fmovnm.lastIndexOf('.')) + ".ogg";
   var ret = `<video id="thisvideo" class="${mcl}\${ctr}" width="${PAGESIZE*1.05}px" height="${PAGESIZE*1.05}px">` +
       `<source src="${fmovnm}" type="video/mp4">` +
@@ -548,10 +550,11 @@ $(window).load(function() {
   function do_load() {
     $.ajax({
       dataType: 'json',
-      url: "static/data/condlist.json",
+      url: "static/data/probe_movies/probes_condlist.json", // CHANGED
       async: false,
       success: function(data) {
         condlist = shuffle(data[condition]);
+        //condlist = shuffle(data);
         InstructionRunner(condlist);
       },
       error: function() {
