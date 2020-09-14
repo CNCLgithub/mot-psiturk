@@ -1,44 +1,28 @@
 #!/bin/bash
 
-# This script will setup the project environment
-
-# Change any of these values as you see fit.
-# For initial run, all should be set to true.
-# "pull" : Download from host
-# "build" : Build locally
-BUILDCONT="none"
-SETUPDATA=true
-
-
-CONT="cont"
-
 # Download links
-CONTDOWNLOAD="https://www.dropbox.com/s/sk8wbw4yf32pxvu/cont?dl=0"
+CONTLINK="library://mebelledonne/default/psiturk-apline:1.0.0"
 # Path to put data
-DATAPATH="psiturk/static/data"
+DATAPATH="psiturk/static/"
+DATALINK="https://yale.box.com/shared/static/a8mtkfippmgw68fnyus8d133yvqsrh3t.gz"
 
-# 1) Create the singularity container (requires sudo)
-if [ $BUILDCONT = "pull" ]; then
-    wget "$CONTDOWNLOAD" -O "cont"
-elif [ $BUILDCONT = "build" ]; then
-    echo "Building container...(REQUIRES ROOT)"
-    if [ ! -d $PWD/.tmp ]; then
-        mkdir $PWD/.tmp
-    fi
-    SINGULARITY_TMPDIR=$PWD/.tmp sudo -E singularity build $CONT  Singularity
-else
-    echo "Not touching container at ${CONT}"
-fi
 
-if [ $SETUPDATA = true ]; then
-    wget "https://yale.box.com/shared/static/783r6981qg1are1mgw408apx27au2bmn.gz" -O "data.tar.gz"
-    tar -xvzf "data.tar.gz" -C --strip-components=1 "psiturk/"
+usage="$(basename "$0") [targets...] -- setup an environmental components of project
+supported targets:
+    cont : either pull the singularity container or build from scratch
+    data : pull data
+"
+
+[ $# -eq 0 ] || [[ "${@}" =~ "help" ]] && echo "$usage"
+
+# container setup
+[[ "${@}" =~ "cont" ]] || echo "Not touching container"
+[[ "${@}" =~ "cont" ]] && echo "pulling container" && \
+    singularity pull "psiturk.sif" "$CONTLINK"
+
+# datasets
+[[ "${@}" =~ "data" ]] || [[ "${@}" =~ "data" ]] || echo "Not touching data"
+[[ "${@}" =~ "data" ]] && echo "pulling data" && \
+    wget "$DATALINK" -O "data.tar.gz" && \
+    tar -xvzf "data.tar.gz" -C "$DATAPATH" && \
     rm "data.tar.gz"
-    
-    # getting the probe movies
-    wget "https://yale.box.com/shared/static/nn6gzglvw19mx65kpf8nj4x71bng9r4c.xz" -O "probe_movies.tar.xz"
-    tar -xvf "probe_movies.tar.xz" -C "$DATAPATH"
-    rm "probe_movies.tar.xz"
-fi
-
-
