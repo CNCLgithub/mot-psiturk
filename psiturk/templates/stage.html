@@ -1,12 +1,55 @@
 <div id="full-container">
 	<br>
-        <div id ="scale_region" style="background-color: white;"></div>
-	  <div id="moviescreen">
-	  </div>
-	  <div id="register">
-		  <br>
-		    <div id ="response_region" style="background-color: white; margin=auto; align-self:center;text-align:center"></div>
+    <div id="moviescreen">
+    </div>
 
+	  <div id="register">
+        <div id ="response_region" style="background-color: white; display: none; margin=auto; align-self:center; text-align:center">
+            <br>
+            <div class="card">
+                <form id="target_response" action="#">
+                    <b>Is the highlighted dot a target?</b><br>
+                    <label class="radio">
+                        <input id="yes_target" type="radio" name="radios">
+                        <span class="outer">
+                            <span class="inner">
+                            </span>
+                        </span>
+                        Yes
+                    </label>
+                    <label class="radio">
+                        <input id="no_target" type="radio" name="radios">
+                        <span class="outer">
+                            <span class="inner">
+                            </span>
+                        </span>
+                        No
+                    </label>
+                </form>
+            </div>
+            <hr />
+            <div class="card">
+                <form id="probe_response" action="#">
+                    <b>Did you see the probe?</b><br>
+                    <label class="radio">
+                        <input id="yes_probe" type="radio" name="radios">
+                        <span class="outer">
+                            <span class="inner">
+                            </span>
+                        </span>
+                        Yes
+                    </label>
+                    <label class="radio">
+                        <input id="no_probe" type="radio" name="radios">
+                        <span class="outer">
+                            <span class="inner">
+                            </span>
+                        </span>
+                        No
+                    </label>
+                </form>
+            </div>
+        </div>
 
 		    <hr />
 		    <div id="centerdiv">

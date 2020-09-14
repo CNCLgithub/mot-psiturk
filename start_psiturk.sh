@@ -1,4 +1,5 @@
 #!/bin/bash
 
+PSICONT="psiturk.sif"
 
-singularity exec "cont" bash -c "cd psiturk && psiturk"
+singularity exec "$PSICONT" bash -c "cd psiturk && psiturk"

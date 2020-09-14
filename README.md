@@ -1,25 +1,23 @@
 # MOT Psiturk
 
-This is the psiturk component of MOT CogSci 2020
+Current MOT psiturk for probe experiments
 
 ## Setup
 
 ### dependencies
 
-- singularity (optional)
-- psiturk
+- singularity
 - wget
-- unzip
+- tar
 
-Singularity is not mandadatory but may be the most streamline for deployment
 
 ### setup
 
-simply run 
+see help
 
 ```bash
 chmod +x setup.sh
-./setup.sh
+./setup.sh --help
 ```
 
 This setup file will, by default, pull a container and data files from dropbox.
@@ -27,33 +25,12 @@ This setup file will, by default, pull a container and data files from dropbox.
 
 ## Running psiturk
 
-If using singularity, just do:
 
 ```bash
 chmod +x start_psiturk.sh
 ./start_psiturk.sh
 ```
 
-Otherwise
-
-
-Navigate to the psiturk folder
-
-```bash
-cd psiturk
-```
-
-and run psiturk
-
-```bash
-psiturk -c
-```
-
-If you get an error about config run the following and try again
-
-```bash
-psiturk -C
-```
 
 ## API
 

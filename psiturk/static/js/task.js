@@ -89,7 +89,9 @@ var make_mov = function(movname, is_intro, has_ctr) {
   if (typeof(has_ctr) === 'undefined') has_ctr = true;
   var mcl = "movieobj";
   var ctr = "";
-  var fmovnm = "static/data/movies/" + movname;
+  //var fmovnm = "static/data/movies/" + movname; CHANGED
+  var exp = "exp0_peak_att/"; // for testing purposes TODO remove
+  var fmovnm = "static/data/probe_movies/" + exp + movname;
   var foggnm = fmovnm.substr(0, fmovnm.lastIndexOf('.')) + ".ogg";
   var ret = `<video id="thisvideo" class="${mcl}\${ctr}" width="${PAGESIZE*1.05}px" height="${PAGESIZE*1.05}px">` +
       `<source src="${fmovnm}" type="video/mp4">` +
@@ -113,38 +115,6 @@ function allowNext() {
   button.disabled = false;
   button.style.display = "inline-block";
 }
-
-function makeCheckBox() {
-
-  return "<div class=\"card\"" +
-    "<form id=\"trial_response\" action=\"#\">" +
-    "<b>Is the highlighted dot a target?</b><br>" +
-    "<label class=\"radio\"><input id=\"yes_box\" type=\"radio\" name=\"radios\">" +
-    "<span class=\"outer\"><span class=\"inner\"></span></span>Yes</label>" +
-    "<label class=\"radio\"><input id=\"nay_box\" type=\"radio\" name=\"radios\">" +
-    "<span class=\"outer\"><span class=\"inner\"></span></span>No</label>" +
-    "</form>" +
-    "</div>" +
-    "<hr />"
-};
-
-function scaleSlider() {
-  return "<span id=\"qspan\">Move the slider to match the width of your card</span>"+
-    "<input id=\"scale_slider\" type=\"range\" min=\"0\" max=\"100\" default=\"50\" width=\"1500\"/>";
-};
-
-
-function responseSlider() {
-  return `<div style="width:${PAGESIZE * 1.15}px;margin:auto;text-align:center">` +
-    "<span id=\"qspan\">How hard was it to track all 4 targets? </span>" +
-    "<br>" +
-    `<input id=\"response_slider\" type=\"range\" min=\"0\" max=\"100\" default=\"50\" style="width:${PAGESIZE}px;margin:auto;"/>` +
-    `<label class="pull-left"><i>None</i></label>` +
-    `<label class="pull-center"><i>Somewhat</i></label>` +
-    `<label class="pull-right"><i>A lot</i></label>` +
-    "</div>";
-};
-
 
 class Page {
 
@@ -187,9 +157,9 @@ class Page {
 
   // Returns the placement of each color scaled from [0, 1]
   retrieveResponse() {
-    var form = document.getElementById("trial_response");
-    var slider = document.getElementById("response_slider");
-    var rep = [form.value, slider.value]
+    var target_form = document.getElementById("target_response");
+    var probe_form = document.getElementById("probe_response");
+    var rep = [target_form.value, probe_form.value]
     return rep
   }
 
@@ -229,7 +199,7 @@ class Page {
       this.showImage();
 
     } else {
-      this.scale_region.innerHTML = scaleSlider();
+      document.getElementById("scale_region").style.display = 'block';
       var slider_value = document.getElementById("scale_slider");
       var scale_img = document.getElementById("thisimg");
       slider_value.oninput = function(e) {
@@ -242,31 +212,41 @@ class Page {
   }
 
   addResponse() {
-    this.response.innerHTML = makeCheckBox() + responseSlider();
+    document.getElementById("response_region").style.display = 'block';
   }
 
   // The form will automatically enable the next button
   enableResponse() {
-    var slider = document.getElementById("response_slider");
-    slider.disabled = true;
-    slider.onmousedown = function() {
+    var yes_probe = document.getElementById("yes_probe");
+    var no_probe = document.getElementById("no_probe");
+    yes_probe.disabled = true;
+    no_probe.disabled = true;
+
+    // getting target response
+    var target_form = document.getElementById("target_response");
+    var yes_target = document.getElementById("yes_target");
+    yes_target.onclick = function() {
+        target_form.value = true;
+        yes_probe.disabled = false;
+        no_probe.disabled = false;
+    }
+    var no_target = document.getElementById("no_target");
+    no_target.onclick = function() {
+        target_form.value = false;
+        yes_probe.disabled = false;
+        no_probe.disabled = false;
+    }
+
+    // getting probe response
+    var probe_form = document.getElementById("probe_response");
+    yes_probe.onclick = function() {
+      probe_form.value = true;
       allowNext();
-    };
-    var form = document.getElementById("trial_response");
-    var yes = document.getElementById("yes_box");
-    yes.value = true;
-    yes.onclick = function() {
-      form.value = true;
-      slider.disabled = false;
     }
-    var no = document.getElementById("nay_box");
-    no.value = false;
-    no.onclick = function() {
-      form.value = false;
-      slider.disabled = false;
+    no_probe.onclick = function() {
+      probe_form.value = false;
+      allowNext();
     }
-    // var form = document.getElementById("trial_response");
-    // form.disabled = false;
   }
 
   disableResponse() {
@@ -275,8 +255,15 @@ class Page {
   }
 
   clearResponse() {
-    this.scale_region.innerHTML = "";
-    this.response.innerHTML = "";
+    document.getElementById("response_region").style.display = 'none';
+    document.getElementById("yes_target").checked = false;
+    document.getElementById("no_target").checked = false;
+    document.getElementById("yes_probe").checked = false;
+    document.getElementById("no_probe").checked = false;
+    if (this.mediatype == 'scale') {
+        document.getElementById("scale_region").style.display = 'none';
+    }
+    //document.getElementById("response_slider").value = document.getElementById("response_slider").defaultValue;
   }
 
   // plays movie
@@ -337,71 +324,6 @@ var InstructionRunner = function(condlist) {
   var reloadbtn = document.getElementById(RELOAD);
   var nTrials = condlist.length;
 
-  // each instruction is an array of 4 elements
-  // 1: The text to be shown (if any)
-  // 2: The type of format (image, movie, text, scale)
-  // 3: Any media needed (can be an empty string)
-  // 4: Whether to show the response div (true/false)
-
-  var instructions = [
-    [
-      "In this task, you will observe a series of dots move on the screen.<br>" +
-        "Click <b>Next</b> to give it a try.",
-      "", "", false
-    ],
-    [
-      "In this task, you will observe a series of dots move on the screen.<br>",
-      "movie", "intro_no_label.mp4", false
-    ],
-    // image with target labels (red)
-    [
-      "At the beginning of each trial, you will see <b>4</b> of the <b>8</b> dots highlighted <span style=\"color:red;\">red</span> "+
-        "designating them as <b>targets</b>.<br>" +
-        "Shortly after, the <span style=\"color:red;\">red</span> labels will dissapear and the dots will begin to move.<br>" +
-        "Your task is to keep track of the targets as they move.",
-      "image", "labelled_targets.png", false
-    ],
-    [
-      "Here is an example of a dynamic scene with targets.<br>",
-      "movie", "intro_target_label.mp4", false
-    ],
-    [
-      "At the end of each trial, <b>1</b> of the <b>8</b> dots will be highlighted in <span style=\"color:blue;\">blue</span>" +
-        ".<br>-> Your first task is to judge whether <i>that dot</i> was one of the <b>targets</b>.<br>" +
-        "-> Your second task is to rate <b>how hard</b> it was to track <i>all four</i> targets.",
-      "", "", false
-    ],
-    [
-      "At the end of each trial, <b>1</b> of the <b>8</b> dots will be highlighted in <span style=\"color:blue;\">blue</span>" +
-        ".<br>-> Your first task is to judge whether <i>that dot</i> was one of the <b>targets</b>.<br>" +
-        "-> Your second task is to rate <b>how hard</b> it was to track <i>all four</i> targets.",
-      "movie", "intro_full.mp4", false
-    ],
-    [
-      "You will be able to record your response by clicking on one of the two check boxes and by adjusting the slider shown below.<br>" +
-        "<hr /><i>Note</i>: You will <b>NOT</b> be able to progress to the next trial until you have submitted both responses.",
-      "", "", true
-    ],
-    [
-      "You will <b>NOT</b> be able to record your response until the video has <b>completed</b>",
-      "movie", "intro_full.mp4", true
-    ],
-    [
-      "<b>Before we begin, follow the instructions below to setup your display.</b><br><hr />" +
-        "<p>Please sit comfortably in front of you monitor and outstretch your arm holding a credit card (or a similary sized ID card). <br>" +
-        "<p>Adjust the size of the image using the slider until its <strong>width</strong> matches the width of your credit card (or ID card).",
-      "scale", "generic_cc.png", false
-    ],
-    [
-      "Please maintain this arm-length distance from your monitor for the duration of this experiment (20-25 minutes).",
-      "text", "", false
-    ],
-    ["After a short check to make sure that you have understood the instructions, " +
-      "you will have to make your judgments about " + nTrials + " trials.<br>",
-      "", "", false
-    ],
-
-  ];
   var ninstruct = instructions.length;
 
   // Plays next instruction or exits.
@@ -430,7 +352,7 @@ var InstructionRunner = function(condlist) {
   };
 
   // start the loop
-  do_page(0);
+  do_page(8); // CH
 };
 
 
@@ -526,8 +448,8 @@ var Experiment = function(triallist) {
     var rep = trialPage.retrieveResponse();
     psiTurk.recordTrialData({
       'TrialName': triallist[cIdx],
-      'Response': rep[0],
-      'Rating': rep[1],
+      'Target': rep[0],
+      'Probe': rep[1],
       'ReactionTime': rt,
       'IsInstruction': false,
       'TrialOrder': cIdx
@@ -628,10 +550,13 @@ $(window).load(function() {
   function do_load() {
     $.ajax({
       dataType: 'json',
-      url: "static/data/condlist.json",
+      // url: "static/data/condlist.json", // CHANGED
+      url: "static/data/probe_movies/probes_condlist.json", // CHANGED
       async: false,
       success: function(data) {
+        console.log(condition)
         condlist = shuffle(data[condition]);
+        //condlist = shuffle(data);
         InstructionRunner(condlist);
       },
       error: function() {
