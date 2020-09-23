@@ -91,6 +91,8 @@ var make_mov = function(movname, is_intro, has_ctr) {
   var ctr = "";
   var fmovnm = "static/data/movies/" + movname;
   var foggnm = fmovnm.substr(0, fmovnm.lastIndexOf('.')) + ".ogg";
+
+
   var ret = `<video id="thisvideo" class="${mcl}\${ctr}" width="${PAGESIZE*1.05}px" height="${PAGESIZE*1.05}px">` +
       `<source src="${fmovnm}" type="video/mp4">` +
       `<source src="${foggnm}" type="video/ogg">` +
@@ -150,6 +152,7 @@ class Page {
     this.addText();
     // If there is a slider, then progression is contingent
     // on complete presentation of the media.
+
     this.addMedia();
   }
 
@@ -181,6 +184,14 @@ class Page {
     } else if (this.mediatype === 'movie') {
       this.mvsc.innerHTML = make_mov(this.mediapath, true);
       this.showMovie();
+
+    var container = this.mvsc.parentNode;
+        container.style.width = `${PAGESIZE*1.5}px`
+        container.style.background = '#6c7ff0'
+        console.log("width of the full container", container.style.width)
+      //this.mvsc.style.padding = '100px'
+
+
     } else if (this.mediatype == 'scale'){
       this.mvsc.innerHTML = make_img(this.mediapath, true, false) + "<br>";
       this.scalePage();
@@ -350,7 +361,7 @@ var InstructionRunner = function(condlist) {
   };
 
   // start the loop
-  do_page(0);
+  do_page(10);
 };
 
 
