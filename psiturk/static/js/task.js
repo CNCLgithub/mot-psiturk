@@ -184,13 +184,13 @@ class Page {
     } else if (this.mediatype === 'movie') {
       this.mvsc.innerHTML = make_mov(this.mediapath, true);
       this.showMovie();
-
-    var container = this.mvsc.parentNode;
-        container.style.width = `${PAGESIZE*1.5}px`
-        container.style.background = '#6c7ff0'
-        console.log("width of the full container", container.style.width)
-      //this.mvsc.style.padding = '100px'
-
+    
+        var width = PAGESIZE * 1.05 
+        this.mvsc.style.width = `${1.5*width}px`; // making sure there is space for rotation
+        this.mvsc.style.background = '#6c7ff0';
+        console.log("width of the full container", this.mvsc.style.width);
+        // TODO make this dynamic
+      this.mvsc.style.padding = `${0.25*width}px`;
 
     } else if (this.mediatype == 'scale'){
       this.mvsc.innerHTML = make_img(this.mediapath, true, false) + "<br>";
