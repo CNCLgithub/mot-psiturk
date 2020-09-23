@@ -92,8 +92,8 @@ var make_mov = function(movname, is_intro, has_ctr) {
   var fmovnm = "static/data/movies/" + movname;
   var foggnm = fmovnm.substr(0, fmovnm.lastIndexOf('.')) + ".ogg";
 
-
-  var ret = `<video id="thisvideo" class="${mcl}\${ctr}" width="${PAGESIZE*1.05}px" height="${PAGESIZE*1.05}px">` +
+  //var ret = `<video id="thisvideo" class="${mcl}\${ctr}" width="${PAGESIZE*1.05}px" height="${PAGESIZE*1.05}px">` +
+  var ret = `<video id="thisvideo" class="${mcl}\${ctr}" width="${PAGESIZE*1.05}px" height="${PAGESIZE*1.05}px" style="border-style: dashed">` +
       `<source src="${fmovnm}" type="video/mp4">` +
       `<source src="${foggnm}" type="video/ogg">` +
       `Your browser does not support HTML5 mp4 video.</video>`;
@@ -184,14 +184,6 @@ class Page {
     } else if (this.mediatype === 'movie') {
       this.mvsc.innerHTML = make_mov(this.mediapath, true);
       this.showMovie();
-    
-        var width = PAGESIZE * 1.05 
-        this.mvsc.style.width = `${1.5*width}px`; // making sure there is space for rotation
-        this.mvsc.style.background = '#6c7ff0';
-        console.log("width of the full container", this.mvsc.style.width);
-        // TODO make this dynamic
-      this.mvsc.style.padding = `${0.25*width}px`;
-
     } else if (this.mediatype == 'scale'){
       this.mvsc.innerHTML = make_img(this.mediapath, true, false) + "<br>";
       this.scalePage();
@@ -272,6 +264,9 @@ class Page {
     if (this.mediatype == 'scale') {
         document.getElementById("scale_region").style.display = 'none';
     }
+    if (this.mediatype == 'movie') {
+        document.getElementById("moviescreen").style.backgroundColor = 'white';
+    }
     //document.getElementById("response_slider").value = document.getElementById("response_slider").defaultValue;
   }
 
@@ -303,10 +298,31 @@ class Page {
         me.next.disabled = false;
       };
     }
+
     mov.oncanplaythrough = function() {
       mov.play();
     };
     mov.onended = movOnEnd;
+    
+    // overriding the full container width
+    document.getElementById("full-container").style.width = "100%";
+
+    // making sure there is space for rotation
+    var width = PAGESIZE * 1.05;
+    console.log("width, height of the movie screen: ", 1.5*width);
+    this.mvsc.style.width = `${1.5*width}px`;
+    this.mvsc.style.height = `${1.5*width}px`;
+    this.mvsc.style.padding = `${0.25*width}px`;
+
+    // changing to the color of the video background
+    this.mvsc.style.background = '#6c7ff0';
+    this.mvsc.style.margin = '0 auto';
+
+    // random rotation
+    var angle = Math.random()*360;
+    console.log("random rotation angle: ", angle);
+    mov.style.transform = `rotate(${angle}deg)`;
+    this.mvsc.style.display = 'block';
   }
 
   showImage() {
