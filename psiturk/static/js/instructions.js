@@ -22,7 +22,7 @@ var instructions = [
      "designating them as <b>targets</b>.<br>" +
      "Shortly after, the <span style=\"color:blue;\">blue</span> labels will dissapear and the dots will begin to move.<br>" +
      "Your main task is to keep track of the targets as they move.",
-   "image", "intro_target_designation.png", false
+   "movie", "intro/intro_target_designation_snap.mp4", false
  ],
  [
    "Here is an example of a dynamic scene with targets.<br>",
@@ -30,27 +30,22 @@ var instructions = [
  ],
  [
    "In some trials there will be a <b>probe</b>, i.e. the color of one of the dots will change <i>slightly</i> for a very short time as can be seen below.",
-   "image", "intro_probe.png", false
+   "movie", "intro/intro_probe_snap.mp4", false
  ],
  [
-   "Here is an example of a scene with a probe -- try to spot it!<br>",
-   "", "", false
+   "The following scene is with a probe -- try to spot the probe!<br>" +
+    "Click <b>Next</b> to give it a try.",
+   "movie", "intro/intro_probe_snap.mp4", false
  ],
  [
-   "Here is an example of a scene with a probe -- try to spot it!<br>",
+   "The following scene is with a probe -- try to spot the probe!<br>",
    "movie", "intro/intro_probe.mp4", false
  ],
  [
-   "At the end of each trial, <b>1</b> of the <b>8</b> dots will be highlighted in <span style=\"color:yellow;\">yellow</span>" +
+   "At the end of each trial, <b>1</b> of the <b>8</b> dots will be highlighted in <span style=\"color:blue;\">blue</span>" +
      ".<br>-> Your first task is to judge whether <i>that dot</i> was one of the <b>targets</b>.<br>" +
-     "-> Your second task is to say whether you saw the <b>probe</b>, i.e. one of the rings changing color during the trial.",
-   "", "", false
- ],
- [
-   "At the end of each trial, <b>1</b> of the <b>8</b> dots will be highlighted in <span style=\"color:yellow;\">yellow</span>" +
-     ".<br>-> Your first task is to judge whether <i>that dot</i> was one of the <b>targets</b>.<br>" +
-     "-> Your second task is to say whether you saw one of dots chaning color.",
-   "movie", "intro/intro_full.mp4", false
+     "-> Your second task is to say whether you saw a <b>probe</b>, i.e. whether one of the dots briefly changed color during movement.",
+   "movie", "intro/intro_query_snap.mp4", false
  ],
  [
    "You will be able to record your response by clicking on the check boxes shown below.<br>" +
@@ -58,7 +53,14 @@ var instructions = [
    "", "", true
  ],
  [
-   "You will <b>NOT</b> be able to record your response until the video has <b>completed</b>",
+   "Remember, the main task is to keep track of the targets.<br>" + 
+   "The secondary task is to say whether you have seen a probe.<br>" +
+   "Click <b>Next</b> to try the full task and recording responses after the video is completed.",
+   "", "", false
+ ],
+ [
+   "Remember, the main task is to keep track of the targets.<br>" + 
+   "The secondary task is to say whether you have seen a probe.<br>",
    "movie", "intro/intro_full.mp4", true
  ],
     [

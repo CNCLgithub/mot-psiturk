@@ -6,3 +6,4 @@ psiturk/.psiturk_history
 psiturk/custom.pyc
 psiturk/participants.db
 psiturk/static/data
+*.tar.gz

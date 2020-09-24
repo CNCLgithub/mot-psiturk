@@ -15,7 +15,7 @@ var PROGRESS = "progress";
 var RELOAD = "reloadbutton";
 var INS_INSTRUCTS = "instruct";
 var INS_HEADER = "instr_header";
-var PAGESIZE = 500;
+var PAGESIZE = 300;
 
 var IMG_TIME = 100 // time to display images in ms
 
@@ -92,8 +92,7 @@ var make_mov = function(movname, is_intro, has_ctr) {
   var fmovnm = "static/data/movies/" + movname;
   var foggnm = fmovnm.substr(0, fmovnm.lastIndexOf('.')) + ".ogg";
 
-  //var ret = `<video id="thisvideo" class="${mcl}\${ctr}" width="${PAGESIZE*1.05}px" height="${PAGESIZE*1.05}px">` +
-  var ret = `<video id="thisvideo" class="${mcl}\${ctr}" width="${PAGESIZE*1.05}px" height="${PAGESIZE*1.05}px" style="border-style: dashed">` +
+  var ret = `<video id="thisvideo" class="${mcl}\${ctr}" width="${PAGESIZE*1.05}px" height="${PAGESIZE*1.05}px">` +
       `<source src="${fmovnm}" type="video/mp4">` +
       `<source src="${foggnm}" type="video/ogg">` +
       `Your browser does not support HTML5 mp4 video.</video>`;
@@ -123,11 +122,13 @@ class Page {
   /*******************
    * Public Methods  *
    *******************/
-  constructor(text, mediatype, mediapath, show_response = false) {
+  constructor(text, mediatype, mediapath, show_response = false, mov_angle = 0) {
     // page specific variables
+
     this.text = text;
     this.mediatype = mediatype;
     this.mediapath = mediapath;
+    this.mov_angle = mov_angle;
     this.mask = false;
     this.pageSize = PAGESIZE;
     // html elements
@@ -178,6 +179,9 @@ class Page {
 
   // formats html for media types
   addMedia() {
+    if (this.mediatype !== 'movie') {
+      document.getElementById("moviescreen").style.backgroundColor = 'white';
+    }
     if (this.mediatype === 'image') {
       this.mvsc.innerHTML = make_img(this.mediapath, true, false) + "<br>";
       this.showImage();
@@ -188,6 +192,7 @@ class Page {
       this.mvsc.innerHTML = make_img(this.mediapath, true, false) + "<br>";
       this.scalePage();
     } else {
+      document.getElementById("moviescreen").style.height = '0px';
       this.mvsc.innerHTML = "";
       this.showImage();
     }
@@ -203,6 +208,7 @@ class Page {
       document.getElementById("scale_region").style.display = 'block';
       var slider_value = document.getElementById("scale_slider");
       var scale_img = document.getElementById("thisimg");
+        slider_value.value = PAGESIZE/500*50;
       slider_value.oninput = function(e) {
         PAGESIZE = (e.target.value / 50.0) * 500;
         scale_img.width = `${PAGESIZE}px`;
@@ -264,9 +270,9 @@ class Page {
     if (this.mediatype == 'scale') {
         document.getElementById("scale_region").style.display = 'none';
     }
-    if (this.mediatype == 'movie') {
-        document.getElementById("moviescreen").style.backgroundColor = 'white';
-    }
+    //if (this.mediatype == 'movie') {
+        //document.getElementById("moviescreen").style.backgroundColor = 'white';
+    //}
     //document.getElementById("response_slider").value = document.getElementById("response_slider").defaultValue;
   }
 
@@ -319,9 +325,8 @@ class Page {
     this.mvsc.style.margin = '0 auto';
 
     // random rotation
-    var angle = Math.random()*360;
-    console.log("random rotation angle: ", angle);
-    mov.style.transform = `rotate(${angle}deg)`;
+    console.log("rotation angle: ", this.mov_angle);
+    mov.style.transform = `rotate(${this.mov_angle}deg)`;
     this.mvsc.style.display = 'block';
   }
 
@@ -377,7 +382,7 @@ var InstructionRunner = function(condlist) {
   };
 
   // start the loop
-  do_page(10);
+  do_page(7);
 };
 
 
@@ -437,7 +442,24 @@ var quiz = function(goBack, goNext) {
 
 var Experiment = function(triallist) {
   psiTurk.showPage('stage.html');
-  var triallist = shuffle(triallist);
+    console.log(triallist);
+
+    // add rotations according to scenes
+    var angles = [];
+    for (i = 0; i < 10; i++) {
+        angles.push(i*36);
+    }
+
+    for (scene = 0; scene < 12; scene++) {
+        shuffle(angles);
+        for (i = 0; i < angles.length; i++) {
+            var idx = scene*10+i;
+            triallist[idx] = [triallist[idx], angles[i]];
+        }
+    }
+
+  shuffle(triallist);
+
   var screen = document.getElementById(MOVIESCREEN);
   var button = document.getElementById(NEXTBUTTON);
   var prog = document.getElementById(PROGRESS);
@@ -451,10 +473,10 @@ var Experiment = function(triallist) {
     if (curIdx === triallist.length) {
       end();
     }
-    var flnm = triallist[curIdx];
+    var flnm = triallist[curIdx][0];
     show_progress(curIdx);
     starttime = new Date().getTime();
-    var pg = new Page("", "movie", flnm, true);
+    var pg = new Page("", "movie", flnm, true, triallist[curIdx][1]);
     // `Page` will record the subject responce when "next" is clicked
     // and go to the next trial
     pg.showPage(
@@ -579,8 +601,7 @@ $(window).load(function() {
       async: false,
       success: function(data) {
         console.log(condition);
-        condlist = shuffle(data[condition]);
-        //condlist = shuffle(data);
+        condlist = data[condition];
         InstructionRunner(condlist);
       },
       error: function() {
