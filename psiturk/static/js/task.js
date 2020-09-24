@@ -382,7 +382,7 @@ var InstructionRunner = function(condlist) {
   };
 
   // start the loop
-  do_page(7);
+  do_page(0);
 };
 
 
