@@ -4,7 +4,7 @@
 // 3: Any media needed (can be an empty string)
 // 4: Whether to show the response div (true/false)
 
-var nTrials = 128
+var nTrials = 120
 
 var instructions = [
     [
@@ -55,7 +55,7 @@ var instructions = [
  [
    "Remember, the main task is to keep track of the targets.<br>" + 
    "The secondary task is to say whether you have seen a probe.<br>" +
-   "Click <b>Next</b> to try the full task and recording responses after the video is completed.",
+   "Click <b>Next</b> to try recording your response after the video is completed.",
    "", "", false
  ],
  [
