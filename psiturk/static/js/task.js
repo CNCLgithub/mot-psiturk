@@ -15,6 +15,7 @@ var PROGRESS = "progress";
 var RELOAD = "reloadbutton";
 var INS_INSTRUCTS = "instruct";
 var INS_HEADER = "instr_header";
+var FULL_CONTAINER= "full-container"
 var PAGESIZE = 300;
 
 var IMG_TIME = 100 // time to display images in ms
@@ -59,6 +60,10 @@ function shuffle(array) {
   return array;
 };
 
+// used to pause execution
+const sleep = milliseconds => { 
+  return new Promise(resolve => setTimeout(resolve, milliseconds)); 
+}; 
 
 var black_div = function() {
   return '<div style=\"background-color: black; width: 1280px; height: 720px;\"></div>'
@@ -138,6 +143,7 @@ class Page {
     this.showResponse = show_response;
     this.next = document.getElementById(NEXTBUTTON);
     this.next.disable = true;
+    this.next.style.display = "none";
     this.mvsc = document.getElementById(MOVIESCREEN);
     this.reloadbtn = document.getElementById(RELOAD);
   }
@@ -155,6 +161,12 @@ class Page {
     // on complete presentation of the media.
 
     this.addMedia();
+        if (this.mediatype !== 'movie') {
+            // sleeping for 3.5s to make people not rush through instructions
+            sleep(3500).then(() => { 
+            document.getElementById(NEXTBUTTON).style.display = 'inline-block';
+        });
+        }
   }
 
   // Returns the placement of each color scaled from [0, 1]
@@ -203,7 +215,6 @@ class Page {
       this.mvsc.innerHTML = "";
       this.instruct.innerHTML = "You have already scaled your monitor";
       this.showImage();
-
     } else {
       document.getElementById("scale_region").style.display = 'block';
       var slider_value = document.getElementById("scale_slider");
@@ -301,6 +312,9 @@ class Page {
         if (me.mask) {
           cut2black();
         }
+        sleep(2000).then(() => { 
+            me.next.style.display = "inline-block";
+        });
         me.next.disabled = false;
       };
     }
@@ -311,7 +325,7 @@ class Page {
     mov.onended = movOnEnd;
     
     // overriding the full container width
-    document.getElementById("full-container").style.width = "100%";
+    document.getElementById(FULL_CONTAINER).style.width = "100%";
 
     // making sure there is space for rotation
     var width = PAGESIZE * 1.05;

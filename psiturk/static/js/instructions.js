@@ -18,33 +18,33 @@ var instructions = [
  ],
  // image with target labels (blue)
  [
-   "At the beginning of each trial, you will see <b>4</b> of the <b>8</b> dots highlighted <span style=\"color:blue;\">blue</span> "+
-     "designating them as <b>targets</b>.<br>" +
-     "Shortly after, the <span style=\"color:blue;\">blue</span> labels will dissapear and the dots will begin to move.<br>" +
+   "At the beginning of each trial, you will see <b>4</b> of the <b>8</b> dots highlighted <span style=\"background-color:#96b2ff;\">blue</span> "+
+     "designating them as <span style=\"background-color:#96b2ff;\"><b>targets</b></span>.<br>" +
+     "Shortly after, the blue labels will dissapear and the dots will begin to move.<br>" +
      "Your main task is to keep track of the targets as they move.",
    "movie", "intro/intro_target_designation_snap.mp4", false
  ],
  [
-   "Here is an example of a dynamic scene with targets.<br>",
+   "Here is an example of a dynamic scene with <span style=\"background-color:#96b2ff;\">targets</span>.<br>",
    "movie", "intro/intro_target_designation.mp4", false
  ],
  [
-   "In some trials there will be a <b>probe</b>, i.e. the color of one of the dots will change <i>slightly</i> for a very short time as can be seen below.",
+   "In some trials there will be a <span style=\"background-color: #d9a677\"><b>probe</b></span>, i.e. the color of one of the dots will change <i>slightly</i> for a very short time as can be seen below.",
    "movie", "intro/intro_probe_snap.mp4", false
  ],
  [
-   "The following scene is with a probe -- try to spot the probe!<br>" +
+   "The following scene is with a <span style=\"background-color: #d9a677\">probe</span> - try to spot it!<br>" +
     "Click <b>Next</b> to give it a try.",
    "movie", "intro/intro_probe_snap.mp4", false
  ],
  [
-   "The following scene is with a probe -- try to spot the probe!<br>",
+   "The following scene is with a <span style=\"background-color: #d9a677\">probe</span> - try to spot it!<br>",
    "movie", "intro/intro_probe.mp4", false
  ],
  [
-   "At the end of each trial, <b>1</b> of the <b>8</b> dots will be highlighted in <span style=\"color:blue;\">blue</span>" +
-     ".<br>-> Your first task is to judge whether <i>that dot</i> was one of the <b>targets</b>.<br>" +
-     "-> Your second task is to say whether you saw a <b>probe</b>, i.e. whether one of the dots briefly changed color during movement.",
+   "At the end of each trial, <b>1</b> of the <b>8</b> dots will be highlighted in <span style=\"background-color:#f5eb76;\">yellow</span>" +
+     ".<br>-> Your first task is to judge whether <i>that dot</i> was one of the <span style=\"background-color:#96b2ff;\">targets</span>.<br>" +
+     "-> Your second task is to say whether you saw a <span style=\"background-color: #d9a677\">probe</span>, i.e. whether one of the dots briefly changed color during movement.",
    "movie", "intro/intro_query_snap.mp4", false
  ],
  [
@@ -53,14 +53,14 @@ var instructions = [
    "", "", true
  ],
  [
-   "Remember, the main task is to keep track of the targets.<br>" + 
-   "The secondary task is to say whether you have seen a probe.<br>" +
+   "Remember, the main task is to say whether <span style=\"background-color:#f5eb76;\">highlighted</span> dot is one of the <span style=\"background-color:#96b2ff;\">targets</span>.<br>" + 
+   "The secondary task is to say whether you have seen a <span style=\"background-color: #d9a677\">probe</span>.<br>" +
    "Click <b>Next</b> to try recording your response after the video is completed.",
    "", "", false
  ],
  [
-   "Remember, the main task is to keep track of the targets.<br>" + 
-   "The secondary task is to say whether you have seen a probe.<br>",
+   "Remember, the main task is to say whether <span style=\"background-color:#f5eb76;\">highlighted</span> dot is one of the <span style=\"background-color:#96b2ff;\">targets</span>.<br>" + 
+   "The secondary task is to say whether you have seen a <span style=\"background-color: #d9a677\">probe</span>.<br>",
    "movie", "intro/intro_full.mp4", true
  ],
     [
