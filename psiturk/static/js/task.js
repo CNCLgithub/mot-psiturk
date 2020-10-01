@@ -117,7 +117,7 @@ var make_mov = function(movname, is_intro, has_ctr) {
 function allowNext() {
   var button = document.getElementById(NEXTBUTTON)
   button.disabled = false;
-  button.style.display = "inline-block";
+  button.style.display = "block";
 }
 
 class Page {
@@ -127,7 +127,7 @@ class Page {
   /*******************
    * Public Methods  *
    *******************/
-  constructor(text, mediatype, mediapath, show_response = false, mov_angle = 0) {
+  constructor(text, mediatype, mediapath, show_response = "none", mov_angle = 0) {
     // page specific variables
 
     this.text = text;
@@ -139,7 +139,7 @@ class Page {
     // html elements
     this.instruct = document.getElementById(INS_INSTRUCTS);
     this.scale_region = document.getElementById("scale_region");
-    this.response = document.getElementById("response_region");
+    this.response_region = document.getElementById("response_region");
     this.showResponse = show_response;
     this.next = document.getElementById(NEXTBUTTON);
     this.next.disable = true;
@@ -161,20 +161,17 @@ class Page {
     // on complete presentation of the media.
 
     this.addMedia();
-        if (this.mediatype !== 'movie') {
+        if (this.mediatype != 'movie') {
             // sleeping for 3.5s to make people not rush through instructions
             sleep(3500).then(() => { 
-            document.getElementById(NEXTBUTTON).style.display = 'inline-block';
-        });
+                document.getElementById(NEXTBUTTON).style.display = 'block';
+            });
         }
   }
 
-  // Returns the placement of each color scaled from [0, 1]
   retrieveResponse() {
-    var target_form = document.getElementById("target_response");
-    var probe_form = document.getElementById("probe_response");
-    var rep = [target_form.value, probe_form.value]
-    return rep
+    var response_form = document.getElementById("response_form");
+    return response_form.value
   }
 
 
@@ -184,14 +181,14 @@ class Page {
 
   // injects text into page's inner html
   addText() {
-    if (this.text !== "") {
+    if (this.text != "") {
       this.instruct.innerHTML = this.text;
     }
   }
 
   // formats html for media types
   addMedia() {
-    if (this.mediatype !== 'movie') {
+    if (this.mediatype != 'movie') {
       document.getElementById("moviescreen").style.backgroundColor = 'white';
     }
     if (this.mediatype === 'image') {
@@ -210,7 +207,59 @@ class Page {
     }
   };
 
+  addResponse() {
+    document.getElementById("response_region").style.display = 'block';
+    document.getElementById("response_form").style.display = 'block';
+    
+    console.log("response kind", this.showResponse);
+    if (this.showResponse == 'td') {
+        document.getElementById("td_question").style.display = 'block';
+    } else if (this.showResponse == 'pr') {
+        document.getElementById("pr_question").style.display = 'block';
+    }
+    
+    this.next.style.display = 'block';
+  }
+
+  // The form will automatically enable the next button
+  enableResponse() {
+
+    var yes = document.getElementById("yes");
+    var no = document.getElementById("no");
+
+    var response_form = document.getElementById("response_form");
+
+    yes.onclick = function() {
+        response_form.value = true;
+        allowNext();
+    }
+    no.onclick = function() {
+        response_form.value = false;
+        allowNext();
+    }
+  }
+
+  clearResponse() {
+    document.getElementById("response_region").style.display = 'none';
+    document.getElementById("td_question").style.display = 'none';
+    document.getElementById("pr_question").style.display = 'none';
+
+    document.getElementById("yes").checked = false;
+    document.getElementById("no").checked = false;
+
+    if (this.mediatype == 'scale') {
+        document.getElementById("scale_region").style.display = 'none';
+    }
+    //if (this.mediatype == 'movie') {
+        //document.getElementById("moviescreen").style.backgroundColor = 'white';
+    //}
+    //document.getElementById("response_slider").value = document.getElementById("response_slider").defaultValue;
+  }
+
   scalePage() {
+
+    let me = this;
+
     if (SCALE_COMPLETE) {
       this.mvsc.innerHTML = "";
       this.instruct.innerHTML = "You have already scaled your monitor";
@@ -220,71 +269,16 @@ class Page {
       var slider_value = document.getElementById("scale_slider");
       var scale_img = document.getElementById("thisimg");
         slider_value.value = PAGESIZE/500*50;
-      slider_value.oninput = function(e) {
-        PAGESIZE = (e.target.value / 50.0) * 500;
-        scale_img.width = `${PAGESIZE}px`;
-        scale_img.style.width = `${PAGESIZE}px`;
-        SCALE_COMPLETE = true;
+        slider_value.oninput = function(e) {
+            PAGESIZE = (e.target.value / 50.0) * 500;
+            scale_img.width = `${PAGESIZE}px`;
+            scale_img.style.width = `${PAGESIZE}px`;
+            SCALE_COMPLETE = true;
+            me.addResponse();
+            document.getElementById('response_form').style.display = 'none';
+            console.log("here");
       }
     }
-  }
-
-  addResponse() {
-    document.getElementById("response_region").style.display = 'block';
-  }
-
-  // The form will automatically enable the next button
-  enableResponse() {
-    var yes_probe = document.getElementById("yes_probe");
-    var no_probe = document.getElementById("no_probe");
-    yes_probe.disabled = true;
-    no_probe.disabled = true;
-
-    // getting target response
-    var target_form = document.getElementById("target_response");
-    var yes_target = document.getElementById("yes_target");
-    yes_target.onclick = function() {
-        target_form.value = true;
-        yes_probe.disabled = false;
-        no_probe.disabled = false;
-    }
-    var no_target = document.getElementById("no_target");
-    no_target.onclick = function() {
-        target_form.value = false;
-        yes_probe.disabled = false;
-        no_probe.disabled = false;
-    }
-
-    // getting probe response
-    var probe_form = document.getElementById("probe_response");
-    yes_probe.onclick = function() {
-      probe_form.value = true;
-      allowNext();
-    }
-    no_probe.onclick = function() {
-      probe_form.value = false;
-      allowNext();
-    }
-  }
-
-  disableResponse() {
-    document.getElementById("trial_response").disabled = true;
-    document.getElementById("response_slider").disabled = true;
-  }
-
-  clearResponse() {
-    document.getElementById("response_region").style.display = 'none';
-    document.getElementById("yes_target").checked = false;
-    document.getElementById("no_target").checked = false;
-    document.getElementById("yes_probe").checked = false;
-    document.getElementById("no_probe").checked = false;
-    if (this.mediatype == 'scale') {
-        document.getElementById("scale_region").style.display = 'none';
-    }
-    //if (this.mediatype == 'movie') {
-        //document.getElementById("moviescreen").style.backgroundColor = 'white';
-    //}
-    //document.getElementById("response_slider").value = document.getElementById("response_slider").defaultValue;
   }
 
   // plays movie
@@ -297,7 +291,7 @@ class Page {
     let me = this;
 
     // The "next" botton will only activate after recording a response
-    if (this.showResponse) {
+    if (this.showResponse != 'none') {
       this.next.style.display = "none";
       var movOnEnd = function() {
         if (me.mask) {
@@ -313,7 +307,9 @@ class Page {
           cut2black();
         }
         sleep(2000).then(() => { 
-            me.next.style.display = "inline-block";
+            me.addResponse();
+            document.getElementById('response_form').style.display = 'none';
+            me.next.style.display = "block";
         });
         me.next.disabled = false;
       };
@@ -345,12 +341,22 @@ class Page {
   }
 
   showImage() {
-    if (this.showResponse) {
+    if (this.showResponse != 'none') {
       this.next.disabled = true;
       this.addResponse();
       this.enableResponse();
     } else {
       this.next.disabled = false;
+          console.log("show image");
+        sleep(2000).then(() => {
+            this.addResponse();
+            document.getElementById('response_form').style.display = 'none';
+        });
+    }
+
+
+    if (this.mediatype == 'scale') {
+        document.getElementById("scale_region").style.display = 'none';
     }
   }
 };
@@ -396,7 +402,7 @@ var InstructionRunner = function(condlist) {
   };
 
   // start the loop
-  do_page(0);
+  do_page(17);
 };
 
 
@@ -460,11 +466,11 @@ var Experiment = function(triallist) {
 
     // add rotations according to scenes
     var angles = [];
-    for (i = 0; i < 10; i++) {
-        angles.push(i*36);
+    for (i = 0; i < 12; i++) {
+        angles.push(i*30);
     }
 
-    for (scene = 0; scene < 12; scene++) {
+    for (scene = 0; scene < 10; scene++) {
         shuffle(angles);
         for (i = 0; i < angles.length; i++) {
             var idx = scene*10+i;
@@ -490,7 +496,8 @@ var Experiment = function(triallist) {
     var flnm = triallist[curIdx][0];
     show_progress(curIdx);
     starttime = new Date().getTime();
-    var pg = new Page("", "movie", flnm, true, triallist[curIdx][1]);
+    var query = flnm.split('_')[4]
+    var pg = new Page("", "movie", flnm, query, triallist[curIdx][1]);
     // `Page` will record the subject responce when "next" is clicked
     // and go to the next trial
     pg.showPage(
@@ -509,8 +516,7 @@ var Experiment = function(triallist) {
     var rep = trialPage.retrieveResponse();
     psiTurk.recordTrialData({
       'TrialName': triallist[cIdx],
-      'Target': rep[0],
-      'Probe': rep[1],
+      'Response': rep,
       'ReactionTime': rt,
       'IsInstruction': false,
       'TrialOrder': cIdx
@@ -614,7 +620,7 @@ $(window).load(function() {
       url: "static/data/condlist.json",
       async: false,
       success: function(data) {
-        console.log(condition);
+        console.log("condition:", condition);
         condlist = data[condition];
         InstructionRunner(condlist);
       },

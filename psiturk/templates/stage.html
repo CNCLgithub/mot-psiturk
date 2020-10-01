@@ -7,10 +7,17 @@
         <div id ="response_region" style="background-color: white; display: none; margin=auto; align-self:center; text-align:center">
             <br>
             <div class="card">
-                <form id="target_response" action="#">
-                    <b>Is the highlighted dot a <span style="color:blue">target</span>?</b><br>
+                <form id="response_form" action="#">
+
+                    <span id="td_question" style="display:none">
+                        <b>Is the highlighted dot a <span style="color:blue">target</span>?</b><br>
+                    </span>
+                    <span id="pr_question" style="display:none">
+                        <b>Did you see a <span style="color:#e09b88">probe</span>?</b><br>
+                    </span>
+
                     <label class="radio">
-                        <input id="yes_target" type="radio" name="radios">
+                        <input id="yes" type="radio" name="radios">
                         <span class="outer">
                             <span class="inner">
                             </span>
@@ -18,7 +25,7 @@
                         Yes
                     </label>
                     <label class="radio">
-                        <input id="no_target" type="radio" name="radios">
+                        <input id="no" type="radio" name="radios">
                         <span class="outer">
                             <span class="inner">
                             </span>
@@ -26,30 +33,6 @@
                         No
                     </label>
                 </form>
-            </div>
-            <hr />
-            <div class="card">
-                <form id="probe_response" action="#">
-                    <b>Did you see a <span style="color:#e09b88">probe</span>?</b><br>
-                    <label class="radio">
-                        <input id="yes_probe" type="radio" name="radios">
-                        <span class="outer">
-                            <span class="inner">
-                            </span>
-                        </span>
-                        Yes
-                    </label>
-                    <label class="radio">
-                        <input id="no_probe" type="radio" name="radios">
-                        <span class="outer">
-                            <span class="inner">
-                            </span>
-                        </span>
-                        No
-                    </label>
-                </form>
-            </div>
-        </div>
 
 		    <hr />
 		    <div id="centerdiv">
