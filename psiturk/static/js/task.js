@@ -273,12 +273,21 @@ class Page {
             PAGESIZE = (e.target.value / 50.0) * 500;
             scale_img.width = `${PAGESIZE}px`;
             scale_img.style.width = `${PAGESIZE}px`;
+            me.scaleMoviescreen(0.6);
             SCALE_COMPLETE = true;
             me.addResponse();
             document.getElementById('response_form').style.display = 'none';
-            console.log("here");
       }
     }
+  }
+
+  scaleMoviescreen(scale = 1) {
+    var width = PAGESIZE * 1.05;
+    console.log("width, height of the movie screen: ", 1.5*width);
+    this.mvsc.style.width = `${1.5*width}px`;
+    this.mvsc.style.height = `${scale*1.5*width}px`;
+    this.mvsc.style.padding = `${0.25*width}px`;
+    this.mvsc.style.margin = '0 auto';
   }
 
   // plays movie
@@ -322,17 +331,13 @@ class Page {
     
     // overriding the full container width
     document.getElementById(FULL_CONTAINER).style.width = "100%";
-
+    
     // making sure there is space for rotation
-    var width = PAGESIZE * 1.05;
-    console.log("width, height of the movie screen: ", 1.5*width);
-    this.mvsc.style.width = `${1.5*width}px`;
-    this.mvsc.style.height = `${1.5*width}px`;
-    this.mvsc.style.padding = `${0.25*width}px`;
+    // (scaling according to PAGESIZE)
+    this.scaleMoviescreen();
 
     // changing to the color of the video background
     this.mvsc.style.background = '#6c7ff0';
-    this.mvsc.style.margin = '0 auto';
 
     // random rotation
     console.log("rotation angle: ", this.mov_angle);
@@ -402,7 +407,7 @@ var InstructionRunner = function(condlist) {
   };
 
   // start the loop
-  do_page(17);
+  do_page(14);
 };
 
 
@@ -473,7 +478,7 @@ var Experiment = function(triallist) {
     for (scene = 0; scene < 10; scene++) {
         shuffle(angles);
         for (i = 0; i < angles.length; i++) {
-            var idx = scene*10+i;
+            var idx = scene*12+i;
             triallist[idx] = [triallist[idx], angles[i]];
         }
     }
@@ -493,10 +498,12 @@ var Experiment = function(triallist) {
     if (curIdx === triallist.length) {
       end();
     }
+      console.log(triallist);
     var flnm = triallist[curIdx][0];
     show_progress(curIdx);
     starttime = new Date().getTime();
-    var query = flnm.split('_')[4]
+    var query = flnm.split('_')[4];
+      console.log('flnm', flnm, 'query', query);
     var pg = new Page("", "movie", flnm, query, triallist[curIdx][1]);
     // `Page` will record the subject responce when "next" is clicked
     // and go to the next trial

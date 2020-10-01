@@ -44,13 +44,13 @@ var instructions = [
  [
    "In half of the trials, at the end of the trial, <b>1</b> of the <b>8</b> dots will be circled in yellow.<br>" +
      "In this case your task is to judge whether <i>that dot</i> is one of the <span style=\"color:blue;\">targets</span>.<br>",
-   "movie", "intro/intro_td_snap.mp4", "td"
+   "movie", "intro/intro_td_snap.mp4", "none"
  ],
  [
    "In the other half of the trials, no dot will be highlighted at the end.<br>" +
      "In that case your task is simply to say whether or not you saw a <span style=\"color:#e09b88\">probe</span>,<br>" +
      "i.e. whether you saw one of the dots briefly changing color during movement.",
-   "movie", "intro/intro_pr_snap.mp4", "pr"
+   "movie", "intro/intro_pr_snap.mp4", "none"
  ],
  [
    "Click <b>Next</b> to try recording your response in the first kind of trial<br>"+
@@ -63,7 +63,7 @@ var instructions = [
  ],
  [
    "Click <b>Next</b> to try recording your response in the second kind of trial<br>"+
-    "(saying whether you saw a probe).",
+    "(saying whether you saw a <span style=\"color:#e09b88\">probe</span>).",
    "", "", "none"
  ],
  [
