@@ -1,0 +1,205 @@
+class Page {
+
+  // Handles media presentation and scale handling.
+
+  /*******************
+   * Public Methods  *
+   *******************/
+  constructor(text, mediatype, mediapath, show_response, next_delay, mov_angle = 0) {
+
+    // page specific variables
+    this.text = text;
+    this.mediatype = mediatype;
+    this.mediapath = mediapath;
+    this.show_response = show_response;
+    this.next_delay = next_delay; // delay for showing next button in seconds
+    this.mov_angle = mov_angle;
+
+    // html elements
+    this.scale_region = document.getElementById("scale_region");
+    this.response_region = document.getElementById("response_region");
+    this.response_form = document.getElementById("response_form");
+    this.nextbutton = document.getElementById("nextbutton");
+    this.mediascreen = document.getElementById("mediascreen");
+    this.message = document.getElementById("message");
+    this.progress = document.getElementById("progress");
+
+    this.nextbutton.disable = true;
+    this.nextbutton.style.display = 'none';
+    this.response_region.style.display = 'none';
+    this.response_form.style.display = 'none';
+    this.mediascreen.innerHTML = "";
+  }
+
+  // Loads content to the page
+  // The `callback` argument can be used to handle page progression
+  // or subject responses
+  showPage(callback) {
+    // create callback to progress when done
+    this.nextbutton.onclick = function() {
+      callback();
+    };
+
+    this.addText();
+    this.addMedia();
+  }
+
+  retrieveResponse() {
+    return this.response_form.value
+  }
+
+
+  /************
+   * Helpers  *
+   ***********/
+
+  // injects text into page's inner html
+  addText() {
+      this.message.innerHTML = this.text;
+  }
+
+  // formats html for media types
+  addMedia() {
+    this.mediascreen.style.backgroundColor = 'white';
+    this.scale_region.style.display = 'none';
+
+    if (this.mediatype === 'image') {
+      this.showImage();
+    } else if (this.mediatype === 'movie') {
+      this.showMovie();
+    } else if (this.mediatype == 'scale'){
+      this.scalePage();
+    } else {
+      this.mediascreen.style.height = '0px';
+      this.showEmpty();
+    }
+  };
+
+
+  addResponse() {
+    this.response_region.style.display = 'block';
+    
+    // if no response required, then simply allow to go further
+
+    console.log(this.show_response);
+    if (this.show_response == 'none') {
+        this.allowNext();
+    } else {
+        this.response_form.style.display = 'block';
+        // if response required, then show particular question
+        // and enable response
+        if (this.show_response == 'td') {
+            document.getElementById("td_question").style.display = 'block';
+        } else if (this.show_response == 'pr') {
+            document.getElementById("pr_question").style.display = 'block';
+        }
+        this.enableResponse();
+    }
+  }
+
+    allowNext() {
+        sleep(this.next_delay*1000).then(() => {
+          this.nextbutton.disabled = false;
+          this.nextbutton.style.display = "block";
+        });
+    }
+
+  // The form will automatically enable the next button
+  enableResponse() {
+      let self = this;
+    
+    var yes = document.getElementById("yes");
+    var no = document.getElementById("no");
+
+    yes.onclick = function() {
+        self.response_form.value = true;
+        self.allowNext();
+    }
+    no.onclick = function() {
+        self.response_form.value = false;
+        self.allowNext();
+    }
+  }
+
+  clearResponse() {
+    document.getElementById("td_question").style.display = 'none';
+    document.getElementById("pr_question").style.display = 'none';
+
+    document.getElementById("yes").checked = false;
+    document.getElementById("no").checked = false;
+  }
+
+  scalePage() {
+    this.mediascreen.innerHTML = make_img(this.mediapath, PAGESIZE) + "<br>";
+    let self = this;
+
+    if (SCALE_COMPLETE) {
+      this.mediascreen.innerHTML = "";
+      this.instruct.innerHTML = "You have already scaled your monitor";
+      this.addResponse();
+    } else {
+      this.scale_region.style.display = 'block';
+      var slider_value = document.getElementById("scale_slider");
+      var scale_img = document.getElementById("img");
+
+        slider_value.value = PAGESIZE/500*50;
+        this.scaleMediascreen(0.6);
+
+        slider_value.oninput = function(e) {
+            PAGESIZE = (e.target.value / 50.0) * 500;
+            scale_img.width = `${PAGESIZE}px`;
+            scale_img.style.width = `${PAGESIZE}px`;
+            self.scaleMediascreen(0.6);
+            self.addResponse();
+            SCALE_COMPLETE = true;
+      }
+    }
+  }
+
+  scaleMediascreen(scale = 1) {
+    var width = PAGESIZE * 1.05;
+    this.mediascreen.style.width = `${1.5*width}px`;
+    this.mediascreen.style.height = `${scale*1.5*width}px`;
+    this.mediascreen.style.padding = `${0.25*width}px`;
+    this.mediascreen.style.margin = '0 auto';
+  }
+
+  // plays movie
+  showMovie() {
+    let me = this;
+    
+    this.mediascreen.innerHTML = make_mov(this.mediapath, PAGESIZE);
+    var video = document.getElementById('video');
+
+    video.onended = function() {
+        me.addResponse();
+    };
+
+    video.oncanplaythrough = function() {
+      video.play();
+    };
+    
+    // making sure there is space for rotation
+    // (scaling according to PAGESIZE)
+    this.scaleMediascreen();
+
+    // changing to the color of the video background
+    this.mediascreen.style.background = '#6c7ff0';
+
+    console.log("rotation angle: ", this.mov_angle);
+    video.style.transform = `rotate(${this.mov_angle}deg)`;
+    this.mediascreen.style.display = 'block';
+  }
+
+  showImage() {
+    this.mediascreen.innerHTML = make_img(this.mediapath, PAGESIZE) + "<br>";
+    this.addResponse();
+  }
+
+  showEmpty() {
+    this.addResponse();
+  }
+  showProgress(cur_idx, out_of) {
+    this.progress.innerHTML = (cur_idx + 1) + " / " + (out_of);
+  };
+};
