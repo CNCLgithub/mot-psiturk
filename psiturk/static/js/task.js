@@ -125,7 +125,7 @@ var quiz = function(goBack, goNext) {
 var Experiment = function(triallist) {
   psiTurk.showPage('stage.html');
     
-    triallist = add_rotation_to_triallist(triallist, N_SCENES);
+    // triallist = add_rotation_to_triallist(triallist, N_SCENES);
     shuffle(triallist);
 
   var curidx = 0;
@@ -139,17 +139,16 @@ var Experiment = function(triallist) {
     }
 
     var filename = triallist[curIdx][0];
-    // show_progress(curIdx);
-    starttime = new Date().getTime();
-    
+    var rot_angle = triallist[curIdx][1];
     // getting the query type from the filename
     var query = filename.split('_')[4];
-    var rot_angle = triallist[curIdx][1];
     var pg = new Page("", "movie", filename, query, 0, rot_angle);
 
     pg.showProgress(curIdx, triallist.length);
     // `Page` will record the subject responce when "next" is clicked
     // and go to the next trial
+     
+    starttime = new Date().getTime();
     pg.showPage(
       function() {
         register_response(pg, curIdx);
