@@ -18,16 +18,19 @@ class Page {
     // html elements
     this.scale_region = document.getElementById("scale_region");
     this.response_region = document.getElementById("response_region");
-    this.response_form = document.getElementById("response_form");
+    this.td_response_form = document.getElementById("td_response_form");
+    this.pr_response_form = document.getElementById("pr_response_form");
     this.nextbutton = document.getElementById("nextbutton");
     this.mediascreen = document.getElementById("mediascreen");
     this.message = document.getElementById("message");
     this.progress = document.getElementById("progress");
 
-    this.nextbutton.disable = true;
+    this.nextbutton.disabled = true;
     this.nextbutton.style.display = 'none';
     this.response_region.style.display = 'none';
-    this.response_form.style.display = 'none';
+    this.td_response_form.style.display = 'none';
+    this.pr_response_form.style.display = 'none';
+    this.pr_response_form.disabled = true;
     this.mediascreen.innerHTML = "";
   }
 
@@ -45,7 +48,7 @@ class Page {
   }
 
   retrieveResponse() {
-    return this.response_form.value
+    return [this.td_response_form.value, this.pr_response_form.value]
   }
 
 
@@ -80,19 +83,11 @@ class Page {
     this.response_region.style.display = 'block';
     
     // if no response required, then simply allow to go further
-
-    console.log(this.show_response);
-    if (this.show_response == 'none') {
+    if (this.show_response == false) {
         this.allowNext();
     } else {
-        this.response_form.style.display = 'block';
-        // if response required, then show particular question
-        // and enable response
-        if (this.show_response == 'td') {
-            document.getElementById("td_question").style.display = 'block';
-        } else if (this.show_response == 'pr') {
-            document.getElementById("pr_question").style.display = 'block';
-        }
+        this.td_response_form.style.display = 'block';
+        this.pr_response_form.style.display = 'block';
         this.enableResponse();
     }
   }
@@ -108,25 +103,39 @@ class Page {
   enableResponse() {
       let self = this;
     
-    var yes = document.getElementById("yes");
-    var no = document.getElementById("no");
+    var td_yes = document.getElementById("td_yes");
+    var td_no = document.getElementById("td_no");
+    var pr_yes = document.getElementById("pr_yes");
+    var pr_no = document.getElementById("pr_no");
 
-    yes.onclick = function() {
-        self.response_form.value = true;
+    var pr = [pr_yes, pr_no];
+    pr.map(x => x.disabled = true);
+
+    // registering target designation
+    // and enabling the probe responses
+    td_yes.onclick = function() {
+        self.td_response_form.value = true;
+        pr.map(x => x.disabled = false)
+    }
+    td_no.onclick = function() {
+        self.td_response_form.value = false;
+        pr.map(x => x.disabled = false)
+    }
+    
+    // registering probe detection
+    pr_yes.onclick = function() {
+        self.pr_response_form.value = true;
         self.allowNext();
     }
-    no.onclick = function() {
-        self.response_form.value = false;
+    pr_no.onclick = function() {
+        self.pr_response_form.value = false;
         self.allowNext();
     }
   }
 
   clearResponse() {
-    document.getElementById("td_question").style.display = 'none';
-    document.getElementById("pr_question").style.display = 'none';
-
-    document.getElementById("yes").checked = false;
-    document.getElementById("no").checked = false;
+    var buttons = ["td_yes", "td_no", "pr_yes", "pr_no"];
+    buttons.map(x => document.getElementById(x).checked = false);
   }
 
   scalePage() {
@@ -186,7 +195,6 @@ class Page {
     // changing to the color of the video background
     this.mediascreen.style.background = '#6c7ff0';
 
-    console.log("rotation angle: ", this.mov_angle);
     video.style.transform = `rotate(${this.mov_angle}deg)`;
     this.mediascreen.style.display = 'block';
   }

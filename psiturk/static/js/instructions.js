@@ -2,7 +2,7 @@
 // 1: The text to be shown (if any)
 // 2: The type of format (image, movie, text, scale)
 // 3: Any media needed (can be an empty string)
-// 4: Whether to show the response div and what to show ("none"/"td"/"pr")
+// 4: Whether to show the response div and what to show (false/"td"/"pr")
 
 var nTrials = 120
 
@@ -10,11 +10,11 @@ var instructions = [
     [
     "In this task, you will observe a series of dots move on the screen.<br>" +
         "Click <b>Next</b> to give it a try.",
-    "", "", "none", 2
+    "", "", false, 2
     ],
  [
    "In this task, you will observe a series of dots move on the screen.<br>",
-   "movie", "intro/intro_no_label.mp4", "none", 0
+   "movie", "intro/intro_no_label.mp4", false, 0
  ],
  // image with target labels (blue)
  [
@@ -22,72 +22,60 @@ var instructions = [
      "dashed circles designating them as <span style=\"color:blue;\"><b>targets</b></span>.<br>" +
      "Shortly after, the blue labels will dissapear and the dots will begin to move.<br>" +
      "Your main task is to keep track of the targets as they move.",
-   "movie", "intro/intro_target_designation_snap.mp4", "none", 3
+   "movie", "intro/intro_target_designation_snap.mp4", false, 3
  ],
  [
    "Here is an example of a dynamic scene with <span style=\"color:blue;\">targets</span>.<br>",
-   "movie", "intro/intro_target_designation.mp4", "none", 0
+   "movie", "intro/intro_target_designation.mp4", false, 0
  ],
  [
    "In some trials there will be a <span style=\"color:#e09b88\"><b>probe</b></span>, i.e. the color of one of the dots will change <i>slightly</i> for a very short time as can be seen below.",
-   "movie", "intro/intro_probe_snap.mp4", "none", 3
+   "movie", "intro/intro_probe_snap.mp4", false, 3
  ],
  [
    "The following scene is with a <span style=\"color:#e09b88\">probe</span> - try to spot it!<br>" +
     "Click <b>Next</b> to give it a try.",
-   "movie", "intro/intro_probe_snap.mp4", "none", 2
+   "movie", "intro/intro_probe_snap.mp4", false, 2
  ],
  [
    "The following scene is with a <span style=\"color:#e09b88\">probe</span> - try to spot it!<br>",
-   "movie", "intro/intro_probe.mp4", "none", 0
+   "movie", "intro/intro_probe.mp4", false, 0
  ],
  [
-   "In half of the trials, at the end of the trial, <b>1</b> of the <b>8</b> dots will be circled in yellow.<br>" +
-     "In this case your task is to judge whether <i>that dot</i> is one of the <span style=\"color:blue;\">targets</span>.<br>",
-   "movie", "intro/intro_td_snap.mp4", "none", 3
+   "At the end of each trial, <b>1</b> of the <b>8</b> dots will be highlighted in yellow" +
+     ".<br>-> Your first task is to judge whether <i>that dot</i> was one of the <span style=\"color:blue;\">targets</span>.<br>" +
+     "-> Your second task is to say whether you saw a <span style=\"color:#e09b88\">probe</span>, i.e. whether one of the dots briefly changed color during movement.",
+   "movie", "intro/intro_td_snap.mp4", false, 3
  ],
  [
-   "In the other half of the trials, no dot will be highlighted at the end.<br>" +
-     "In that case your task is simply to say whether or not you saw a <span style=\"color:#e09b88\">probe</span>,<br>" +
-     "i.e. whether you saw one of the dots briefly changing color during movement.",
-   "movie", "intro/intro_pr_snap.mp4", "none", 3
+   "You will be able to record your response by clicking on the check boxes shown below.<br>" +
+     "<hr /><i>Note</i>: You will <b>NOT</b> be able to progress to the next trial until you have submitted both responses.",
+   "", "", true, 0
  ],
  [
-   "Click <b>Next</b> to try recording your response in the first kind of trial<br>"+
-    "(judging whether the highlighted dot is a <span style=\"color:blue;\">target</span>).",
-   "", "", "none", 2
+   "Remember, the main task is to say whether highlighted dot is one of the <span style=\"color:blue;\">targets</span>.<br>" + 
+   "The secondary task is to say whether you saw a <span style=\"color:#e09b88\">probe</span>.<br>" +
+   "Click <b>Next</b> to try recording your response after the video is completed.",
+   "", "", false, 3
  ],
  [
-   " ",
-   "movie", "intro/intro_td.mp4", "td", 0
- ],
- [
-   "Click <b>Next</b> to try recording your response in the second kind of trial<br>"+
-    "(saying whether you saw a <span style=\"color:#e09b88\">probe</span>).",
-   "", "", "none", 2
- ],
- [
-   "",
-   "movie", "intro/intro_pr.mp4", "pr", 0
- ],
- [
-     "Imporantly, you will not know in advance which kind of trial you are in.<br>" +
-     "But remember that the <i>main task</i> is to track the targets in both kinds of trials.",
-   "", "", "none", 3
+   "Remember, the main task is to say whether highlighted dot is one of the <span style=\"color:blue;\">targets</span>.<br>" + 
+   "The secondary task is to say whether you saw a <span style=\"color:#e09b88\">probe</span>.<br>",
+   "movie", "intro/intro_full.mp4", true, 0
  ],
     [
     "<b>Before we begin, follow the instructions below to setup your display.</b><br><hr />" +
         "<p>Please sit comfortably in front of you monitor and outstretch your arm holding a credit card (or a similary sized ID card). <br>" +
         "<p>Adjust the size of the image using the slider until its <strong>width</strong> matches the width of your credit card (or ID card).",
-    "scale", "generic_cc.png", "none", 1
+    "scale", "generic_cc.png", false, 1
     ],
  [
    "Please maintain this arm-length distance from your monitor for the duration of this experiment (20-25 minutes).",
-   "", "", "none", 2
+   "", "", false, 2
  ],
  ["After a short check to make sure that you have understood the instructions, " +
    "you will have to make your judgments about " + nTrials + " trials.<br>",
-   "", "", "none", 2
+   "", "", false, 2
  ],
 
 ];

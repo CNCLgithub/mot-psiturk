@@ -33,7 +33,7 @@ psiTurk.preloadPages(pages);
 var InstructionRunner = function(condlist) {
   psiTurk.showPage('instructions.html');
     
-  var start_instruction_page = 17;
+  var start_instruction_page = 0;
   var nTrials = condlist.length;
   var ninstruct = instructions.length;
 
@@ -102,7 +102,7 @@ var quiz = function(goBack, goNext) {
       // in the database.
       psiTurk.recordUnstructuredData('instructionloops', loop);
       psiTurk.finishInstructions();
-      console.log('Finished instructions');
+      //console.log('Finished instructions');
       // Move on to the experiment
       goNext();
     } else {
@@ -139,10 +139,11 @@ var Experiment = function(triallist) {
     }
 
     var filename = triallist[curIdx][0];
+    //console.log("filename", filename);
     var rot_angle = triallist[curIdx][1];
     // getting the query type from the filename
-    var query = filename.split('_')[4];
-    var pg = new Page("", "movie", filename, query, 0, rot_angle);
+    //var query = filename.split('_')[4];
+    var pg = new Page("", "movie", filename, true, 0, rot_angle);
 
     pg.showProgress(curIdx, triallist.length);
     // `Page` will record the subject responce when "next" is clicked
@@ -165,7 +166,8 @@ var Experiment = function(triallist) {
     var rep = trialPage.retrieveResponse();
     psiTurk.recordTrialData({
       'TrialName': triallist[cIdx],
-      'Response': rep,
+      'Target': rep[0],
+      'Probe': rep[1],
       'ReactionTime': rt,
       'IsInstruction': false,
       'TrialOrder': cIdx
@@ -266,7 +268,7 @@ $(window).load(function() {
       url: "static/data/condlist.json",
       async: false,
       success: function(data) {
-        console.log("condition:", condition);
+        //console.log("condition:", condition);
         condlist = data[condition];
         InstructionRunner(condlist);
       },
