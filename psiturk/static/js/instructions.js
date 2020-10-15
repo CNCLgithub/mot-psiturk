@@ -45,7 +45,7 @@ var instructions = [
    "At the end of each trial, <b>1</b> of the <b>8</b> dots will be highlighted in yellow" +
      ".<br>-> Your first task is to judge whether <i>that dot</i> was one of the <span style=\"color:blue;\">targets</span>.<br>" +
      "-> Your second task is to say whether you saw a <span style=\"color:#e09b88\">probe</span>, i.e. whether one of the dots briefly changed color during movement.",
-   "movie", "intro/intro_td_snap.mp4", false, 3
+   "movie", "intro/intro_query_snap.mp4", false, 3
  ],
  [
    "You will be able to record your response by clicking on the check boxes shown below.<br>" +

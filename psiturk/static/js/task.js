@@ -12,7 +12,6 @@ var PROGRESS = "progress";
 var FULL_CONTAINER= "full-container"
 var PAGESIZE = 300;
 var SCALE_COMPLETE = false; // users do not need to repeat scaling
-var N_SCENES = 10;
 
 // All pages to be loaded
 var pages = [
@@ -125,7 +124,6 @@ var quiz = function(goBack, goNext) {
 var Experiment = function(triallist) {
   psiTurk.showPage('stage.html');
     
-    // triallist = add_rotation_to_triallist(triallist, N_SCENES);
     shuffle(triallist);
 
   var curidx = 0;
