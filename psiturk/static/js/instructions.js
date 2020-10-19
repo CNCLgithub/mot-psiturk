@@ -14,7 +14,7 @@ var instructions = [
     ],
  [
    "In this task, you will observe a series of dots move on the screen.<br>",
-   "movie", "intro/intro_no_label.mp4", false, 0
+   "animation", "intro/intro_no_label.mp4", false, 0
  ],
  // image with target labels (blue)
  [

@@ -2,6 +2,7 @@
  * Requires:
  *     psiturk.js
  *     utils.js
+ *     animation.js
  */
 
 // Initalize psiturk object
@@ -30,7 +31,8 @@ psiTurk.preloadPages(pages);
  ****************/
 
 var InstructionRunner = function(condlist) {
-  psiTurk.showPage('instructions.html');
+    psiTurk.showPage('instructions.html');
+
     
   var start_instruction_page = 0;
   var nTrials = condlist.length;
@@ -266,7 +268,6 @@ $(window).load(function() {
       url: "static/data/condlist.json",
       async: false,
       success: function(data) {
-        //console.log("condition:", condition);
         condlist = data[condition];
         InstructionRunner(condlist);
       },

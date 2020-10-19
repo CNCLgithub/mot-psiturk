@@ -45,6 +45,8 @@ class Page {
 
     this.addText();
     this.addMedia();
+
+
   }
 
   retrieveResponse() {
@@ -72,6 +74,8 @@ class Page {
       this.showMovie();
     } else if (this.mediatype == 'scale'){
       this.scalePage();
+    } else if (this.mediatype == 'animation'){
+      this.showAnimation();
     } else {
       this.mediascreen.style.height = '0px';
       this.showEmpty();
@@ -165,12 +169,12 @@ class Page {
     }
   }
 
-  scaleMediascreen(scale = 1) {
+  scaleElement(element = this.mediascreen, scale = 1) {
     var width = PAGESIZE * 1.05;
-    this.mediascreen.style.width = `${1.5*width}px`;
-    this.mediascreen.style.height = `${scale*1.5*width}px`;
-    this.mediascreen.style.padding = `${0.25*width}px`;
-    this.mediascreen.style.margin = '0 auto';
+    element.style.width = `${1.5*width}px`;
+    element.style.height = `${scale*1.5*width}px`;
+    element.style.padding = `${0.25*width}px`;
+    element.style.margin = '0 auto';
   }
 
   // plays movie
@@ -190,7 +194,44 @@ class Page {
     
     // making sure there is space for rotation
     // (scaling according to PAGESIZE)
-    this.scaleMediascreen();
+    this.scaleElement(this.mediascreen);
+
+    // changing to the color of the video background
+    this.mediascreen.style.background = '#6c7ff0';
+
+    video.style.transform = `rotate(${this.mov_angle}deg)`;
+    this.mediascreen.style.display = 'block';
+  }
+
+  // plays animation
+  showAnimation() {
+    let me = this;
+
+    /*=============================================================================*/   
+    /* Define Canvas and Initialize
+    /*=============================================================================*/
+    var animation = document.getElementById('animation');
+    var cw = animation.width = window.innerWidth;
+    var ch = animation.height = window.innerHeight; 
+    var cl = new Animation(animation, cw, ch);                
+    setupRAF();
+    cl.init();
+    this.scaleElement(animation);
+    
+    // this.mediascreen.innerHTML = make_mov(this.mediapath, PAGESIZE);
+    // var video = document.getElementById('video');
+
+    animation.onended = function() {
+        me.addResponse();
+    };
+
+    video.oncanplaythrough = function() {
+      video.play();
+    };
+    
+    // making sure there is space for rotation
+    // (scaling according to PAGESIZE)
+    this.scaleElement(this.mediascreen);
 
     // changing to the color of the video background
     this.mediascreen.style.background = '#6c7ff0';
