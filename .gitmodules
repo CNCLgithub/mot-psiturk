@@ -1,0 +1,3 @@
+[submodule "psiturk/static/js/deps/anime"]
+	path = psiturk/static/js/deps/anime
+	url = https://github.com/juliangarnier/anime.git
