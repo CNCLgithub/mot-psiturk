@@ -14,7 +14,7 @@ class DotAnimation {
         let self = this;
 
         this.scene = scene;
-        this.duration = 2;
+        this.duration = 42;
         this.positions = dataset[scene];
 
         this.k = this.positions.length;
@@ -24,6 +24,12 @@ class DotAnimation {
 
         this.area_width = 800;
         this.dot_radius = 20;
+    
+        // initializing the probe
+        this.probe_width = this.dot_radius;
+        this.probe = document.getElementById(`probe`);
+        this.probe.style.width = `${scale_to_pagesize(this.probe_width, this.area_width)}px`;
+        this.probe.style.height = `${scale_to_pagesize(this.probe_width, this.area_width)}px`;
 
         // collecting dots as JS objects
         // and initializing the dots
@@ -86,18 +92,32 @@ class DotAnimation {
             var complete_function = (i == 0) ? callback : function() {return;}
             tl.add({
                 targets: this.dots[i],
-                loop: this.loop,
                 translateX: this.positions.map(p_t => ({value: scale_to_pagesize(p_t[i][0], this.area_width), duration: this.duration})),
                 translateY: this.positions.map(p_t => ({value: scale_to_pagesize(-p_t[i][1], this.area_width) + PAGESIZE/2, duration: this.duration})),
-
                 complete: complete_function,
-
             }, freeze_time)
         }
+        
+        var probed_dot = 0;
+        var probed_frames = [50, 51, 52];
+        var displays = [];
+        for (var t=0; t < this.positions.length; t++) {
+            //var display = probed_frames.includes(t) ? "inline-block" : "none";
+            var display = t % 2 == 0 ? "inline-block" : "none";
+            displays.push(({value: display, duration: this.duration}));
+        }
+
+        tl.add({
+            targets: probe,
+            display: displays,
+            translateX: this.positions.map(p_t => ({value: scale_to_pagesize(p_t[probed_dot][0], this.area_width), duration: this.duration})),
+            translateY: this.positions.map(p_t => ({value: scale_to_pagesize(-p_t[probed_dot][1], this.area_width) + PAGESIZE/2, duration: this.duration})),
+        }, freeze_time)
     }
 
     get_td() {
         return this.dots.map(dot => dot.value);
     }
+
 
 }

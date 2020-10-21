@@ -11,3 +11,17 @@
     right: 0;
     text-align: center;
 }
+
+
+.probe {
+    height: 20px;
+    width: 20px;
+    background-color: black;
+    display: inline-block;
+
+    position: absolute;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    text-align: center;
+}

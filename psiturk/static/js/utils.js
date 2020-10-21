@@ -76,6 +76,7 @@ var make_animation = function(n_dots) {
     for (var i=0; i<n_dots; i++) {
         ret += `<span class="dot" id="dot_${i}"></span>`;
     }
+    ret += `<span class="probe" id="probe"></span>`
     return ret;
 };
 
