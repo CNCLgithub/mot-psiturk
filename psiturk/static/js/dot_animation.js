@@ -1,3 +1,8 @@
+// TODO remove hardcoded area_width
+var scale_to_pagesize = function(value, area) {
+    return value/area*PAGESIZE;
+}
+
 class DotAnimation {
     constructor(scene = 3, loop = false) {
         this.scene = scene;
@@ -8,24 +13,33 @@ class DotAnimation {
         this.k = this.positions.length;
         this.n_dots = this.positions[1].length;
         this.n_dots = 8;
+        this.area_width = 800;
+        this.dot_radius = 20;
 
         // collecting dots as JS objects
+        // and initializing the dots
         this.dots = [];
         for (var i = 0; i < this.n_dots; i++) {
             var dot = document.getElementById(`dot_${i}`);
+            
+            // scaling the size of the dot
+            dot.style.width = `${scale_to_pagesize(this.dot_radius*2, this.area_width)}px`;
+            dot.style.height = `${scale_to_pagesize(this.dot_radius*2, this.area_width)}px`;
+            
+            // initializing clickability
             dot.value = false;
-
             dot.onclick = function() {
                 this.value = (!this.value);
                 this.style.backgroundColor = this.value ? "red" : "#bbb";
             }
+            
+            // putting the dot into starting position
+            anime.set(this.dots[i], {
+                translateX: scale_to_pagesize(this.positions[0][i][0], this.area_width),
+                translateY: scale_to_pagesize(-this.positions[0][i][1], this.area_width) + PAGESIZE/2,
+            })
 
             this.dots.push(dot);
-
-            anime.set(this.dots[i], {
-                translateX: this.positions[0][i][0],
-                translateY: -this.positions[0][i][1],
-            })
         }
 
     }
@@ -36,30 +50,13 @@ class DotAnimation {
                 targets: this.dots[i],
                 easing: 'linear',
                 loop: this.loop,
-                translateX: this.positions.map(p_t => ({value: p_t[i][0], duration: this.duration})),
-                translateY: this.positions.map(p_t => ({value: -p_t[i][1], duration: this.duration})),
+                translateX: this.positions.map(p_t => ({value: scale_to_pagesize(p_t[i][0], this.area_width), duration: this.duration})),
+                translateY: this.positions.map(p_t => ({value: scale_to_pagesize(-p_t[i][1], this.area_width) + PAGESIZE/2, duration: this.duration})),
             })
         }
+    }
 
-
-        //const tl = anime.timeline({
-          //loop: false,
-          //autoplay: true,
-          //duration: 500,
-          //easing: 'linear',
-        //});
-        
-        //for (var t = 0; t < this.k; t++) {
-            //for (var i = 0; i < this.n_dots; i++) {
-                //tl.
-                //add({
-                    //targets: this.dots[i],
-                    //easing: 'linear',
-                    //loop: this.loop,
-                    //translateX: this.positions[t][i][0],
-                    //translateY: -this.positions[t][i][1],
-                //}, t*this.duration)
-            //}
-        //}
+    get_n_clicked() {
+        return this.dots.map(dot => dot.value).filter(Boolean).length;
     }
 }
