@@ -9,9 +9,12 @@ var scale_to_pagesize = function(value, area) {
 }
 
 class DotAnimation {
+
     constructor(scene = 3) {
+        let self = this;
+
         this.scene = scene;
-        this.duration = 42;
+        this.duration = 2;
         this.positions = dataset[scene];
 
         this.k = this.positions.length;
@@ -35,11 +38,14 @@ class DotAnimation {
             // initializing clickability
             dot.value = false;
             dot.onclick = function() {
-                this.value = (!this.value);
-                this.style.backgroundColor = this.value ? RED : GRAY;
+                if (self.get_n_clicked() < self.n_targets || this.value == true) {
+                    this.value = (!this.value);
+                    this.style.backgroundColor = this.value ? RED : GRAY;
+                } else {
+                    console.log("can't select more than four");
+                }
             }
             
-
             this.dots.push(dot);
         }
 
@@ -86,4 +92,5 @@ class DotAnimation {
     get_n_clicked() {
         return this.dots.map(dot => dot.value).filter(Boolean).length;
     }
+
 }
