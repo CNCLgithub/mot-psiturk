@@ -1,18 +1,24 @@
 // TODO remove hardcoded area_width
+
+var RED = "#e60000";
+var GRAY = "#bbb";
+var BLACK = "#000000";
+
 var scale_to_pagesize = function(value, area) {
     return value/area*PAGESIZE;
 }
 
 class DotAnimation {
-    constructor(scene = 3, loop = false) {
+    constructor(scene = 3) {
         this.scene = scene;
         this.duration = 42;
         this.positions = dataset[scene];
-        this.loop = loop;
 
         this.k = this.positions.length;
         this.n_dots = this.positions[1].length;
         this.n_dots = 8;
+        this.n_targets = 4;
+
         this.area_width = 800;
         this.dot_radius = 20;
 
@@ -30,29 +36,50 @@ class DotAnimation {
             dot.value = false;
             dot.onclick = function() {
                 this.value = (!this.value);
-                this.style.backgroundColor = this.value ? "red" : "#bbb";
+                this.style.backgroundColor = this.value ? RED : GRAY;
             }
             
-            // putting the dot into starting position
-            anime.set(this.dots[i], {
-                translateX: scale_to_pagesize(this.positions[0][i][0], this.area_width),
-                translateY: scale_to_pagesize(-this.positions[0][i][1], this.area_width) + PAGESIZE/2,
-            })
 
             this.dots.push(dot);
         }
 
     }
 
-    play() {
-        for (var i = 0; i < this.n_dots; i++) {
-            anime({
-                targets: this.dots[i],
+    play(freeze_time = 2000) {
+        // timeline allows to control what happens after what
+        var tl = anime.timeline({
                 easing: 'linear',
+        });
+
+        // putting the dot into starting position
+        for (var i = 0; i < this.n_dots; i++) {
+            tl.set(this.dots[i], {
+                translateX: scale_to_pagesize(this.positions[0][i][0], this.area_width),
+                translateY: scale_to_pagesize(-this.positions[0][i][1], this.area_width) + PAGESIZE/2,
+            }, 0)
+        }
+        
+        // indicicating the targets
+        var targets = this.dots.slice(0, this.n_targets)
+        tl.add({
+            targets: targets,
+            backgroundColor: RED,
+            duration: 1,
+        })
+        tl.add({
+            targets: targets,
+            backgroundColor: GRAY,
+            duration: 1,
+        }, freeze_time)
+
+
+        for (var i = 0; i < this.n_dots; i++) {
+            tl.add({
+                targets: this.dots[i],
                 loop: this.loop,
                 translateX: this.positions.map(p_t => ({value: scale_to_pagesize(p_t[i][0], this.area_width), duration: this.duration})),
                 translateY: this.positions.map(p_t => ({value: scale_to_pagesize(-p_t[i][1], this.area_width) + PAGESIZE/2, duration: this.duration})),
-            })
+            }, freeze_time)
         }
     }
 
