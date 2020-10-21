@@ -207,7 +207,7 @@ class Page {
     showAnimation() {
         let me = this;
 
-        this.mediascreen.innerHTML = make_animation();
+        this.mediascreen.innerHTML = make_animation(8);
         this.scaleElement(this.mediascreen);
 
         var animation = new DotAnimation();

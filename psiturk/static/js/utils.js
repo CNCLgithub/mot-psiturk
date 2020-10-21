@@ -71,8 +71,11 @@ var make_mov = function(movname, size) {
     return ret;
 };
 
-var make_animation = function() {
-    var ret = `<span class="dot" id="dot1"></span>`;
+var make_animation = function(n_dots) {
+    var ret = ``
+    for (var i=0; i<n_dots; i++) {
+        ret += `<span class="dot" id="dot_${i}"></span>`;
+    }
     return ret;
 };
 
