@@ -156,25 +156,23 @@ class Page {
             var scale_img = document.getElementById("img");
 
             slider_value.value = PAGESIZE/500*50;
-            this.scaleMediascreen(0.6);
+            this.scaleMediascreen();
 
             slider_value.oninput = function(e) {
                 PAGESIZE = (e.target.value / 50.0) * 500;
                 scale_img.width = `${PAGESIZE}px`;
                 scale_img.style.width = `${PAGESIZE}px`;
-                self.scaleMediascreen(0.6);
+                self.scaleMediascreen();
                 self.addResponse();
                 SCALE_COMPLETE = true;
             }
         }
     }
 
-    scaleElement(element = this.mediascreen, scale = 1) {
-        var width = PAGESIZE * 1.05;
-        element.style.width = `${1.5*width}px`;
-        element.style.height = `${scale*1.5*width}px`;
-        element.style.padding = `${0.25*width}px`;
-        element.style.margin = '0 auto';
+    scaleMediascreen() {
+        this.mediascreen.style.width = `${PAGESIZE}px`;
+        this.mediascreen.style.height = `${PAGESIZE}px`;
+        this.mediascreen.style.margin = '0 auto';
     }
 
     // plays movie
@@ -194,10 +192,10 @@ class Page {
 
         // making sure there is space for rotation
         // (scaling according to PAGESIZE)
-        this.scaleElement(this.mediascreen);
+        this.scaleMediascreen();
 
         // changing to the color of the video background
-        this.mediascreen.style.background = '#6c7ff0';
+        this.mediascreen.style.background = '#e6e6e6';
 
         video.style.transform = `rotate(${this.mov_angle}deg)`;
         this.mediascreen.style.display = 'block';
@@ -208,30 +206,21 @@ class Page {
         let me = this;
 
         this.mediascreen.innerHTML = make_animation(8);
-        this.scaleElement(this.mediascreen);
+        this.scaleMediascreen();
 
         var animation = new DotAnimation();
-        console.log("positions", animation);
-        animation.play();
-
-
-        video.onended = function() {
+        var callback = function() {
+            console.log("animation complete :P");
             me.addResponse();
         };
 
-        video.oncanplaythrough = function() {
-            video.play();
-        };
-
-        // making sure there is space for rotation
-        // (scaling according to PAGESIZE)
-        this.scaleElement(this.mediascreen);
-
         // changing to the color of the video background
-        this.mediascreen.style.background = '#6c7ff0';
+        this.mediascreen.style.background = '#e6e6e6';
 
-        video.style.transform = `rotate(${this.mov_angle}deg)`;
+        // video.style.transform = `rotate(${this.mov_angle}deg)`;
         this.mediascreen.style.display = 'block';
+
+        animation.play(callback);
     }
 
     showImage() {

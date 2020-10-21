@@ -36,13 +36,16 @@ class DotAnimation {
             dot.style.height = `${scale_to_pagesize(this.dot_radius*2, this.area_width)}px`;
             
             // initializing clickability
+            // TODO perhaps will need to write some better
+            // clicking logic, so that it's easier to click
+            // (like having a general onclick for the mediascreen)
             dot.value = false;
             dot.onclick = function() {
-                if (self.get_n_clicked() < self.n_targets || this.value == true) {
+                if (self.get_td().filter(Boolean).length < self.n_targets || this.value == true) {
                     this.value = (!this.value);
                     this.style.backgroundColor = this.value ? RED : GRAY;
                 } else {
-                    console.log("can't select more than four");
+                    console.log("can't select more than ", self.n_targets);
                 }
             }
             
@@ -51,7 +54,7 @@ class DotAnimation {
 
     }
 
-    play(freeze_time = 2000) {
+    play(callback, freeze_time = 2000) {
         // timeline allows to control what happens after what
         var tl = anime.timeline({
                 easing: 'linear',
@@ -80,17 +83,21 @@ class DotAnimation {
 
 
         for (var i = 0; i < this.n_dots; i++) {
+            var complete_function = (i == 0) ? callback : function() {return;}
             tl.add({
                 targets: this.dots[i],
                 loop: this.loop,
                 translateX: this.positions.map(p_t => ({value: scale_to_pagesize(p_t[i][0], this.area_width), duration: this.duration})),
                 translateY: this.positions.map(p_t => ({value: scale_to_pagesize(-p_t[i][1], this.area_width) + PAGESIZE/2, duration: this.duration})),
+
+                complete: complete_function,
+
             }, freeze_time)
         }
     }
 
-    get_n_clicked() {
-        return this.dots.map(dot => dot.value).filter(Boolean).length;
+    get_td() {
+        return this.dots.map(dot => dot.value);
     }
 
 }
