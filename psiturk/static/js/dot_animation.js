@@ -1,4 +1,3 @@
-// TODO remove hardcoded area_width
 
 var RED = "#e60000";
 var GRAY = "#bbb";
@@ -8,17 +7,28 @@ var scale_to_pagesize = function(value, area) {
     return value/area*PAGESIZE;
 }
 
+
+function rotate(x, y, angle) {
+    var radians = (Math.PI / 180) * angle,
+        nx = Math.cos(radians) * x + Math.sin(radians) * y,
+        ny = Math.cos(radians) * y - Math.sin(radians) * x;
+    return [nx, ny];
+}
+
 // putting into the correct coordinates
-var scale_positions = function(positions, area, rotation = 0) {
+var scale_positions = function(positions, area, rot_angle = 0) {
     var scaled_positions = [];
 
     for (var t = 0; t < positions.length; t++) {
         var scaled_positions_t = [];
         for (var i = 0; i < positions[t].length; i++) {
             var x = scale_to_pagesize(positions[t][i][0], area);
-            var y = scale_to_pagesize(-positions[t][i][1], area) + PAGESIZE/2;
-            scaled_positions_t.push([x, y]);
+            var y = scale_to_pagesize(-positions[t][i][1], area);
+            xy = rotate(x, y, rot_angle);
+            xy[1] += PAGESIZE/2;
+            scaled_positions_t.push(xy);
         }
+
         scaled_positions.push(scaled_positions_t);
     }
     return scaled_positions;
