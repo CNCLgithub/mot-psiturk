@@ -34,7 +34,7 @@ psiTurk.preloadPages(pages);
 var InstructionRunner = function(condlist) {
     psiTurk.showPage('instructions.html');
 
-    var start_instruction_page = 1;
+    var start_instruction_page = 17;
     var nTrials = condlist.length;
     var ninstruct = instructions.length;
 
@@ -45,6 +45,7 @@ var InstructionRunner = function(condlist) {
         if (i < ninstruct) {
             // constructing Page using the the instructions.js
             var page = new Page(...instructions[i]);
+
             page.showPage(function() {
                 page.clearResponse();
                 show_instruction_page(i + 1);
@@ -123,10 +124,10 @@ var quiz = function(goBack, goNext) {
  * Experiment *
  **************/
 
-var Experiment = function(triallist) {
+var Experiment = function(condlist) {
     psiTurk.showPage('stage.html');
 
-    shuffle(triallist);
+    shuffle(condlist);
 
     var curidx = 0;
     var starttime = -1;
@@ -134,22 +135,34 @@ var Experiment = function(triallist) {
     // uses `Page` to show a single trial
     var runTrial = function(curIdx) {
         // We've reached the end of the experiment
-        if (curIdx === triallist.length) {
+        if (curIdx === condlist.length) {
             end_experiment();
         }
+        
+        var scene = condlist[curIdx][0];
+        var rot_angle = condlist[curIdx][1];
+        var probes = condlist[curIdx][2];
+        
+        // var pg = new Page("", "movie", filename, true, 0, rot_angle);
+        var pg = new Page("", "animation", condlist[curIdx], true, 0);
 
-        var filename = triallist[curIdx][0];
-        //console.log("filename", filename);
-        var rot_angle = triallist[curIdx][1];
-        // getting the query type from the filename
-        //var query = filename.split('_')[4];
-        var pg = new Page("", "movie", filename, true, 0, rot_angle);
-
-        pg.showProgress(curIdx, triallist.length);
+        pg.showProgress(curIdx, condlist.length);
         // `Page` will record the subject responce when "next" is clicked
         // and go to the next trial
 
         starttime = new Date().getTime();
+        
+        var spacebar = [];
+
+        console.log("spacebar init");
+        document.onkeydown = function(event){
+            if(event.keyCode === 32) {
+                spacebar.push(new Date().getTime() - starttime);
+                event.preventDefault();
+                console.log("space bar clicked :P");
+            }
+        };
+
         pg.showPage(
             function() {
                 register_response(pg, curIdx);
@@ -165,7 +178,7 @@ var Experiment = function(triallist) {
         var rt = new Date().getTime() - starttime;
         var rep = trialPage.retrieveResponse();
         psiTurk.recordTrialData({
-            'TrialName': triallist[cIdx],
+            'TrialName': condlist[cIdx],
             'Target': rep[0],
             'Probe': rep[1],
             'ReactionTime': rt,

@@ -5,21 +5,19 @@ class Page {
     /*******************
      * Public Methods  *
      *******************/
-    constructor(text, mediatype, mediapath, show_response, next_delay, mov_angle = 0) {
+    constructor(text, mediatype, mediadata, show_response, next_delay) {
 
         // page specific variables
         this.text = text;
         this.mediatype = mediatype;
-        this.mediapath = mediapath;
+        this.mediadata = mediadata;
         this.show_response = show_response;
         this.next_delay = next_delay; // delay for showing next button in seconds
-        this.mov_angle = mov_angle;
 
         // html elements
         this.scale_region = document.getElementById("scale_region");
         this.response_region = document.getElementById("response_region");
-        this.td_response_form = document.getElementById("td_response_form");
-        this.pr_response_form = document.getElementById("pr_response_form");
+        this.query = document.getElementById("query");
         this.nextbutton = document.getElementById("nextbutton");
         this.mediascreen = document.getElementById("mediascreen");
         this.message = document.getElementById("message");
@@ -28,10 +26,10 @@ class Page {
         this.nextbutton.disabled = true;
         this.nextbutton.style.display = 'none';
         this.response_region.style.display = 'none';
-        // this.td_response_form.style.display = 'none';
-        //this.pr_response_form.style.display = 'none';
-        //this.pr_response_form.disabled = true;
+
+        this.query.style.display = 'none';
         this.mediascreen.innerHTML = "";
+        this.animation = undefined;
     }
 
     // Loads content to the page
@@ -50,7 +48,7 @@ class Page {
     }
 
     retrieveResponse() {
-        return [this.td_response_form.value, this.pr_response_form.value]
+        return [this.animation.get_td(), this.animation.get_spacebar()]
     }
 
 
@@ -90,8 +88,7 @@ class Page {
         if (this.show_response == false) {
             this.allowNext();
         } else {
-            //this.td_response_form.style.display = 'block';
-            //this.pr_response_form.style.display = 'block';
+            this.query.style.display = 'block';
             this.enableResponse(animation);
         }
     }
@@ -178,7 +175,7 @@ class Page {
         // changing to the color of the video background
         this.mediascreen.style.background = '#e6e6e6';
 
-        video.style.transform = `rotate(${this.mov_angle}deg)`;
+        video.style.transform = `rotate(${this.rot_angle}deg)`;
         this.mediascreen.style.display = 'block';
     }
 
@@ -189,7 +186,12 @@ class Page {
         this.mediascreen.innerHTML = make_animation(8);
         this.scaleMediascreen();
 
-        var animation = new DotAnimation();
+        var scene = this.mediadata[0];
+        var rot_angle = this.mediadata[1];
+        var probes = this.mediadata[2];
+
+        var animation = new DotAnimation(scene, rot_angle, probes);
+        this.animation = animation;
         var callback = function() {
             console.log("animation complete :P");
             self.addResponse(animation);
@@ -198,7 +200,7 @@ class Page {
         // changing to the color of the video background
         this.mediascreen.style.background = '#e6e6e6';
 
-        // video.style.transform = `rotate(${this.mov_angle}deg)`;
+        // video.style.transform = `rotate(${this.rot_angle}deg)`;
         this.mediascreen.style.display = 'block';
         
         animation.play(callback);

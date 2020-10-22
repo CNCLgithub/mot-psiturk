@@ -7,7 +7,6 @@ var scale_to_pagesize = function(value, area) {
     return value/area*PAGESIZE;
 }
 
-
 function rotate(x, y, angle) {
     var radians = (Math.PI / 180) * angle,
         nx = Math.cos(radians) * x + Math.sin(radians) * y,
@@ -16,7 +15,7 @@ function rotate(x, y, angle) {
 }
 
 // putting into the correct coordinates
-var scale_positions = function(positions, area, rot_angle = 0) {
+var scale_positions = function(positions, area, rot_angle) {
     var scaled_positions = [];
 
     for (var t = 0; t < positions.length; t++) {
@@ -55,14 +54,14 @@ var argmin = function(array) {
 
 class DotAnimation {
 
-    constructor(scene = 3) {
+    constructor(scene = 1, rot_angle = 0, probes = []) {
         let self = this;
 
         this.scene = scene;
-        this.duration = 1;
-        this.positions = dataset[scene];
+        this.duration = 41.6666;
+        this.positions = dataset[scene-1];
         this.area_width = 800;
-        this.scaled_positions = scale_positions(this.positions, this.area_width);
+        this.scaled_positions = scale_positions(this.positions, this.area_width, rot_angle);
         
         console.log(this.positions);
         console.log(this.scaled_positions);
@@ -80,6 +79,7 @@ class DotAnimation {
         this.probe = document.getElementById(`probe`);
         this.probe.style.width = `${scale_to_pagesize(this.probe_width, this.area_width)}px`;
         this.probe.style.height = `${scale_to_pagesize(this.probe_width, this.area_width)}px`;
+        this.probe_placements = probes;
 
         // collecting dots as JS objects
         // and initializing the dots
@@ -99,10 +99,15 @@ class DotAnimation {
             
             this.dots.push(dot);
         }
-
+        
+        // spacebar time array
+        this.spacebar = [];
+        this.has_ended = false;
     }
 
     play(callback, freeze_time = 500) {
+        let self = this;
+
         // timeline allows to control what happens after what
         var tl = anime.timeline({
                 easing: 'linear',
@@ -129,9 +134,22 @@ class DotAnimation {
             duration: 1,
         }, freeze_time)
 
+        var starttime = new Date().getTime();
+            
+        console.log("spacebar init");
+        document.onkeyup = function(event){
+            if (event.keyCode === 32 ) {
+                var time = new Date().getTime() - starttime;
+
+                if (time < freeze_time || self.has_ended) return;
+                if (self.spacebar.length < 500) self.spacebar.push(time-freeze_time);
+
+                console.log(self.spacebar);
+            }
+        };
 
         for (var i = 0; i < this.n_dots; i++) {
-            var complete_function = (i == 0) ? callback : function() {return;}
+            var complete_function = (i == 0) ? function() {self.has_ended = true; callback();} : function() {return;}
             tl.add({
                 targets: this.dots[i],
                 translateX: this.scaled_positions.map(p_t => ({value: p_t[i][0], duration: this.duration})),
@@ -158,6 +176,10 @@ class DotAnimation {
 
     get_td() {
         return this.dots.map(dot => dot.value);
+    }
+    
+    get_spacebar() {
+        return this.spacebar;
     }
 
     click(e, mediascreen) {
