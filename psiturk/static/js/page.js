@@ -203,7 +203,7 @@ class Page {
 
     // plays animation
     showAnimation() {
-        let me = this;
+        let self = this;
 
         this.mediascreen.innerHTML = make_animation(8);
         this.scaleMediascreen();
@@ -211,7 +211,7 @@ class Page {
         var animation = new DotAnimation();
         var callback = function() {
             console.log("animation complete :P");
-            me.addResponse();
+            self.addResponse();
         };
 
         // changing to the color of the video background
@@ -219,7 +219,10 @@ class Page {
 
         // video.style.transform = `rotate(${this.mov_angle}deg)`;
         this.mediascreen.style.display = 'block';
-
+        
+        this.mediascreen.onclick = function(e) {
+            animation.click(e, self.mediascreen);
+        };
         animation.play(callback);
     }
 

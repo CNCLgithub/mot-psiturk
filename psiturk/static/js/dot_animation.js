@@ -24,6 +24,25 @@ var scale_positions = function(positions, area) {
     return scaled_positions;
 }
 
+var argmax = function(array) {
+    var max = array[0];
+    var max_i = 0;
+
+    for (var i=0; i<array.length; i++) {
+        if (array[i] > max) {
+            max = array[i];
+            max_i = i;
+        }
+    }
+    
+    return max_i;
+}
+
+var argmin = function(array) {
+    array = array.map(x => -x);
+    return argmax(array);
+}
+
 class DotAnimation {
 
     constructor(scene = 3) {
@@ -67,14 +86,6 @@ class DotAnimation {
             // clicking logic, so that it's easier to click
             // (like having a general onclick for the mediascreen)
             dot.value = false;
-            dot.onclick = function() {
-                if (self.get_td().filter(Boolean).length < self.n_targets || this.value == true) {
-                    this.value = (!this.value);
-                    this.style.backgroundColor = this.value ? RED : GRAY;
-                } else {
-                    console.log("can't select more than ", self.n_targets);
-                }
-            }
             
             this.dots.push(dot);
         }
@@ -137,5 +148,38 @@ class DotAnimation {
 
     get_td() {
         return this.dots.map(dot => dot.value);
+    }
+
+    click(e, mediascreen) {
+        console.log("screen clicked");
+        var rect = mediascreen.getBoundingClientRect();
+        var x = e.clientX - rect.left; //x position within the element.
+        var y = e.clientY - rect.top;  //y position within the element.
+
+        x -= PAGESIZE/2;
+        //y -= PAGESIZE/2;
+        
+        var distances = [];
+        for (var i = 0; i < this.dots.length; i++) {
+            const style = window.getComputedStyle(this.dots[i]);
+            const matrix = style.transform || style.webkitTransform || style.mozTransform;
+            const matrixValues = matrix.match(/matrix.*\((.+)\)/)[1].split(', ')
+            const dot_x = matrixValues[4]
+            const dot_y = matrixValues[5]
+            
+            var distance = Math.sqrt(Math.pow(x - dot_x, 2) + Math.pow(y - dot_y, 2));
+            distances.push(distance);
+        }
+
+        console.log("Left? : " + x + " ; Top? : " + y + ".");
+        console.log(distances);
+
+        var dot = this.dots[argmin(distances)];
+        if (this.get_td().filter(Boolean).length < this.n_targets || dot.value == true) {
+            dot.value = (!dot.value);
+            dot.style.backgroundColor = dot.value ? RED : GRAY;
+        } else {
+            console.log("can't select more than ", this.n_targets);
+        }
     }
 }
