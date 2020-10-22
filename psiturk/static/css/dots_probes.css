@@ -18,6 +18,7 @@
     width: 20px;
     background-color: black;
     display: inline-block;
+    opacity: 0.0;
 
     position: absolute;
     margin: 0 auto;

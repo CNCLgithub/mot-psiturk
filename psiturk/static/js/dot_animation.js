@@ -8,6 +8,22 @@ var scale_to_pagesize = function(value, area) {
     return value/area*PAGESIZE;
 }
 
+// putting into the correct coordinates
+var scale_positions = function(positions, area) {
+    var scaled_positions = [];
+
+    for (var t = 0; t < positions.length; t++) {
+        var scaled_positions_t = [];
+        for (var i = 0; i < positions[t].length; i++) {
+            var x = scale_to_pagesize(positions[t][i][0], area);
+            var y = scale_to_pagesize(-positions[t][i][1], area) + PAGESIZE/2;
+            scaled_positions_t.push([x, y]);
+        }
+        scaled_positions.push(scaled_positions_t);
+    }
+    return scaled_positions;
+}
+
 class DotAnimation {
 
     constructor(scene = 3) {
@@ -16,17 +32,22 @@ class DotAnimation {
         this.scene = scene;
         this.duration = 42;
         this.positions = dataset[scene];
+        this.area_width = 800;
+        this.scaled_positions = scale_positions(this.positions, this.area_width);
+        
+        console.log(this.positions);
+        console.log(this.scaled_positions);
+
 
         this.k = this.positions.length;
         this.n_dots = this.positions[1].length;
         this.n_dots = 8;
         this.n_targets = 4;
 
-        this.area_width = 800;
         this.dot_radius = 20;
     
         // initializing the probe
-        this.probe_width = this.dot_radius;
+        this.probe_width = this.dot_radius/2;
         this.probe = document.getElementById(`probe`);
         this.probe.style.width = `${scale_to_pagesize(this.probe_width, this.area_width)}px`;
         this.probe.style.height = `${scale_to_pagesize(this.probe_width, this.area_width)}px`;
@@ -60,7 +81,7 @@ class DotAnimation {
 
     }
 
-    play(callback, freeze_time = 2000) {
+    play(callback, freeze_time = 500) {
         // timeline allows to control what happens after what
         var tl = anime.timeline({
                 easing: 'linear',
@@ -69,8 +90,8 @@ class DotAnimation {
         // putting the dot into starting position
         for (var i = 0; i < this.n_dots; i++) {
             tl.set(this.dots[i], {
-                translateX: scale_to_pagesize(this.positions[0][i][0], this.area_width),
-                translateY: scale_to_pagesize(-this.positions[0][i][1], this.area_width) + PAGESIZE/2,
+                translateX: this.scaled_positions[0][i][0],
+                translateY: this.scaled_positions[0][i][1],
             }, 0)
         }
         
@@ -92,32 +113,29 @@ class DotAnimation {
             var complete_function = (i == 0) ? callback : function() {return;}
             tl.add({
                 targets: this.dots[i],
-                translateX: this.positions.map(p_t => ({value: scale_to_pagesize(p_t[i][0], this.area_width), duration: this.duration})),
-                translateY: this.positions.map(p_t => ({value: scale_to_pagesize(-p_t[i][1], this.area_width) + PAGESIZE/2, duration: this.duration})),
+                translateX: this.scaled_positions.map(p_t => ({value: p_t[i][0], duration: this.duration})),
+                translateY: this.scaled_positions.map(p_t => ({value: p_t[i][1], duration: this.duration})),
                 complete: complete_function,
             }, freeze_time)
         }
         
         var probed_dot = 0;
-        var probed_frames = [50, 51, 52];
-        var displays = [];
+        var probed_frames = [2, 3, 4];
+        var opacities = [];
         for (var t=0; t < this.positions.length; t++) {
-            //var display = probed_frames.includes(t) ? "inline-block" : "none";
-            var display = t % 2 == 0 ? "inline-block" : "none";
-            displays.push(({value: display, duration: this.duration}));
+            var opacity = probed_frames.includes(t) ? 1.0 : 0.0;
+            opacities.push({value: opacity, duration: 42});
         }
 
         tl.add({
-            targets: probe,
-            display: displays,
-            translateX: this.positions.map(p_t => ({value: scale_to_pagesize(p_t[probed_dot][0], this.area_width), duration: this.duration})),
-            translateY: this.positions.map(p_t => ({value: scale_to_pagesize(-p_t[probed_dot][1], this.area_width) + PAGESIZE/2, duration: this.duration})),
+            targets: this.probe,
+            opacity: opacities,
+            translateX: this.scaled_positions.map(p_t => ({value: p_t[probed_dot][0], duration: this.duration})),
+            translateY: this.scaled_positions.map(p_t => ({value: p_t[probed_dot][1] - this.probe_width + this.dot_radius, duration: this.duration})),
         }, freeze_time)
     }
 
     get_td() {
         return this.dots.map(dot => dot.value);
     }
-
-
 }
