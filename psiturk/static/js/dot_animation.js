@@ -9,7 +9,7 @@ var scale_to_pagesize = function(value, area) {
 }
 
 // putting into the correct coordinates
-var scale_positions = function(positions, area) {
+var scale_positions = function(positions, area, rotation = 0) {
     var scaled_positions = [];
 
     for (var t = 0; t < positions.length; t++) {
@@ -49,7 +49,7 @@ class DotAnimation {
         let self = this;
 
         this.scene = scene;
-        this.duration = 42;
+        this.duration = 1;
         this.positions = dataset[scene];
         this.area_width = 800;
         this.scaled_positions = scale_positions(this.positions, this.area_width);

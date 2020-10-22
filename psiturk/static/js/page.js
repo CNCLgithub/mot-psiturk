@@ -28,9 +28,9 @@ class Page {
         this.nextbutton.disabled = true;
         this.nextbutton.style.display = 'none';
         this.response_region.style.display = 'none';
-        this.td_response_form.style.display = 'none';
-        this.pr_response_form.style.display = 'none';
-        this.pr_response_form.disabled = true;
+        // this.td_response_form.style.display = 'none';
+        //this.pr_response_form.style.display = 'none';
+        //this.pr_response_form.disabled = true;
         this.mediascreen.innerHTML = "";
     }
 
@@ -83,16 +83,16 @@ class Page {
     };
 
 
-    addResponse() {
+    addResponse(animation = undefined) {
         this.response_region.style.display = 'block';
 
         // if no response required, then simply allow to go further
         if (this.show_response == false) {
             this.allowNext();
         } else {
-            this.td_response_form.style.display = 'block';
-            this.pr_response_form.style.display = 'block';
-            this.enableResponse();
+            //this.td_response_form.style.display = 'block';
+            //this.pr_response_form.style.display = 'block';
+            this.enableResponse(animation);
         }
     }
 
@@ -104,42 +104,23 @@ class Page {
     }
 
     // The form will automatically enable the next button
-    enableResponse() {
+    enableResponse(animation) {
         let self = this;
-
-        var td_yes = document.getElementById("td_yes");
-        var td_no = document.getElementById("td_no");
-        var pr_yes = document.getElementById("pr_yes");
-        var pr_no = document.getElementById("pr_no");
-
-        var pr = [pr_yes, pr_no];
-        pr.map(x => x.disabled = true);
-
-        // registering target designation
-        // and enabling the probe responses
-        td_yes.onclick = function() {
-            self.td_response_form.value = true;
-            pr.map(x => x.disabled = false)
-        }
-        td_no.onclick = function() {
-            self.td_response_form.value = false;
-            pr.map(x => x.disabled = false)
-        }
-
-        // registering probe detection
-        pr_yes.onclick = function() {
-            self.pr_response_form.value = true;
-            self.allowNext();
-        }
-        pr_no.onclick = function() {
-            self.pr_response_form.value = false;
-            self.allowNext();
-        }
+        
+        this.mediascreen.onclick = function(e) {
+            animation.click(e, self.mediascreen);
+            // if all targets selected, then allow next
+            if (animation.get_td().filter(Boolean).length == animation.n_targets) {
+                self.allowNext();
+            } else {
+                self.nextbutton.disabled = true;
+            }
+        };
     }
 
     clearResponse() {
-        var buttons = ["td_yes", "td_no", "pr_yes", "pr_no"];
-        buttons.map(x => document.getElementById(x).checked = false);
+        // var buttons = ["td_yes", "td_no", "pr_yes", "pr_no"];
+        // buttons.map(x => document.getElementById(x).checked = false);
     }
 
     scalePage() {
@@ -211,7 +192,7 @@ class Page {
         var animation = new DotAnimation();
         var callback = function() {
             console.log("animation complete :P");
-            self.addResponse();
+            self.addResponse(animation);
         };
 
         // changing to the color of the video background
@@ -220,9 +201,6 @@ class Page {
         // video.style.transform = `rotate(${this.mov_angle}deg)`;
         this.mediascreen.style.display = 'block';
         
-        this.mediascreen.onclick = function(e) {
-            animation.click(e, self.mediascreen);
-        };
         animation.play(callback);
     }
 
