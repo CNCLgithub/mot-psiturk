@@ -28,6 +28,7 @@ class Page {
         this.response_region.style.display = 'none';
 
         this.query.style.display = 'none';
+        this.query.style.color = 'black';
         this.mediascreen.innerHTML = "";
         this.animation = undefined;
     }
@@ -182,13 +183,17 @@ class Page {
     // plays animation
     showAnimation() {
         let self = this;
-
-        this.mediascreen.innerHTML = make_animation(8);
-        this.scaleMediascreen();
-
+        
         var scene = this.mediadata[0];
         var rot_angle = this.mediadata[1];
         var probes = this.mediadata[2];
+        probes = [[1, 10], [3, 60]]; // TODO REMOFVE
+
+        var n_dots = 8;
+        var n_probes = probes.length;
+        this.mediascreen.innerHTML = make_animation(n_dots, n_probes);
+        this.scaleMediascreen();
+
 
         var animation = new DotAnimation(scene, rot_angle, probes);
         this.animation = animation;

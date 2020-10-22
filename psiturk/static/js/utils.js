@@ -71,12 +71,15 @@ var make_mov = function(movname, size) {
     return ret;
 };
 
-var make_animation = function(n_dots) {
+var make_animation = function(n_dots, n_probes) {
     var ret = ``
     for (var i=0; i<n_dots; i++) {
         ret += `<span class="dot" id="dot_${i}"></span>`;
     }
-    ret += `<span class="probe" id="probe"></span>`
+    for (var i=0; i<n_probes; i++) {
+        ret += `<span class="probe" id="probe_${i}"></span>`;
+    }
+    ret += `<span id="frame_counter"></span>`;
     return ret;
 };
 
@@ -99,4 +102,32 @@ var add_rotation_to_triallist = function(triallist, n_scenes) {
     }
 
     return triallist
+}
+
+
+var argmax = function(array) {
+    var max = array[0];
+    var max_i = 0;
+
+    for (var i=0; i<array.length; i++) {
+        if (array[i] > max) {
+            max = array[i];
+            max_i = i;
+        }
+    }
+    
+    return max_i;
+}
+
+var argmin = function(array) {
+    array = array.map(x => -x);
+    return argmax(array);
+}
+
+
+function rotate(x, y, angle) {
+    var radians = (Math.PI / 180) * angle,
+        nx = Math.cos(radians) * x + Math.sin(radians) * y,
+        ny = Math.cos(radians) * y - Math.sin(radians) * x;
+    return [nx, ny];
 }

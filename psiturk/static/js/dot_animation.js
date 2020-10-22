@@ -7,13 +7,6 @@ var scale_to_pagesize = function(value, area) {
     return value/area*PAGESIZE;
 }
 
-function rotate(x, y, angle) {
-    var radians = (Math.PI / 180) * angle,
-        nx = Math.cos(radians) * x + Math.sin(radians) * y,
-        ny = Math.cos(radians) * y - Math.sin(radians) * x;
-    return [nx, ny];
-}
-
 // putting into the correct coordinates
 var scale_positions = function(positions, area, rot_angle) {
     var scaled_positions = [];
@@ -33,24 +26,6 @@ var scale_positions = function(positions, area, rot_angle) {
     return scaled_positions;
 }
 
-var argmax = function(array) {
-    var max = array[0];
-    var max_i = 0;
-
-    for (var i=0; i<array.length; i++) {
-        if (array[i] > max) {
-            max = array[i];
-            max_i = i;
-        }
-    }
-    
-    return max_i;
-}
-
-var argmin = function(array) {
-    array = array.map(x => -x);
-    return argmax(array);
-}
 
 class DotAnimation {
 
@@ -62,10 +37,6 @@ class DotAnimation {
         this.positions = dataset[scene-1];
         this.area_width = 800;
         this.scaled_positions = scale_positions(this.positions, this.area_width, rot_angle);
-        
-        console.log(this.positions);
-        console.log(this.scaled_positions);
-
 
         this.k = this.positions.length;
         this.n_dots = this.positions[1].length;
@@ -74,12 +45,6 @@ class DotAnimation {
 
         this.dot_radius = 20;
     
-        // initializing the probe
-        this.probe_width = this.dot_radius/2;
-        this.probe = document.getElementById(`probe`);
-        this.probe.style.width = `${scale_to_pagesize(this.probe_width, this.area_width)}px`;
-        this.probe.style.height = `${scale_to_pagesize(this.probe_width, this.area_width)}px`;
-        this.probe_placements = probes;
 
         // collecting dots as JS objects
         // and initializing the dots
@@ -91,16 +56,27 @@ class DotAnimation {
             dot.style.width = `${scale_to_pagesize(this.dot_radius*2, this.area_width)}px`;
             dot.style.height = `${scale_to_pagesize(this.dot_radius*2, this.area_width)}px`;
             
-            // initializing clickability
-            // TODO perhaps will need to write some better
-            // clicking logic, so that it's easier to click
-            // (like having a general onclick for the mediascreen)
             dot.value = false;
-            
             this.dots.push(dot);
         }
+
+        // initializing the probe
+        this.probe_placements = probes;
+        this.probe_pad = 30; // how many frames are probed before and after the probed frame
+        this.probe_width = this.dot_radius/2;
+
+        this.probes = [];
+        for (var i = 0; i < probes.length; i++) {
+            var probe = document.getElementById(`probe_${i}`);
+
+            probe.style.width = `${scale_to_pagesize(this.probe_width, this.area_width)}px`;
+            probe.style.height = `${scale_to_pagesize(this.probe_width, this.area_width)}px`;
+             
+            this.probes.push(probe);
+        }
         
-        // spacebar time array
+
+        // spacebar spacetime array extravaganza
         this.spacebar = [];
         this.has_ended = false;
     }
@@ -128,17 +104,27 @@ class DotAnimation {
             backgroundColor: RED,
             duration: 1,
         })
+        // removing indication
         tl.add({
             targets: targets,
             backgroundColor: GRAY,
             duration: 1,
         }, freeze_time)
-
+        
         var starttime = new Date().getTime();
-            
-        console.log("spacebar init");
+       
+        // preventing from scrolling on space bar click
+        window.addEventListener('keydown', function(e) {
+            if(e.keyCode == 32 && e.target == document.body) {
+                e.preventDefault();
+            }
+        });
+        
+        // adding spacebar handling after release
         document.onkeyup = function(event){
-            if (event.keyCode === 32 ) {
+            if (event.keyCode === 32) {
+                event.preventDefault();
+
                 var time = new Date().getTime() - starttime;
 
                 if (time < freeze_time || self.has_ended) return;
@@ -149,6 +135,7 @@ class DotAnimation {
         };
 
         for (var i = 0; i < this.n_dots; i++) {
+            // for the first dot animation, adding a callback at the end
             var complete_function = (i == 0) ? function() {self.has_ended = true; callback();} : function() {return;}
             tl.add({
                 targets: this.dots[i],
@@ -158,20 +145,36 @@ class DotAnimation {
             }, freeze_time)
         }
         
-        var probed_dot = 0;
-        var probed_frames = [2, 3, 4];
-        var opacities = [];
-        for (var t=0; t < this.positions.length; t++) {
-            var opacity = probed_frames.includes(t) ? 1.0 : 0.0;
-            opacities.push({value: opacity, duration: 42});
-        }
+        var probe_y_offset = scale_to_pagesize(self.dot_radius - self.probe_width/2, self.area_width);
 
-        tl.add({
-            targets: this.probe,
-            opacity: opacities,
-            translateX: this.scaled_positions.map(p_t => ({value: p_t[probed_dot][0], duration: this.duration})),
-            translateY: this.scaled_positions.map(p_t => ({value: p_t[probed_dot][1] - this.probe_width + this.dot_radius, duration: this.duration})),
-        }, freeze_time)
+        for (var i = 0; i < this.probes.length; i++) {
+            // preparing the probe opacities and probe placements
+            var probe_opacities = new Array(this.positions.length);
+            probe_opacities.fill(0.0);
+
+            var t = this.probe_placements[i][1];
+            var dot = this.probe_placements[i][0];
+
+            // setting the probe for the beggining
+            tl.set(this.probes[i], {
+                translateX: this.scaled_positions[0][dot-1][0],
+                translateY: this.scaled_positions[0][dot-1][1] + probe_y_offset,
+            }, 0)
+            
+            var start = Math.max(1, t-this.probe_pad);
+            var end = Math.min(this.positions.length, t+this.probe_pad);
+            console.log(start, end);
+            for (var j = start; j < end; j++) {
+                probe_opacities[j] = 1.0;
+            }
+
+            tl.add({
+                targets: this.probes[i],
+                opacity: probe_opacities,
+                translateX: this.scaled_positions.map(p_t => ({value: p_t[dot-1][0], duration: this.duration})),
+                translateY: this.scaled_positions.map(p_t => ({value: p_t[dot-1][1] + probe_y_offset, duration: this.duration})),
+            }, freeze_time)
+        }
     }
 
     get_td() {
@@ -183,11 +186,11 @@ class DotAnimation {
     }
 
     click(e, mediascreen) {
-        console.log("screen clicked");
         var rect = mediascreen.getBoundingClientRect();
-        var x = e.clientX - rect.left; //x position within the element.
-        var y = e.clientY - rect.top;  //y position within the element.
+        var x = e.clientX - rect.left; // x position within the element.
+        var y = e.clientY - rect.top;  // y position within the element.
 
+        // for some reason only need to shift x accordintg to PAGESIZE
         x -= PAGESIZE/2;
         //y -= PAGESIZE/2;
         
@@ -203,8 +206,7 @@ class DotAnimation {
             distances.push(distance);
         }
 
-        console.log("Left? : " + x + " ; Top? : " + y + ".");
-        console.log(distances);
+        // console.log("Left? : " + x + " ; Top? : " + y + ".");
 
         var dot = this.dots[argmin(distances)];
         if (this.get_td().filter(Boolean).length < this.n_targets || dot.value == true) {

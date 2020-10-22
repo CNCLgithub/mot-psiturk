@@ -151,17 +151,6 @@ var Experiment = function(condlist) {
         // and go to the next trial
 
         starttime = new Date().getTime();
-        
-        var spacebar = [];
-
-        console.log("spacebar init");
-        document.onkeydown = function(event){
-            if(event.keyCode === 32) {
-                spacebar.push(new Date().getTime() - starttime);
-                event.preventDefault();
-                console.log("space bar clicked :P");
-            }
-        };
 
         pg.showPage(
             function() {
@@ -283,7 +272,7 @@ $(window).load(function() {
             async: false,
             success: function(data) {
                 dataset = data;
-                console.log(dataset);
+                console.log("dataset", dataset);
                 InstructionRunner(condlist);
             },
             error: function() {
