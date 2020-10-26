@@ -72,14 +72,26 @@ var make_mov = function(movname, size) {
 };
 
 var make_animation = function(n_dots, n_probes) {
-    var ret = ``
+    var ret = ``;
     for (var i=0; i<n_dots; i++) {
         ret += `<span class="dot" id="dot_${i}"></span>`;
     }
+    
+    // RANDOM FUNCTION TO CALCULATE HOW MUCH 
+    // TODO LINEAR, MAYBE NOT THE RIGHT FUNCTION FOR HOW
+    // HUMANS PERCEIVE DIFFERENCE IN LUMINANCE
+    var intercept = 0.08;
+    var slope = intercept/INIT_CONTRAST
+    var PROBE_DIFFERENCE = slope * (CONTRAST - INIT_CONTRAST) + intercept;
+
+    var pb_c = DOT_COLOR * (1.0 - PROBE_DIFFERENCE);
+    
+    console.log(DOT_COLOR, pb_c);
+
     for (var i=0; i<n_probes; i++) {
-        ret += `<span class="probe" id="probe_${i}"></span>`;
+        ret += `<span class="probe" id="probe_${i}" style="background-color: rgb(${pb_c}, ${pb_c}, ${pb_c})"></span>`;
     }
-    //ret += `Frame: <input type="number" id="frame_counter" value00">`;
+    //ret += `Frame: <input type="number" id="frame_counter" value="0">`;
     return ret;
 };
 

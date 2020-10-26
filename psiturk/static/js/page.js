@@ -18,6 +18,7 @@ class Page {
         this.scale_region = document.getElementById("scale_region");
         this.response_region = document.getElementById("response_region");
         this.query = document.getElementById("query");
+        this.probe_reminder = document.getElementById("probe_reminder");
         this.nextbutton = document.getElementById("nextbutton");
         this.mediascreen = document.getElementById("mediascreen");
         this.message = document.getElementById("message");
@@ -28,6 +29,7 @@ class Page {
         this.response_region.style.display = 'none';
 
         this.query.style.display = 'none';
+        this.probe_reminder.style.display = 'none';
         this.query.style.color = 'black';
         this.mediascreen.innerHTML = "";
         this.animation = undefined;
@@ -111,7 +113,7 @@ class Page {
             animation.click(e, self.mediascreen);
             // if all targets selected, then allow next
             if (animation.get_td().filter(Boolean).length == animation.n_targets) {
-                document.getElementById("probe_reminder").style.display = "block";
+                self.probe_reminder.style.display = "block";
                 self.allowNext();
             } else {
                 self.nextbutton.disabled = true;
@@ -155,26 +157,22 @@ class Page {
         this.mediascreen.innerHTML = make_img(this.mediadata, PAGESIZE) + "<br>";
         let self = this;
 
-        if (SCALE_COMPLETE) {
-            this.mediascreen.innerHTML = "";
-            this.instruct.innerHTML = "You have already scaled your monitor";
-            this.addResponse();
-        } else {
-            this.scale_region.style.display = 'block';
-            var slider_value = document.getElementById("scale_slider");
-            var scale_img = document.getElementById("img");
+        this.scale_region.style.display = 'block';
+        var slider_value = document.getElementById("scale_slider");
+        var contrast_img = document.getElementById("img");
+        
+        slider_value.step = 0.5;
+        slider_value.value = CONTRAST/2;
+        contrast_img.style.filter = `contrast(${CONTRAST}%)`;
+    
+        this.scaleMediascreen();
 
-            slider_value.value = PAGESIZE/500*50;
-            this.scaleMediascreen();
-
-            slider_value.oninput = function(e) {
-                PAGESIZE = (e.target.value / 50.0) * 500;
-                scale_img.width = `${PAGESIZE}px`;
-                scale_img.style.width = `${PAGESIZE}px`;
-                self.scaleMediascreen();
-                self.addResponse();
-                SCALE_COMPLETE = true;
-            }
+        slider_value.oninput = function(e) {
+            CONTRAST = e.target.value*2;
+            contrast_img.style.filter = `contrast(${CONTRAST}%)`;
+            
+            console.log(CONTRAST);
+            self.addResponse();
         }
     }
 

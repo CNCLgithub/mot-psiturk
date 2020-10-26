@@ -9,9 +9,8 @@ var RED = "#e60000";
 
 var instructions = [
     [
-        "In this task, you will observe a series of dots move on the screen.<br>" +
-        "Click <b>Next</b> to give it a try.",
-        "", "", false, 2
+        "Please adjust contrast with the slider below so that you can see 7 rectangles as well as possible.",
+        "contrast", "contrast.png", false, 0
     ],
     [
         "In this task, you will observe a series of dots move on the screen.<br>",

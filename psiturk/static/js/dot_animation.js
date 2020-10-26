@@ -34,7 +34,7 @@ class DotAnimation {
         let self = this;
 
         this.scene = scene;
-        this.duration = 41.6666;
+        this.duration = 41.6667;
         //this.duration = 1;
         this.positions = dataset[scene-1];
         this.area_width = 800;
@@ -136,7 +136,12 @@ class DotAnimation {
                     var time = new Date().getTime() - starttime;
 
                     if (time < freeze_time || self.has_ended) return;
-                    if (self.spacebar.length < 500) self.spacebar.push(time-freeze_time);
+                    if (self.spacebar.length < 500) self.spacebar.push((time-freeze_time)/self.duration);
+                    anime({
+                        targets: document.getElementById("mediascreen"),
+                        border: ["hidden", "solid"],
+                        duration: 50,
+                    })
 
                     console.log(self.spacebar);
                 }

@@ -10,8 +10,14 @@ var psiTurk = new PsiTurk(uniqueId, adServerLoc, mode);
 
 // Names of elements used in the experiment
 var PROGRESS = "progress";
-var FULL_CONTAINER= "full-container"
+var FULL_CONTAINER= "full-container";
 var PAGESIZE = 500;
+
+// stuff to do with contrast
+var INIT_CONTRAST = 73; // this is the reference
+var CONTRAST = INIT_CONTRAST; // this is what we'll register from user
+var DOT_COLOR = 180; // this is the color of the dot
+
 var SCALE_COMPLETE = false; // users do not need to repeat scaling
 
 
@@ -56,6 +62,9 @@ var InstructionRunner = function(condlist) {
     };
 
     var end_instructions = function() {
+        currentview = new Experiment(condlist);
+        return;
+
         psiTurk.finishInstructions();
         quiz(function() {
             InstructionRunner(condlist);

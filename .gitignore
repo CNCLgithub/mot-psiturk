@@ -7,3 +7,4 @@ psiturk/custom.pyc
 psiturk/participants.db
 psiturk/static/data
 *.tar.gz
+psiturk/__pycache__
