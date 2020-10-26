@@ -4,7 +4,8 @@
 // 3: Any media needed (can be an empty string)
 // 4: Whether to show the response div and what to show (false/"td"/"pr")
 
-var nTrials = 120
+var nTrials = 120;
+var RED = "#e60000";
 
 var instructions = [
     [
@@ -14,32 +15,33 @@ var instructions = [
     ],
  [
    "In this task, you will observe a series of dots move on the screen.<br>",
-   "animation", "intro/intro_no_label.mp4", true, 0
+   "animation", [10, 88, [], "normal"], false, 0
  ],
  // image with target labels (blue)
  [
-   "At the beginning of each trial, you will see <b>4</b> of the <b>8</b> dots highlighted with blue "+
-     "dashed circles designating them as <span style=\"color:blue;\"><b>targets</b></span>.<br>" +
-     "Shortly after, the blue labels will dissapear and the dots will begin to move.<br>" +
+   "At the beginning of each trial, you will see <b>4</b> of the <b>8</b> dots highlighted in red "+
+     `designating them as <span style="color:${RED};"><b>targets</b></span> <span class="query-dot"></span>.<br>` +
+     "Shortly after, the red indication will dissapear and the dots will begin to move.<br>" +
      "Your main task is to keep track of the targets as they move.",
-   "movie", "intro/intro_target_designation_snap.mp4", false, 3
+   "animation", [10, 88, [], "just_td"], false, 3
  ],
  [
-   "Here is an example of a dynamic scene with <span style=\"color:blue;\">targets</span>.<br>",
-   "movie", "intro/intro_target_designation.mp4", false, 0
+   `Here is an example of a dynamic scene with <span style=\"color:${RED};\">targets</span> <span class="query-dot"></span>.<br>`,
+   "animation", [10, 98, [], "normal"], false, 0
  ],
  [
-   "In some trials there will be a <span style=\"color:#e09b88\"><b>probe</b></span>, i.e. the color of one of the dots will change <i>slightly</i> for a very short time as can be seen below.",
-   "movie", "intro/intro_probe_snap.mp4", false, 3
+   `In some trials there will be a probe <span class="query-probe"></span> , i.e. there will appear a small square on one of the dots as can be seen below.`,
+   "animation", [8, 178, [[1, 0]], "just_probe"], false, 3
  ],
  [
-   "The following scene is with a <span style=\"color:#e09b88\">probe</span> - try to spot it!<br>" +
+    `Whenever you see a probe, you have to click <b>SPACEBAR</b> immediately to indicate that you detected the probe <span class="query-probe"></span> .<br>` +
+   `The following scene is with a probe - try to spot it and click <b>SPACEBAR</b> when you see it!<br>` + 
     "Click <b>Next</b> to give it a try.",
-   "movie", "intro/intro_probe_snap.mp4", false, 2
+   "", "", false, 2
  ],
  [
-   "The following scene is with a <span style=\"color:#e09b88\">probe</span> - try to spot it!<br>",
-   "movie", "intro/intro_probe.mp4", false, 0
+   "",
+   "animation", [9, 129, [[1, 40]], "normal"], false, 0
  ],
  [
    "At the end of each trial, <b>1</b> of the <b>8</b> dots will be highlighted in yellow" +

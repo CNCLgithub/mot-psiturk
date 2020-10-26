@@ -187,15 +187,14 @@ class Page {
         var scene = this.mediadata[0];
         var rot_angle = this.mediadata[1];
         var probes = this.mediadata[2];
-        probes = [[1, 10], [3, 60]]; // TODO REMOFVE
+        var just_td = this.mediadata[3]; // just showing target designation for instructions
 
         var n_dots = 8;
         var n_probes = probes.length;
         this.mediascreen.innerHTML = make_animation(n_dots, n_probes);
         this.scaleMediascreen();
 
-
-        var animation = new DotAnimation(scene, rot_angle, probes);
+        var animation = new DotAnimation(scene, rot_angle, probes, just_td);
         this.animation = animation;
         var callback = function() {
             console.log("animation complete :P");

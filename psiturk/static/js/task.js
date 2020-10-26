@@ -34,7 +34,7 @@ psiTurk.preloadPages(pages);
 var InstructionRunner = function(condlist) {
     psiTurk.showPage('instructions.html');
 
-    var start_instruction_page = 17;
+    var start_instruction_page = 6;
     var nTrials = condlist.length;
     var ninstruct = instructions.length;
 
@@ -58,10 +58,10 @@ var InstructionRunner = function(condlist) {
     var end_instructions = function() {
         psiTurk.finishInstructions();
         quiz(function() {
-            InstructionRunner(condlist)
+            InstructionRunner(condlist);
         },
             function() {
-                currentview = new Experiment(condlist)
+                currentview = new Experiment(condlist);
             })
     };
 

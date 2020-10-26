@@ -26,3 +26,23 @@
     right: 0;
     text-align: center;
 }
+
+.query-dot {
+    height: 20px;
+    width: 20px;
+    background-color: #e60000;
+    border-radius: 50%;
+    display: inline-block;
+
+    position: relative;
+    text-align: center;
+}
+
+.query-probe {
+    height: 10px;
+    width: 10px;
+    background-color: black;
+    display: inline-block;
+    opacity: 1.0;
+    position: relative;
+}

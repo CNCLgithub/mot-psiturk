@@ -79,7 +79,7 @@ var make_animation = function(n_dots, n_probes) {
     for (var i=0; i<n_probes; i++) {
         ret += `<span class="probe" id="probe_${i}"></span>`;
     }
-    ret += `<span id="frame_counter"></span>`;
+    ret += `Frame: <input type="number" id="frame_counter" value="0">`;
     return ret;
 };
 
