@@ -16,6 +16,7 @@ var scale_positions = function(positions, area, rot_angle) {
         for (var i = 0; i < positions[t].length; i++) {
             var x = scale_to_pagesize(positions[t][i][0], area);
             var y = scale_to_pagesize(-positions[t][i][1], area);
+
             xy = rotate(x, y, rot_angle);
             xy[1] += PAGESIZE/2;
             scaled_positions_t.push(xy);
@@ -63,7 +64,7 @@ class DotAnimation {
 
         // initializing the probe
         this.probe_placements = probes;
-        this.probe_pad = 10; // how many frames are probed before and after the probed frame
+        this.probe_pad = 1; // how many frames are probed before and after the probed frame
         this.probe_width = this.dot_radius/2;
 
         this.probes = [];

@@ -122,7 +122,7 @@ class Page {
     }
 
     scalePage() {
-        this.mediascreen.innerHTML = make_img(this.mediapath, PAGESIZE) + "<br>";
+        this.mediascreen.innerHTML = make_img(this.mediadata, PAGESIZE) + "<br>";
         let self = this;
 
         if (SCALE_COMPLETE) {
@@ -207,7 +207,7 @@ class Page {
         // video.style.transform = `rotate(${this.rot_angle}deg)`;
         this.mediascreen.style.display = 'block';
         
-        animation.play(callback);
+        animation.play(callback, 1500);
     }
 
     showImage() {
