@@ -4,7 +4,7 @@
 // 3: Any media needed (can be an empty string)
 // 4: Whether to show the response div and what to show (false/"td"/"pr")
 
-var nTrials = 120;
+var nTrials = 60;
 var RED = "#e60000";
 
 var instructions = [
@@ -31,7 +31,7 @@ var instructions = [
     ],
     [
         `In some trials there will be probes <span class="query-probe"></span> , i.e. a small square may appear on one of the dots as can be seen below.`,
-        "animation", [4, 0, [[1, 0]], "just_probe"], false, 3
+        "animation", [2, 0, [[1, 0]], "just_probe"], false, 3
     ],
     [
         `Whenever you see a probe, you have to click <b>SPACEBAR</b> immediately to indicate that you detected the probe <span class="query-probe"></span> .<br>` +

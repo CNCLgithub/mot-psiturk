@@ -73,6 +73,8 @@ class Page {
             this.showMovie();
         } else if (this.mediatype == 'scale'){
             this.scalePage();
+        } else if (this.mediatype == 'contrast'){
+            this.adjustContrast();
         } else if (this.mediatype == 'animation'){
             this.showAnimation();
         } else {
@@ -122,6 +124,33 @@ class Page {
     }
 
     scalePage() {
+        this.mediascreen.innerHTML = make_img(this.mediadata, PAGESIZE) + "<br>";
+        let self = this;
+
+        if (SCALE_COMPLETE) {
+            this.mediascreen.innerHTML = "";
+            this.instruct.innerHTML = "You have already scaled your monitor";
+            this.addResponse();
+        } else {
+            this.scale_region.style.display = 'block';
+            var slider_value = document.getElementById("scale_slider");
+            var scale_img = document.getElementById("img");
+
+            slider_value.value = PAGESIZE/500*50;
+            this.scaleMediascreen();
+
+            slider_value.oninput = function(e) {
+                PAGESIZE = (e.target.value / 50.0) * 500;
+                scale_img.width = `${PAGESIZE}px`;
+                scale_img.style.width = `${PAGESIZE}px`;
+                self.scaleMediascreen();
+                self.addResponse();
+                SCALE_COMPLETE = true;
+            }
+        }
+    }
+
+    adjustContrast() {
         this.mediascreen.innerHTML = make_img(this.mediadata, PAGESIZE) + "<br>";
         let self = this;
 
