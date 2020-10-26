@@ -34,8 +34,8 @@ class DotAnimation {
         let self = this;
 
         this.scene = scene;
-        //this.duration = 41.6666;
-        this.duration = 1;
+        this.duration = 41.6666;
+        //this.duration = 1;
         this.positions = dataset[scene-1];
         this.area_width = 800;
         this.scaled_positions = scale_positions(this.positions, this.area_width, rot_angle);
