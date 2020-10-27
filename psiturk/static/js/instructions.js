@@ -40,7 +40,7 @@ var instructions = [
     ],
     [
         "",
-        "animation", [5, 0, [[1, 48], [2, 130]], "normal"], false, 0
+        "animation", [5, 0, [[1, 48], [2, 130], [3, 80]], "normal"], false, 0
     ],
     [
         `At the end of each trial, you need to select the <span style="color:#e60000"><b>4 targets</b></span> <span class="query-dot"></span>.<br>` + 

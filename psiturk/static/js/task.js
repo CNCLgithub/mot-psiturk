@@ -17,6 +17,7 @@ var PAGESIZE = 500;
 var INIT_CONTRAST = 73; // this is the reference
 var CONTRAST = INIT_CONTRAST; // this is what we'll register from user
 var DOT_COLOR = 180; // this is the color of the dot
+var PROBE_BASE_DIFFERENCE = 0.07;
 
 var SCALE_COMPLETE = false; // users do not need to repeat scaling
 
@@ -40,7 +41,7 @@ psiTurk.preloadPages(pages);
 var InstructionRunner = function(condlist) {
     psiTurk.showPage('instructions.html');
 
-    var start_instruction_page = 20;
+    var start_instruction_page = 0;
     var nTrials = condlist.length;
     var ninstruct = instructions.length;
 
@@ -62,9 +63,6 @@ var InstructionRunner = function(condlist) {
     };
 
     var end_instructions = function() {
-        currentview = new Experiment(condlist);
-        return;
-
         psiTurk.finishInstructions();
         quiz(function() {
             InstructionRunner(condlist);

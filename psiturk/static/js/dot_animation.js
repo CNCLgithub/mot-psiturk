@@ -137,10 +137,13 @@ class DotAnimation {
 
                     if (time < freeze_time || self.has_ended) return;
                     if (self.spacebar.length < 500) self.spacebar.push((time-freeze_time)/self.duration);
+                    
+                    var mediascreen = document.getElementById("mediascreen");
                     anime({
-                        targets: document.getElementById("mediascreen"),
-                        border: ["hidden", "solid"],
-                        duration: 50,
+                        targets: mediascreen,
+                        backgroundColor: "#000000",
+                        duration: 8,
+                        direction: 'alternate'
                     })
 
                     console.log(self.spacebar);

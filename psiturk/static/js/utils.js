@@ -80,7 +80,7 @@ var make_animation = function(n_dots, n_probes) {
     // RANDOM FUNCTION TO CALCULATE HOW MUCH 
     // TODO LINEAR, MAYBE NOT THE RIGHT FUNCTION FOR HOW
     // HUMANS PERCEIVE DIFFERENCE IN LUMINANCE
-    var intercept = 0.08;
+    var intercept = PROBE_BASE_DIFFERENCE;
     var slope = intercept/INIT_CONTRAST
     var PROBE_DIFFERENCE = slope * (CONTRAST - INIT_CONTRAST) + intercept;
 
