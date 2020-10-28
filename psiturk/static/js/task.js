@@ -40,7 +40,7 @@ psiTurk.preloadPages(pages);
 
 var InstructionRunner = function(condlist) {
     psiTurk.showPage('instructions.html');
-    alert(`is it mobile or tablet: ${isMobileTablet()}`);
+
 
     var start_instruction_page = 0;
     var nTrials = condlist.length;
@@ -317,6 +317,12 @@ $(window).load(function() {
         });
 
     };
+   
+    if (isMobileTablet()){
+        console.log("mobile browser detected");
+        alert(`Sorry, but your browser is not supported. Please switch to a desktop browser or return the hit.`);
+        return;
+    }
 
     load_condlist();
 });
