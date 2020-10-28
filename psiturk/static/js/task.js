@@ -317,10 +317,10 @@ $(window).load(function() {
         });
 
     };
-   
+  
     if (isMobileTablet()){
         console.log("mobile browser detected");
-        alert(`Sorry, but your browser is not supported. Please switch to a desktop browser or return the hit.`);
+        alert(`Sorry, but mobile or tablet browsers are not supported. Please switch to a desktop browser or return the hit.`);
         return;
     }
 
