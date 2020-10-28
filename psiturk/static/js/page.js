@@ -100,6 +100,12 @@ class Page {
     }
 
     allowNext() {
+        console.log("allowNext")
+
+        // TODO debugging purposes
+        this.nextbutton.disabled = false;
+        this.nextbutton.style.display = "block";
+
         sleep(this.next_delay*1000).then(() => {
             this.nextbutton.disabled = false;
             this.nextbutton.style.display = "block";
@@ -182,10 +188,11 @@ class Page {
 
     goFullscreen() {
         this.mediascreen.innerHTML = make_fullscreen_button();
-
+        
         var fs_button = document.getElementById("fullscreen_button");
         let self = this;
         fs_button.onclick = function() {
+            console.log("click registered for FS");
             openFullscreen();
             self.addResponse();
         }
@@ -253,7 +260,8 @@ class Page {
         this.mediascreen.style.borderStyle = 'solid';
         this.mediascreen.style.borderColor = 'rgba(0, 0, 0, .0)';
         
-        animation.play(callback, 1500);
+        var freeze_time = trial_type == "just_movement" ? 0 : 2000;
+        animation.play(callback, freeze_time);
     }
 
     showImage() {

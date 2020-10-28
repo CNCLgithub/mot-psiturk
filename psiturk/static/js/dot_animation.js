@@ -34,8 +34,8 @@ class DotAnimation {
         let self = this;
 
         this.scene = scene;
-        //this.duration = 41.6667;
-        this.duration = 1;
+        this.duration = 41.6667;
+        //this.duration = 1;
         this.positions = dataset[scene-1];
         this.area_width = 800;
         this.scaled_positions = scale_positions(this.positions, this.area_width, rot_angle);
@@ -84,7 +84,7 @@ class DotAnimation {
         this.min_select_distance = scale_to_pagesize(this.dot_radius*4, this.area_width);
     }
 
-    play(callback, freeze_time = 500) {
+    play(callback, freeze_time = 2000) {
         let self = this;
 
         // timeline allows to control what happens after what

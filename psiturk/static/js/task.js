@@ -40,8 +40,9 @@ psiTurk.preloadPages(pages);
 
 var InstructionRunner = function(condlist) {
     psiTurk.showPage('instructions.html');
+    alert(`is it mobile or tablet: ${isMobileTablet()}`);
 
-    var start_instruction_page = 20;
+    var start_instruction_page = 0;
     var nTrials = condlist.length;
     var ninstruct = instructions.length;
 
@@ -63,9 +64,9 @@ var InstructionRunner = function(condlist) {
     };
 
     var end_instructions = function() {
-        // skipping quiz for debugging
-        currentview = new Experiment(condlist);
-        return;
+        // TODO skipping quiz for debugging
+        //currentview = new Experiment(condlist);
+        //return;
 
         psiTurk.finishInstructions();
         quiz(function() {
