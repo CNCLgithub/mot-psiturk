@@ -246,6 +246,9 @@ class Page {
 
         // video.style.transform = `rotate(${this.rot_angle}deg)`;
         this.mediascreen.style.display = 'block';
+
+        this.mediascreen.style.borderStyle = 'solid';
+        this.mediascreen.style.borderColor = 'rgba(0, 0, 0, .0)';
         
         animation.play(callback, 1500);
     }
