@@ -144,3 +144,22 @@ function rotate(x, y, angle) {
         ny = Math.cos(radians) * y - Math.sin(radians) * x;
     return [nx, ny];
 }
+
+
+var openFullscreen = function() {
+    console.log("going full screen");
+    var elem = document.documentElement;
+
+    if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) { /* Safari */
+        elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { /* IE11 */
+        elem.msRequestFullscreen();
+    }
+}
+
+function make_fullscreen_button() {
+    var ret = `<button type="button" style="margin: 0 auto" id="fullscreen_button">Switch to full screen mode</button>`;
+    return ret;
+}

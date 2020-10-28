@@ -41,7 +41,7 @@ psiTurk.preloadPages(pages);
 var InstructionRunner = function(condlist) {
     psiTurk.showPage('instructions.html');
 
-    var start_instruction_page = 0;
+    var start_instruction_page = 1;
     var nTrials = condlist.length;
     var ninstruct = instructions.length;
 

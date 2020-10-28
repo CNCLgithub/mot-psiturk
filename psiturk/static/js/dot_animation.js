@@ -1,4 +1,3 @@
-
 var RED = "#e60000";
 var GRAY = "#bbb";
 var BLACK = "#000000";

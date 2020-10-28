@@ -8,3 +8,4 @@ psiturk/participants.db
 psiturk/static/data
 *.tar.gz
 psiturk/__pycache__
+psiturk.sif

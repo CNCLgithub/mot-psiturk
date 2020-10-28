@@ -39,6 +39,7 @@ class Page {
     // The `callback` argument can be used to handle page progression
     // or subject responses
     showPage(callback) {
+
         // create callback to progress when done
         this.nextbutton.onclick = function() {
             callback();
@@ -46,8 +47,6 @@ class Page {
 
         this.addText();
         this.addMedia();
-
-
     }
 
     retrieveResponse() {
@@ -77,6 +76,8 @@ class Page {
             this.scalePage();
         } else if (this.mediatype == 'contrast'){
             this.adjustContrast();
+        } else if (this.mediatype == 'fullscreen'){
+            this.goFullscreen();
         } else if (this.mediatype == 'animation'){
             this.showAnimation();
         } else {
@@ -172,6 +173,17 @@ class Page {
             contrast_img.style.filter = `contrast(${CONTRAST}%)`;
             
             console.log(CONTRAST);
+            self.addResponse();
+        }
+    }
+
+    goFullscreen() {
+        this.mediascreen.innerHTML = make_fullscreen_button();
+
+        var fs_button = document.getElementById("fullscreen_button");
+        let self = this;
+        fs_button.onclick = function() {
+            openFullscreen();
             self.addResponse();
         }
     }

@@ -9,9 +9,27 @@ var RED = "#e60000";
 
 var instructions = [
     [
-        "Please adjust contrast with the slider below so that you can see 7 rectangles as well as possible.",
-        "contrast", "contrast.png", false, 0
+        "This experiment requires you to be using a <b>desktop browser</b>. The program should have automatically detected whether you are using a phone or a tablet. If you are using a phone or tablet and it has still allowed you to continue, please reopen the experiment in a desktop browser now.<br>" +
+        "If you can only use a tablet or a phone, and are unable to switch to a desktop browser, please quit the experiment and return the HIT.<br>" +
+        "If you are on a desktop browser -- great! Click <b>Next</b> to continue.",
+        "", "", false, 3
     ],
+    [
+        "This experiment requires you to be in <b>full screen</b> mode. The experiment will switch to full screen mode when you press the button below.<br>" +
+        "Don't worry, we will return your browser to its normal size later. If you do need to leave in the middle, you can press the ESC key -- but please avoid this;<br>" +
+        "your responses are only useful to us if you stay in this mode until the end of the experiment.",
+        "fullscreen", "", false, 1
+    ],
+    [
+        "<b>Before we begin, follow the instructions below to setup your display.</b><br><hr />" +
+        "<p>Please sit comfortably in front of you monitor and outstretch your arm holding a credit card (or a similary sized ID card). <br>" +
+        "<p>Adjust the size of the image using the slider until its <strong>width</strong> matches the width of your credit card (or ID card).",
+        "scale", "generic_cc.png", false, 1
+    ],
+    //[
+        //"Please adjust contrast with the slider below so that you can see 7 rectangles as well as possible.",
+        //"contrast", "contrast.png", false, 0
+    //],
     [
         "In this task, you will observe a series of dots move on the screen.<br>",
         "animation", [1, 0, [], "normal"], false, 0
@@ -60,12 +78,6 @@ var instructions = [
     [
         "",
         "animation", [7, 0, [[1, 66], [2, 120]], "normal"], true, 0
-    ],
-    [
-        "<b>Before we begin, follow the instructions below to setup your display.</b><br><hr />" +
-        "<p>Please sit comfortably in front of you monitor and outstretch your arm holding a credit card (or a similary sized ID card). <br>" +
-        "<p>Adjust the size of the image using the slider until its <strong>width</strong> matches the width of your credit card (or ID card).",
-        "scale", "generic_cc.png", false, 1
     ],
     [
         "Please maintain this arm-length distance from your monitor for the duration of this experiment (20-25 minutes).",
