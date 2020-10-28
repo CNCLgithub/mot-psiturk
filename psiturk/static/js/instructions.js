@@ -5,7 +5,7 @@
 // 4: Whether to show the response div and what to show (false/"td"/"pr")
 
 var nTrials = 60;
-var RED = "#e60000";
+var RED = "#eb3434";
 
 var instructions = [
     [

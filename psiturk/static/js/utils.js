@@ -71,7 +71,7 @@ var make_mov = function(movname, size) {
     return ret;
 };
 
-var make_animation = function(n_dots, n_probes) {
+var make_animation = function(n_dots, n_probes, trial_type) {
     var ret = ``;
     for (var i=0; i<n_dots; i++) {
         ret += `<span class="dot" id="dot_${i}"></span>`;
@@ -92,6 +92,9 @@ var make_animation = function(n_dots, n_probes) {
         ret += `<span class="probe" id="probe_${i}" style="background-color: rgb(${pb_c}, ${pb_c}, ${pb_c})"></span>`;
     }
     //ret += `Frame: <input type="number" id="frame_counter" value="0">`;
+    if (trial_type == "just_probe") {
+        ret += `<span class="probe-indicator" id="indicator"></span>`;
+    }
     return ret;
 };
 

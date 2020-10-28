@@ -1,4 +1,5 @@
-var RED = "#e60000";
+var RED = "#eb3434";
+var PINK = "#d45b81";
 var GRAY = "#bbb";
 var BLACK = "#000000";
 
@@ -33,8 +34,8 @@ class DotAnimation {
         let self = this;
 
         this.scene = scene;
-        this.duration = 41.6667;
-        //this.duration = 1;
+        //this.duration = 41.6667;
+        this.duration = 1;
         this.positions = dataset[scene-1];
         this.area_width = 800;
         this.scaled_positions = scale_positions(this.positions, this.area_width, rot_angle);
@@ -80,6 +81,7 @@ class DotAnimation {
         this.spacebar = [];
         this.has_ended = false;
         this.type = type;
+        this.min_select_distance = scale_to_pagesize(this.dot_radius*4, this.area_width);
     }
 
     play(callback, freeze_time = 500) {
@@ -191,9 +193,22 @@ class DotAnimation {
             }, 0)
             
             if (this.type == "just_probe") {
+                var indicator = document.getElementById("indicator");
+                
+                var indicator_width = scale_to_pagesize(this.dot_radius*4, this.area_width)
+                indicator.style.width = `${indicator_width}px`;
+                indicator.style.height = `${indicator_width}px`;
+
+                var indicator_y_offset = scale_to_pagesize(this.dot_radius, this.area_width) - indicator_width/2;
+
+                tl.set(indicator, {
+                    translateX: this.scaled_positions[0][dot-1][0],
+                    translateY: this.scaled_positions[0][dot-1][1] + indicator_y_offset,
+                })
+
                 tl.set(this.probes[i], {
                     opacity: 1.0,
-                }, 0)
+                })
                 callback();
                 return;
             }
@@ -224,15 +239,14 @@ class DotAnimation {
     get_spacebar() {
         return this.spacebar;
     }
-
-    click(e, mediascreen) {
+    
+    get_closest_dot(e, mediascreen) {
         var rect = mediascreen.getBoundingClientRect();
         var x = e.clientX - rect.left; // x position within the element.
         var y = e.clientY - rect.top;  // y position within the element.
 
-        // for some reason only need to shift x accordintg to PAGESIZE
         x -= PAGESIZE/2;
-        //y -= PAGESIZE/2;
+        y -= scale_to_pagesize(this.dot_radius, this.area_width) + 5;
         
         var distances = [];
         for (var i = 0; i < this.dots.length; i++) {
@@ -247,8 +261,49 @@ class DotAnimation {
         }
 
         // console.log("Left? : " + x + " ; Top? : " + y + ".");
+    
+        var i = argmin(distances)
+        var dot = this.dots[i];
+        var min_distance = distances[i];
 
-        var dot = this.dots[argmin(distances)];
+        return [dot, min_distance];
+    }
+
+    onmousemove(e, mediascreen) {
+        var rect = mediascreen.getBoundingClientRect();
+        var x = e.clientX - rect.left; // x position within the element.
+        var y = e.clientY - rect.top;  // y position within the element.
+        
+        // clear previous borderStyle
+        for (var i = 0; i < this.dots.length; i++) {
+            //this.dots[i].style.backgroundColor = this.dots[i].value ? RED : GRAY;
+            this.dots[i].style.border = 'none';
+        }
+
+        // if outside boundaries, do nothing
+        if (x < 0 || x > PAGESIZE || y < 0 || y > PAGESIZE) {
+            return;
+        }
+
+        var values = this.get_closest_dot(e, mediascreen);
+        var distance = values[1];
+        console.log(distance);
+        if (distance <= this.min_select_distance) {
+            console.log('distance small enough');
+            var dot = values[0];
+            dot.style.border = '2px solid'
+            dot.style.borderColor = '#ff8593';
+        }
+    }
+
+    click(e, mediascreen) {
+        var values = this.get_closest_dot(e, mediascreen);
+        var distance = values[1];
+        if (distance > this.min_select_distance) {
+            return;
+        }
+        var dot = values[0];
+
         if (this.get_td().filter(Boolean).length < this.n_targets || dot.value == true) {
             dot.value = (!dot.value);
             dot.style.backgroundColor = dot.value ? RED : GRAY;

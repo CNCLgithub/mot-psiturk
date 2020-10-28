@@ -120,6 +120,9 @@ class Page {
                 self.nextbutton.disabled = true;
             }
         };
+        document.onmousemove = function(e) {
+            animation.onmousemove(e, self.mediascreen);
+        };
     }
 
     clearResponse() {
@@ -227,14 +230,14 @@ class Page {
         var scene = this.mediadata[0];
         var rot_angle = this.mediadata[1];
         var probes = this.mediadata[2];
-        var just_td = this.mediadata[3]; // just showing target designation for instructions
+        var trial_type = this.mediadata[3]; // just showing target designation probe for instructions
 
         var n_dots = 8;
         var n_probes = probes.length;
-        this.mediascreen.innerHTML = make_animation(n_dots, n_probes);
+        this.mediascreen.innerHTML = make_animation(n_dots, n_probes, trial_type);
         this.scaleMediascreen();
 
-        var animation = new DotAnimation(scene, rot_angle, probes, just_td);
+        var animation = new DotAnimation(scene, rot_angle, probes, trial_type);
         this.animation = animation;
         var callback = function() {
             console.log("animation complete :P");
