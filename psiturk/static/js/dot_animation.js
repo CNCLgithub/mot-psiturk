@@ -146,7 +146,7 @@ class DotAnimation {
                     var time = new Date().getTime() - starttime;
 
                     if (time < freeze_time || self.has_ended) return;
-                    if (self.spacebar.length < 500) self.spacebar.push((time-freeze_time)/self.duration);
+                    if (self.spacebar.length < 500) self.spacebar.push(time-freeze_time);
                     
                     var mediascreen = document.getElementById("mediascreen");
                     mediascreen.style.border = 'solid';
