@@ -82,6 +82,15 @@ class DotAnimation {
         this.has_ended = false;
         this.type = type;
         this.min_select_distance = scale_to_pagesize(this.dot_radius*4, this.area_width);
+        
+        // further things we record
+        // we record time as class variable when the trial ends
+        this.trial_end_time = 0;
+        // mouse clicks of the form [timestamp, coordinates, dot_index (0 if no dot selected/deselected),
+        // select_deselect (true if selecting, false if deselecting)]
+        this.mouseclicks = [];
+        // mouse moves of the form [timestamp, coordinates]
+        this.mousemoves = [];
     }
 
     play(callback, freeze_time = 2000) {
@@ -152,10 +161,16 @@ class DotAnimation {
                     console.log(self.spacebar);
                 }
             };
+            
+            var end_function = function() {
+                self.has_ended = true;
+                self.trial_end_time = new Date().getTime();
+                callback();
+            }
 
             for (var i = 0; i < this.n_dots; i++) {
                 // for the first dot animation, adding a callback at the end
-                var complete_function = (i == 0) ? function() {self.has_ended = true; callback();} : function() {return;}
+                var complete_function = (i == 0) ? end_function : function() {return;}
                 tl.add({
                     targets: this.dots[i],
                     translateX: this.scaled_positions.map(p_t => ({value: p_t[i][0], duration: this.duration})),
@@ -239,6 +254,14 @@ class DotAnimation {
     get_spacebar() {
         return this.spacebar;
     }
+
+    get_mouseclicks() {
+        return this.mouseclicks;
+    }
+
+    get_mousemoves() {
+        return this.mousemoves;
+    }
     
     get_closest_dot(e, mediascreen) {
         var rect = mediascreen.getBoundingClientRect();
@@ -246,7 +269,7 @@ class DotAnimation {
         var y = e.clientY - rect.top;  // y position within the element.
 
         x -= PAGESIZE/2;
-        y -= scale_to_pagesize(this.dot_radius, this.area_width) + 5;
+        //y -= scale_to_pagesize(this.dot_radius, this.area_width);
         
         var distances = [];
         for (var i = 0; i < this.dots.length; i++) {
@@ -266,11 +289,13 @@ class DotAnimation {
         var dot = this.dots[i];
         var min_distance = distances[i];
 
-        return [dot, min_distance];
+        return [dot, min_distance, [x,y-PAGESIZE/2], i];
     }
 
     onmousemove(e, mediascreen) {
         var rect = mediascreen.getBoundingClientRect();
+        console.log(e.clientX, rect.left)
+        console.log(e.clientY, rect.top)
         var x = e.clientX - rect.left; // x position within the element.
         var y = e.clientY - rect.top;  // y position within the element.
         
@@ -285,6 +310,9 @@ class DotAnimation {
             return;
         }
 
+        var time = new Date().getTime() - this.trial_end_time;
+        this.mousemoves.push([time, [x-PAGESIZE/2, y-PAGESIZE/2]]);
+
         var values = this.get_closest_dot(e, mediascreen);
         var distance = values[1];
         console.log(distance);
@@ -297,18 +325,32 @@ class DotAnimation {
     }
 
     click(e, mediascreen) {
+        var time = new Date().getTime() - this.trial_end_time;
+
         var values = this.get_closest_dot(e, mediascreen);
         var distance = values[1];
+        var coordinates = values[2];
+
+        var select_deselect = false;
+        // dot_index = 0 means that no dot was selected or deselected
+        var dot_index = 0;
+
         if (distance > this.min_select_distance) {
+            this.mouseclicks.push([time, coordinates, dot_index, select_deselect]);
             return;
         }
         var dot = values[0];
 
         if (this.get_td().filter(Boolean).length < this.n_targets || dot.value == true) {
+            // true if selecting the dot, false if deselecting
+            select_deselect = (!dot.value);
+            dot_index = values[3] + 1;
+
             dot.value = (!dot.value);
             dot.style.backgroundColor = dot.value ? RED : GRAY;
         } else {
             console.log("can't select more than ", this.n_targets);
         }
+        this.mouseclicks.push([time, coordinates, dot_index, select_deselect]);
     }
 }

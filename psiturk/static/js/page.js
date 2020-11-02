@@ -50,7 +50,9 @@ class Page {
     }
 
     retrieveResponse() {
-        return [this.animation.get_td(), this.animation.get_spacebar()]
+        var response = [this.animation.get_td(), this.animation.get_spacebar(), this.animation.get_mouseclicks(), this.animation.get_mousemoves()]
+        console.log(response)
+        return response
     }
 
 
