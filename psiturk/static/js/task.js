@@ -21,6 +21,8 @@ var PROBE_BASE_DIFFERENCE = 0.07;
 
 var SCALE_COMPLETE = false; // users do not need to repeat scaling
 
+var PROLIFIC_ID = "";
+var PROLIFIC_RETURN_URL = "https://app.prolific.co/submissions/complete?cc=782B6DAB";
 
 // All pages to be loaded
 var pages = [
@@ -35,12 +37,34 @@ psiTurk.preloadPages(pages);
 
 
 /****************
+ * Prolific ID  *
+ ****************/
+
+var ProlificID = function(condlist) {
+    while (true) {
+        PROLIFIC_ID = prompt("Please enter Prolific ID to proceed:");
+        // a small check on length
+        if (PROLIFIC_ID.length == 24) {
+            psiTurk.recordTrialData({
+                'prolific_id': PROLIFIC_ID,
+            });
+            //condlist = [condlist[0]]; // debug
+            console.log("prolific_id recorded:", PROLIFIC_ID);
+            console.log(condlist);
+            InstructionRunner(condlist);
+            return;
+        }
+        alert("Make sure you enter the Prolific ID correctly, please try again.");
+    }
+}
+
+
+/****************
  * Instructions  *
  ****************/
 
 var InstructionRunner = function(condlist) {
     psiTurk.showPage('instructions.html');
-
 
     var start_instruction_page = 20;
     var nTrials = condlist.length;
@@ -182,6 +206,8 @@ var Experiment = function(condlist) {
             'TrialName': condlist[cIdx],
             'Target': rep[0],
             'Probe': rep[1],
+            'MouseClicks': rep[2],
+            'MouseMoves': rep[3],
             'ReactionTime': rt,
             'IsInstruction': false,
             'TrialOrder': cIdx
@@ -256,6 +282,7 @@ var Questionnaire = function() {
         psiTurk.saveData({
             success: function() {
                 psiTurk.completeHIT(); // when finished saving compute bonus, the quit
+                window.location.replace(PROLIFIC_RETURN_URL); // redirecting back to Prolific
             },
             error: prompt_resubmit
         });
@@ -285,7 +312,8 @@ $(window).load(function() {
             success: function(data) {
                 dataset = data;
                 console.log("dataset", dataset);
-                InstructionRunner(condlist);
+                //InstructionRunner(condlist);
+                ProlificID(condlist);
             },
             error: function() {
                 setTimeout(500, do_load);
