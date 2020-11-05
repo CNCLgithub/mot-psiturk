@@ -22,7 +22,6 @@ var PROBE_BASE_DIFFERENCE = 0.07;
 var SCALE_COMPLETE = false; // users do not need to repeat scaling
 
 var PROLIFIC_ID = "";
-var PROLIFIC_RETURN_URL = "https://app.prolific.co/submissions/complete?cc=782B6DAB";
 
 // All pages to be loaded
 var pages = [
@@ -48,7 +47,7 @@ var ProlificID = function(condlist) {
             psiTurk.recordTrialData({
                 'prolific_id': PROLIFIC_ID,
             });
-            //condlist = [condlist[0]]; // debug
+            //condlist = condlist.slice(0, 10); // debug
             console.log("prolific_id recorded:", PROLIFIC_ID);
             console.log(condlist);
             InstructionRunner(condlist);
@@ -282,7 +281,7 @@ var Questionnaire = function() {
         psiTurk.saveData({
             success: function() {
                 psiTurk.completeHIT(); // when finished saving compute bonus, the quit
-                window.location.replace(PROLIFIC_RETURN_URL); // redirecting back to Prolific
+                //window.location.replace(PROLIFIC_RETURN_URL); // redirecting back to Prolific
             },
             error: prompt_resubmit
         });

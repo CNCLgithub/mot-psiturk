@@ -4,7 +4,7 @@
 CONTLINK="library://mebelledonne/default/psiturk-apline:1.0.0"
 # Path to put data
 DATAPATH="psiturk/static/"
-DATALINK="https://yale.box.com/shared/static/jvrp4ludc5vvea3wh88nhfhl9em392gd.gz"
+DATALINK="https://yale.box.com/shared/static/bv2t3tglmis47znvg7c796nmbtzrdt1t.gz"
 
 
 usage="$(basename "$0") [targets...] -- setup an environmental components of project
