@@ -17,11 +17,16 @@ var PAGESIZE = 500;
 var INIT_CONTRAST = 73; // this is the reference
 var CONTRAST = INIT_CONTRAST; // this is what we'll register from user
 var DOT_COLOR = 180; // this is the color of the dot
-var PROBE_BASE_DIFFERENCE = 0.07;
+//var PROBE_BASE_DIFFERENCE = 0.07;
+//var PROBE_BASE_DIFFERENCE = 0.15;
+var PROBE_BASE_DIFFERENCE = 0.11;
 
 var SCALE_COMPLETE = false; // users do not need to repeat scaling
 
 var PROLIFIC_ID = "";
+var N_TRIALS = 40;
+var START_INSTRUCTION = 0;
+//var SKIP_INSTRUCTIONS = TRUE;
 
 // All pages to be loaded
 var pages = [
@@ -47,9 +52,7 @@ var ProlificID = function(condlist) {
             psiTurk.recordTrialData({
                 'prolific_id': PROLIFIC_ID,
             });
-            //condlist = condlist.slice(0, 10); // debug
             console.log("prolific_id recorded:", PROLIFIC_ID);
-            console.log(condlist);
             InstructionRunner(condlist);
             return;
         }
@@ -65,7 +68,7 @@ var ProlificID = function(condlist) {
 var InstructionRunner = function(condlist) {
     psiTurk.showPage('instructions.html');
 
-    var start_instruction_page = 20;
+    var start_instruction_page = START_INSTRUCTION;
     var nTrials = condlist.length;
     var ninstruct = instructions.length;
 
@@ -333,6 +336,8 @@ $(window).load(function() {
             success: function(data) {
                 console.log("condition", condition);
                 condlist = data[condition];
+    		condlist = condlist.slice(0, N_TRIALS);
+            	console.log(condlist);
                 load_dataset(condlist);
             },
             error: function() {

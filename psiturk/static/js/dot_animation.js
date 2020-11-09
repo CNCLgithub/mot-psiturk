@@ -37,6 +37,11 @@ class DotAnimation {
         this.duration = 41.6667;
         //this.duration = 1;
         this.positions = dataset[scene-1];
+	console.log(type);
+	if (type == "just_movement" || type == "shorter") {
+		this.positions = this.positions.slice(0, 160);	
+		console.log("shortened trial", this.positions);
+	}
         this.area_width = 800;
         this.scaled_positions = scale_positions(this.positions, this.area_width, rot_angle);
 
@@ -158,7 +163,7 @@ class DotAnimation {
                         direction: 'alternate',
                     })
 
-                    console.log(self.spacebar);
+                    //console.log(self.spacebar);
                 }
             };
             
@@ -231,12 +236,12 @@ class DotAnimation {
             var start = Math.max(1, t-this.probe_pad);
             var end = Math.min(this.positions.length, t+this.probe_pad);
 
-            console.log(start, end);
+            //console.log(start, end);
             for (var j = start; j <= end; j++) {
                 probe_opacities[j] = 1.0;
             }
 
-            console.log(probe_opacities);
+            //console.log(probe_opacities);
 
             tl.add({
                 targets: this.probes[i],
@@ -294,8 +299,8 @@ class DotAnimation {
 
     onmousemove(e, mediascreen) {
         var rect = mediascreen.getBoundingClientRect();
-        console.log(e.clientX, rect.left)
-        console.log(e.clientY, rect.top)
+        //console.log(e.clientX, rect.left)
+        //console.log(e.clientY, rect.top)
         var x = e.clientX - rect.left; // x position within the element.
         var y = e.clientY - rect.top;  // y position within the element.
         
@@ -315,9 +320,9 @@ class DotAnimation {
 
         var values = this.get_closest_dot(e, mediascreen);
         var distance = values[1];
-        console.log(distance);
+        //console.log(distance);
         if (distance <= this.min_select_distance) {
-            console.log('distance small enough');
+            //console.log('distance small enough');
             var dot = values[0];
             dot.style.border = '2px solid'
             dot.style.borderColor = '#ff8593';
