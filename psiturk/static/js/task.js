@@ -24,9 +24,9 @@ var PROBE_BASE_DIFFERENCE = 0.11;
 var SCALE_COMPLETE = false; // users do not need to repeat scaling
 
 var PROLIFIC_ID = "";
-var N_TRIALS = 40;
+var N_TRIALS = 5;
 var START_INSTRUCTION = 0;
-//var SKIP_INSTRUCTIONS = TRUE;
+var SKIP_INSTRUCTIONS = true;
 
 // All pages to be loaded
 var pages = [
@@ -45,8 +45,9 @@ psiTurk.preloadPages(pages);
  ****************/
 
 var ProlificID = function(condlist) {
-    // DEBUG
-    InstructionRunner(condlist); return;
+    if (SKIP_INSTRUCTIONS) {
+        InstructionRunner(condlist); return;
+    }
 
     while (true) {
         PROLIFIC_ID = prompt("Please enter Prolific ID to proceed:");
@@ -71,7 +72,7 @@ var ProlificID = function(condlist) {
 var InstructionRunner = function(condlist) {
     psiTurk.showPage('instructions.html');
 
-    var start_instruction_page = START_INSTRUCTION;
+    var start_instruction_page = SKIP_INSTRUCTIONS ? 100 : START_INSTRUCTION;
     var nTrials = condlist.length;
     var ninstruct = instructions.length;
 
@@ -93,8 +94,9 @@ var InstructionRunner = function(condlist) {
     };
 
     var end_instructions = function() {
-        // DEBUG
-        currentview = new Experiment(condlist); return;
+        if (SKIP_INSTRUCTIONS) {
+            currentview = new Experiment(condlist); return;
+        }
 
         psiTurk.finishInstructions();
         quiz(function() {
@@ -179,11 +181,6 @@ var Experiment = function(condlist) {
             end_experiment();
         }
         
-        var scene = condlist[curIdx][0];
-        var rot_angle = condlist[curIdx][1];
-        var probes = condlist[curIdx][2];
-        
-        // var pg = new Page("", "movie", filename, true, 0, rot_angle);
         var pg = new Page("", "animation", condlist[curIdx], true, 0);
 
         pg.showProgress(curIdx, condlist.length);
@@ -212,6 +209,7 @@ var Experiment = function(condlist) {
             'Probe': rep[1],
             'MouseClicks': rep[2],
             'MouseMoves': rep[3],
+            'DifficultyArray': rep[4],
             'ReactionTime': rt,
             'IsInstruction': false,
             'TrialOrder': cIdx

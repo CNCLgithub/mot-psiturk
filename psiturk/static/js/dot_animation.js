@@ -44,6 +44,7 @@ class DotAnimation {
         //this.duration = 1;
         this.positions = dataset[scene-1];
 	console.log(type);
+
 	if (type == "just_movement" || type == "shorter") {
 		this.positions = this.positions.slice(0, 160);	
 		console.log("shortened trial", this.positions);
@@ -74,6 +75,7 @@ class DotAnimation {
         }
 
         // initializing the probe
+        console.log("PROBES:", probes);
         this.probe_placements = probes;
         this.probe_pad = 1; // how many frames are probed before and after the probed frame
         this.probe_width = this.dot_radius/2;
@@ -134,7 +136,8 @@ class DotAnimation {
                     targets: mediascreen,
                     borderColor: RED,
                     borderWidth: self.has_ended ? `0px` : `${self.difficulty * 10}px`,
-                    easing: 'easeOutExpo',
+                    //easing: 'easeOutExpo',
+                    easing: 'linear',
                     duration: self.has_ended ? 2000 : 200,
                     complete: self.has_ended ? function(){return;} : update_difficulty_border
                 })
@@ -169,7 +172,6 @@ class DotAnimation {
                 }
             });
             
-
             // adding spacebar handling on press
             document.onkeydown = function(event){
                 if (event.keyCode === 32) {
@@ -180,18 +182,6 @@ class DotAnimation {
 
                     if (time < freeze_time || self.has_ended) return;
                     if (self.spacebar.length < 500) self.spacebar.push(time-freeze_time);
-                    
-                    // var mediascreen = document.getElementById("mediascreen");
-                    // mediascreen.style.border = 'solid';
-                    //anime({
-                        //targets: mediascreen,
-                        //borderColor: 'rgba(0, 0, 0, 1)',
-                        //easing: 'easeOutExpo',
-                        //duration: 20,
-                        //direction: 'alternate',
-                    //})
-
-                    //console.log(self.spacebar);
                 }
             }
             
@@ -295,6 +285,10 @@ class DotAnimation {
 
     get_mousemoves() {
         return this.mousemoves;
+    }
+
+    get_difficulty_array() {
+        return this.difficulty_array;
     }
     
     get_closest_dot(e, mediascreen) {

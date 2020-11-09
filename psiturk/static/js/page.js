@@ -50,7 +50,7 @@ class Page {
     }
 
     retrieveResponse() {
-        var response = [this.animation.get_td(), this.animation.get_spacebar(), this.animation.get_mouseclicks(), this.animation.get_mousemoves()]
+        var response = [this.animation.get_td(), this.animation.get_spacebar(), this.animation.get_mouseclicks(), this.animation.get_mousemoves(), this.animation.get_difficulty_array()]
         //console.log(response)
         return response
     }
@@ -238,7 +238,8 @@ class Page {
         
         var scene = this.mediadata[0];
         var rot_angle = this.mediadata[1];
-        var probes = this.mediadata[2];
+        // var probes = this.mediadata[2];
+        var probes = []; // no probes in difficulty experiment
         var trial_type = this.mediadata[3]; // just showing target designation probe for instructions
 
         var n_dots = 8;
