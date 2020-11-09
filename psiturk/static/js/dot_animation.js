@@ -7,6 +7,12 @@ var scale_to_pagesize = function(value, area) {
     return value/area*PAGESIZE;
 }
 
+//// difficulty in [0.0, 1.0]
+//// return RGB (using the fact that it's clipped at 1)
+//var difficulty_color = function(difficulty) {
+    //return [510.0*difficulty, 510.0*(1 - difficulty), 0.0];
+//}
+
 // putting into the correct coordinates
 var scale_positions = function(positions, area, rot_angle) {
     var scaled_positions = [];
@@ -91,6 +97,9 @@ class DotAnimation {
         this.mouseclicks = [];
         // mouse moves of the form [timestamp, coordinates]
         this.mousemoves = [];
+
+        this.difficulty_array = [];
+        this.difficulty = 0.0;
     }
 
     play(callback, freeze_time = 2000) {
@@ -110,6 +119,22 @@ class DotAnimation {
         }
         
         if (this.type != "just_probe") {
+            var mediascreen = document.getElementById("mediascreen");
+            var update_difficulty_border = function() {
+                if (!self.has_ended) {
+                    self.difficulty = Math.max(self.difficulty - 0.13, 0.0);
+                    self.difficulty_array.push(self.difficulty);
+                }
+                anime({
+                    targets: mediascreen,
+                    borderColor: RED,
+                    borderWidth: self.has_ended ? `0px` : `${self.difficulty * 10}px`,
+                    easing: 'easeOutExpo',
+                    duration: self.has_ended ? 2000 : 200,
+                    complete: self.has_ended ? function(){return;} : update_difficulty_border
+                })
+            }
+
             // indicicating the targets
             var targets = this.dots.slice(0, this.n_targets)
             tl.add({
@@ -127,6 +152,7 @@ class DotAnimation {
                 targets: targets,
                 backgroundColor: GRAY,
                 duration: 1,
+                complete: update_difficulty_border,
             }, freeze_time)
             
             var starttime = new Date().getTime();
@@ -138,33 +164,36 @@ class DotAnimation {
                 }
             });
             
-            // adding spacebar handling after release
-            document.onkeyup = function(event){
+
+            // adding spacebar handling on press
+            document.onkeydown = function(event){
                 if (event.keyCode === 32) {
                     event.preventDefault();
 
+                    self.difficulty = Math.min(self.difficulty + 0.23, 1.0);
                     var time = new Date().getTime() - starttime;
 
                     if (time < freeze_time || self.has_ended) return;
                     if (self.spacebar.length < 500) self.spacebar.push(time-freeze_time);
                     
-                    var mediascreen = document.getElementById("mediascreen");
-                    mediascreen.style.border = 'solid';
-                    anime({
-                        targets: mediascreen,
-                        borderColor: 'rgba(0, 0, 0, 1)',
-                        easing: 'easeOutExpo',
-                        duration: 20,
-                        direction: 'alternate',
-                    })
+                    // var mediascreen = document.getElementById("mediascreen");
+                    // mediascreen.style.border = 'solid';
+                    //anime({
+                        //targets: mediascreen,
+                        //borderColor: 'rgba(0, 0, 0, 1)',
+                        //easing: 'easeOutExpo',
+                        //duration: 20,
+                        //direction: 'alternate',
+                    //})
 
                     console.log(self.spacebar);
                 }
-            };
+            }
             
             var end_function = function() {
                 self.has_ended = true;
                 self.trial_end_time = new Date().getTime();
+                console.log(self.difficulty_array);
                 callback();
             }
 

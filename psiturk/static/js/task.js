@@ -40,6 +40,9 @@ psiTurk.preloadPages(pages);
  ****************/
 
 var ProlificID = function(condlist) {
+    // DEBUG
+    InstructionRunner(condlist); return;
+
     while (true) {
         PROLIFIC_ID = prompt("Please enter Prolific ID to proceed:");
         // a small check on length
@@ -87,9 +90,8 @@ var InstructionRunner = function(condlist) {
     };
 
     var end_instructions = function() {
-        // TODO skipping quiz for debugging
-        //currentview = new Experiment(condlist);
-        //return;
+        // DEBUG
+        currentview = new Experiment(condlist); return;
 
         psiTurk.finishInstructions();
         quiz(function() {
