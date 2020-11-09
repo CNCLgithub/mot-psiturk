@@ -51,7 +51,7 @@ class Page {
 
     retrieveResponse() {
         var response = [this.animation.get_td(), this.animation.get_spacebar(), this.animation.get_mouseclicks(), this.animation.get_mousemoves()]
-        console.log(response)
+        //console.log(response)
         return response
     }
 
@@ -102,11 +102,11 @@ class Page {
     }
 
     allowNext() {
-        console.log("allowNext")
+        //console.log("allowNext")
 
         // TODO debugging purposes
-        this.nextbutton.disabled = false;
-        this.nextbutton.style.display = "block";
+        //this.nextbutton.disabled = false;
+        //this.nextbutton.style.display = "block";
 
         sleep(this.next_delay*1000).then(() => {
             this.nextbutton.disabled = false;
@@ -249,7 +249,7 @@ class Page {
         var animation = new DotAnimation(scene, rot_angle, probes, trial_type);
         this.animation = animation;
         var callback = function() {
-            console.log("animation complete :P");
+            // console.log("animation complete :P");
             self.addResponse(animation);
         };
 
