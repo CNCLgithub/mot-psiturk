@@ -3,15 +3,13 @@ var PINK = "#d45b81";
 var GRAY = "#bbb";
 var BLACK = "#000000";
 
+var DIFF_BORDER_TIME = 30;
+var DIFF_DOWN = 0.05; // how much difficulty goes down automatically within DIFF_BORDER_TIME
+var DIFF_UP = 0.25; // how much difficulty goes up when SPACEBAR pressed
+
 var scale_to_pagesize = function(value, area) {
     return value/area*PAGESIZE;
 }
-
-//// difficulty in [0.0, 1.0]
-//// return RGB (using the fact that it's clipped at 1)
-//var difficulty_color = function(difficulty) {
-    //return [510.0*difficulty, 510.0*(1 - difficulty), 0.0];
-//}
 
 // putting into the correct coordinates
 var scale_positions = function(positions, area, rot_angle) {
@@ -126,19 +124,20 @@ class DotAnimation {
         }
         
         if (this.type != "just_probe") {
-            var mediascreen = document.getElementById("mediascreen");
+            var starttime = new Date().getTime();
+
             var update_difficulty_border = function() {
                 if (!self.has_ended) {
-                    self.difficulty = Math.max(self.difficulty - 0.13, 0.0);
-                    self.difficulty_array.push(self.difficulty);
+                    self.difficulty = Math.max(self.difficulty - DIFF_DOWN, 0.0);
+                    //self.difficulty_array.push(self.difficulty);
                 }
                 anime({
                     targets: mediascreen,
-                    borderColor: RED,
-                    borderWidth: self.has_ended ? `0px` : `${self.difficulty * 10}px`,
+                    borderColor: `rgba(235, 52, 52, ${self.difficulty})`,
+                    borderWidth: `10px`,
                     //easing: 'easeOutExpo',
                     easing: 'linear',
-                    duration: self.has_ended ? 2000 : 200,
+                    duration: self.has_ended ? 2000 : DIFF_BORDER_TIME,
                     complete: self.has_ended ? function(){return;} : update_difficulty_border
                 })
             }
@@ -163,7 +162,6 @@ class DotAnimation {
                 complete: update_difficulty_border,
             }, freeze_time)
             
-            var starttime = new Date().getTime();
            
             // preventing from scrolling on space bar click
             window.addEventListener('keydown', function(e) {
@@ -177,7 +175,7 @@ class DotAnimation {
                 if (event.keyCode === 32) {
                     event.preventDefault();
 
-                    self.difficulty = Math.min(self.difficulty + 0.23, 1.0);
+                    self.difficulty = Math.min(self.difficulty + DIFF_UP, 1.0);
                     var time = new Date().getTime() - starttime;
 
                     if (time < freeze_time || self.has_ended) return;
@@ -191,15 +189,27 @@ class DotAnimation {
                 console.log(self.difficulty_array);
                 callback();
             }
+            
+            var update_difficulty_array = function() {
+                console.log("update_difficulty_array");
+                var time = new Date().getTime() - starttime;
+
+                if (time > freeze_time) {
+                    self.difficulty_array.push([time-freeze_time, self.difficulty]);
+                }
+                // if (!self.has_ended) update_difficulty_array(); 
+            }
 
             for (var i = 0; i < this.n_dots; i++) {
                 // for the first dot animation, adding a callback at the end
                 var complete_function = (i == 0) ? end_function : function() {return;}
+                var update_function = (i == 0) ? update_difficulty_array : function() {return;}
                 tl.add({
                     targets: this.dots[i],
                     translateX: this.scaled_positions.map(p_t => ({value: p_t[i][0], duration: this.duration})),
                     translateY: this.scaled_positions.map(p_t => ({value: p_t[i][1], duration: this.duration})),
                     complete: complete_function,
+                    update: update_function
                 }, freeze_time)
             }
 
