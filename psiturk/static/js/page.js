@@ -134,8 +134,9 @@ class Page {
     }
 
     clearResponse() {
-        // var buttons = ["td_yes", "td_no", "pr_yes", "pr_no"];
-        // buttons.map(x => document.getElementById(x).checked = false);
+        document.onmousemove = function(e) {return;};
+        document.onkeydown = function(e) {return;};
+        this.mediascreen.style.border = "none";
     }
 
     scalePage() {

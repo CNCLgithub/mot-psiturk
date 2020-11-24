@@ -24,9 +24,10 @@ var PROBE_BASE_DIFFERENCE = 0.11;
 var SCALE_COMPLETE = false; // users do not need to repeat scaling
 
 var PROLIFIC_ID = "";
-var N_TRIALS = 5;
+var N_TRIALS = 20;
 var START_INSTRUCTION = 0;
-var SKIP_INSTRUCTIONS = true;
+var SKIP_INSTRUCTIONS = false;
+var SKIP_PROLIFIC = false;
 
 // All pages to be loaded
 var pages = [
@@ -45,7 +46,7 @@ psiTurk.preloadPages(pages);
  ****************/
 
 var ProlificID = function(condlist) {
-    if (SKIP_INSTRUCTIONS) {
+    if (SKIP_INSTRUCTIONS || SKIP_PROLIFIC) {
         InstructionRunner(condlist); return;
     }
 

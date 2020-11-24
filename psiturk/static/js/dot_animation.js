@@ -3,9 +3,10 @@ var PINK = "#d45b81";
 var GRAY = "#bbb";
 var BLACK = "#000000";
 
-var DIFF_BORDER_TIME = 30;
+var FRAME_DURATION = 41.6667;
+var DIFF_BORDER_TIME = FRAME_DURATION;
 var DIFF_DOWN = 0.05; // how much difficulty goes down automatically within DIFF_BORDER_TIME
-var DIFF_UP = 0.25; // how much difficulty goes up when SPACEBAR pressed
+var DIFF_UP = 0.35; // how much difficulty goes up when SPACEBAR pressed
 
 var scale_to_pagesize = function(value, area) {
     return value/area*PAGESIZE;
@@ -38,10 +39,8 @@ class DotAnimation {
         let self = this;
 
         this.scene = scene;
-        this.duration = 41.6667;
-        //this.duration = 1;
+        this.duration = FRAME_DURATION;
         this.positions = dataset[scene-1];
-	console.log(type);
 
 	if (type == "just_movement" || type == "shorter") {
 		this.positions = this.positions.slice(0, 160);	
@@ -57,7 +56,6 @@ class DotAnimation {
 
         this.dot_radius = 20;
     
-
         // collecting dots as JS objects
         // and initializing the dots
         this.dots = [];
@@ -73,7 +71,6 @@ class DotAnimation {
         }
 
         // initializing the probe
-        console.log("PROBES:", probes);
         this.probe_placements = probes;
         this.probe_pad = 1; // how many frames are probed before and after the probed frame
         this.probe_width = this.dot_radius/2;
@@ -105,6 +102,9 @@ class DotAnimation {
 
         this.difficulty_array = [];
         this.difficulty = 0.0;
+
+        this.mediascreen = document.getElementById("mediascreen");
+        this.mediascreen.style.borderWidth = `10px`;
     }
 
     play(callback, freeze_time = 2000) {
@@ -127,15 +127,14 @@ class DotAnimation {
             var starttime = new Date().getTime();
 
             var update_difficulty_border = function() {
+                // console.log((new Date().getTime() - starttime), self.difficulty);
                 if (!self.has_ended) {
-                    self.difficulty = Math.max(self.difficulty - DIFF_DOWN, 0.0);
-                    //self.difficulty_array.push(self.difficulty);
+                    self.difficulty -= DIFF_DOWN
+                    self.difficulty = Math.max(self.difficulty, 0.0);
                 }
                 anime({
-                    targets: mediascreen,
+                    targets: self.mediascreen,
                     borderColor: `rgba(235, 52, 52, ${self.difficulty})`,
-                    borderWidth: `10px`,
-                    //easing: 'easeOutExpo',
                     easing: 'linear',
                     duration: self.has_ended ? 2000 : DIFF_BORDER_TIME,
                     complete: self.has_ended ? function(){return;} : update_difficulty_border
@@ -148,8 +147,10 @@ class DotAnimation {
                 targets: targets,
                 backgroundColor: RED,
                 duration: 1,
+                complete: update_difficulty_border,
             })
             if (this.type == "just_td") {
+                this.has_ended = true;
                 callback();
                 return;
             }
@@ -159,7 +160,6 @@ class DotAnimation {
                 targets: targets,
                 backgroundColor: GRAY,
                 duration: 1,
-                complete: update_difficulty_border,
             }, freeze_time)
             
            
@@ -184,14 +184,13 @@ class DotAnimation {
             }
             
             var end_function = function() {
+                console.log("trial ended");
                 self.has_ended = true;
                 self.trial_end_time = new Date().getTime();
-                console.log(self.difficulty_array);
                 callback();
             }
             
             var update_difficulty_array = function() {
-                console.log("update_difficulty_array");
                 var time = new Date().getTime() - starttime;
 
                 if (time > freeze_time) {
@@ -209,7 +208,7 @@ class DotAnimation {
                     translateX: this.scaled_positions.map(p_t => ({value: p_t[i][0], duration: this.duration})),
                     translateY: this.scaled_positions.map(p_t => ({value: p_t[i][1], duration: this.duration})),
                     complete: complete_function,
-                    update: update_function
+                    // update: update_function
                 }, freeze_time)
             }
 
@@ -265,12 +264,9 @@ class DotAnimation {
             var start = Math.max(1, t-this.probe_pad);
             var end = Math.min(this.positions.length, t+this.probe_pad);
 
-            //console.log(start, end);
             for (var j = start; j <= end; j++) {
                 probe_opacities[j] = 1.0;
             }
-
-            //console.log(probe_opacities);
 
             tl.add({
                 targets: this.probes[i],
@@ -321,8 +317,6 @@ class DotAnimation {
             distances.push(distance);
         }
 
-        // console.log("Left? : " + x + " ; Top? : " + y + ".");
-    
         var i = argmin(distances)
         var dot = this.dots[i];
         var min_distance = distances[i];
@@ -332,8 +326,6 @@ class DotAnimation {
 
     onmousemove(e, mediascreen) {
         var rect = mediascreen.getBoundingClientRect();
-        //console.log(e.clientX, rect.left)
-        //console.log(e.clientY, rect.top)
         var x = e.clientX - rect.left; // x position within the element.
         var y = e.clientY - rect.top;  // y position within the element.
         
@@ -353,9 +345,7 @@ class DotAnimation {
 
         var values = this.get_closest_dot(e, mediascreen);
         var distance = values[1];
-        //console.log(distance);
         if (distance <= this.min_select_distance) {
-            //console.log('distance small enough');
             var dot = values[0];
             dot.style.border = '2px solid'
             dot.style.borderColor = '#ff8593';

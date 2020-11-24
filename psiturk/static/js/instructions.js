@@ -52,7 +52,7 @@ var instructions = [
     //],
     [
         "In this task, you will observe a series of dots move on the screen.<br>",
-        "animation", [1, 0, [], "just_movement"], false, 2
+        "animation", [54, 0, [], "just_movement"], false, 2
     ],
     // image with target labels (blue)
     [
@@ -61,11 +61,11 @@ var instructions = [
         "Shortly after, the red indication will dissapear and the dots will begin to move.<br>" +
         "Your main task is to keep track of the targets as they move.<br>" +
         "Click <b>Next</b> to see an example of a dynamic scene with targets.",
-        "animation", [2, 0, [], "just_td"], false, 3
+        "animation", [55, 0, [], "just_td"], false, 3
     ],
     [
         "",
-        "animation", [3, 0, [], "shorter"], false, 0
+        "animation", [56, 0, [], "shorter"], false, 0
     ],
     [
         `At the end of each instance of the task, you need to select the <span style="color:#e60000"><b>4 targets</b></span> <span class="query-dot"></span> by clicking on the dots with your mouse.<br>` + 
@@ -77,33 +77,34 @@ var instructions = [
     ],
     [
         "",
-        "animation", [6, 0, [], "shorter"], true, 0
+        "animation", [57, 0, [], "shorter"], true, 0
     ],
     [
-        `Sometimes during movement there will be probes <span class="query-probe"></span>, i.e. a very dim small square may appear for a very short time on one of the dots as illustrated below.`,
-        "animation", [2, 0, [[1, 0]], "just_probe"], false, 3
+        `Importantly, you also have to indicate <b>how <span style="color:${RED}">difficult</span> it is to track the four targets at each moment</b>.` +
+        `You have to do that by pressing the <b>SPACEBAR</b> continuously: <br>` +
+        `1) Increasing the <i>frequency</i> of the presses when tracking is getting more difficult.<br>`+
+        `2) Reducing the <i>frequency</i> when tracking is getting easier.<br>` +
+        `The border of the screen will turn more or less red according to the frequency of your presses, giving you a sense of the difficulty you are reporting at each moment.`,
+        "", "", false, 5
     ],
     [
-        `Whenever you see a probe, you have to press <b>SPACEBAR</b> immediately to indicate that you detected the probe <span class="query-probe"></span>.<br>` +
-        `We recommend that you keep one of your fingers on SPACEBAR throughout the experiment, so that you can press it immediately after seeing the probe.<br>` +
-        `When you press SPACEBAR, a black border will appear to indicate that your press has been registered.<br>` +
-        `The following scene will have a couple of probes - try to spot them and press SPACEBAR when you see them!<br>` + 
+        "In other words, simply press SPACEBAR more when tracking gets difficult, and press SPACEBAR less when tracking gets easier.<br>" +
         "Click <b>Next</b> to give it a try.",
         "", "", false, 2
     ],
     [
         "",
-        "animation", [5, 0, [[1, 48], [2, 140], [4, 104], [3, 80]], "shorter"], false, 0
+        "animation", [59, 0, [], "shorter"], false, 1
     ],
     [
         `Remember, the <i>main task</i> is to correctly identify the <span style="color:#e60000"><b>4 targets</b></span> <span class="query-dot"></span>.<br>` +
-        `The secondary task is to immediately press <b>SPACEBAR</b> whenever you see a probe <span class="query-probe"></span>.<br>` +
-        "Click <b>Next</b> to try doing the task (pressing SPACEBAR for probes and indicating targets at the end).",
+        `The secondary task is to continuously press <b>SPACEBAR</b> during movement to indicate how <b>difficult</b> tracking currently is.<br>` +
+        "Click <b>Next</b> to try doing the task (pressing SPACEBAR for difficulty and indicating targets at the end).",
         "", "", false, 3
     ],
     [
         "",
-        "animation", [7, 0, [[1, 66], [2, 180], [3, 240], [1, 330], [4, 300]], "normal"], true, 0
+        "animation", [58, 0, [], "normal"], true, 0
     ],
     [
         `Please maintain this arm-length distance from your monitor for the duration of this experiment (${EXP_DURATION-10}-${EXP_DURATION-5} minutes).`,
