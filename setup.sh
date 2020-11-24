@@ -13,6 +13,8 @@ supported targets:
     data : pull data
 "
 
+git submodule update --init
+
 [ $# -eq 0 ] || [[ "${@}" =~ "help" ]] && echo "$usage"
 
 # container setup

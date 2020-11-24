@@ -80,15 +80,15 @@ var instructions = [
         "animation", [57, 0, [], "shorter"], true, 0
     ],
     [
-        `Importantly, you also have to indicate <b>how <span style="color:${RED}">difficult</span> it is to track the four targets at each moment</b>.` +
-        `You have to do that by pressing the <b>SPACEBAR</b> continuously: <br>` +
+        `Importantly, you also have to indicate <b>how <span style="color:${RED}">difficult</span> it is to track the four targets at each moment</b>. ` +
+        `You have to do that by pressing the <b>SPACEBAR</b> throughout the movement: <br>` +
         `1) Increasing the <i>frequency</i> of the presses when tracking is getting more difficult.<br>`+
         `2) Reducing the <i>frequency</i> when tracking is getting easier.<br>` +
         `The border of the screen will turn more or less red according to the frequency of your presses, giving you a sense of the difficulty you are reporting at each moment.`,
         "", "", false, 5
     ],
     [
-        "In other words, simply press SPACEBAR more when tracking gets difficult, and press SPACEBAR less when tracking gets easier.<br>" +
+        "In other words, simply press SPACEBAR more frequently when tracking gets difficult, and press SPACEBAR less frequently when tracking gets easier.<br>" +
         "Click <b>Next</b> to give it a try.",
         "", "", false, 2
     ],
@@ -98,7 +98,7 @@ var instructions = [
     ],
     [
         `Remember, the <i>main task</i> is to correctly identify the <span style="color:#e60000"><b>4 targets</b></span> <span class="query-dot"></span>.<br>` +
-        `The secondary task is to continuously press <b>SPACEBAR</b> during movement to indicate how <b>difficult</b> tracking currently is.<br>` +
+        `The secondary task is to press <b>SPACEBAR</b> throughout the movement to indicate how <b>difficult</b> tracking currently is.<br>` +
         "Click <b>Next</b> to try doing the task (pressing SPACEBAR for difficulty and indicating targets at the end).",
         "", "", false, 3
     ],

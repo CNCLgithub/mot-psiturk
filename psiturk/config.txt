@@ -14,8 +14,8 @@ browser_exclude_rule = MSIE, mobile, tablet, Safari
 database_url = sqlite:///participants.db
 table_name = exp1_live
 [Server Parameters]
-#host = 0.0.0.0
-host = localhost
+host = 0.0.0.0
+#host = localhost
 port = 22367
 cutoff_time = 30
 logfile = server.log
@@ -28,7 +28,7 @@ secret_key = 'this is my secret key which is hard to guess, i should change this
 #certfile = <path_to.crt>
 #keyfile = <path_to.key>
 [Task Parameters]
-experiment_code_version = 5.01
+experiment_code_version = 5.02
 num_conds = 1
 num_counters = 1
 [Shell Parameters]
