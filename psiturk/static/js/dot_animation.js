@@ -4,6 +4,7 @@ var GRAY = "#bbb";
 var BLACK = "#000000";
 
 var FRAME_DURATION = 41.6667;
+var FRAME_DURATION = 1;
 var DIFF_BORDER_TIME = FRAME_DURATION;
 var DIFF_DOWN = 0.06; // how much difficulty goes down automatically within DIFF_BORDER_TIME
 var DIFF_UP = 0.3; // how much difficulty goes up when SPACEBAR pressed
@@ -14,7 +15,6 @@ var scale_to_pagesize = function(value, area) {
 
 // putting into the correct coordinates
 var scale_positions = function(positions, area, rot_angle, y_shift) {
-    console.log(y_shift);
     var scaled_positions = [];
 
     for (var t = 0; t < positions.length; t++) {
@@ -79,7 +79,6 @@ class DotAnimation {
         // initializing the pylons
         var pylon_positions = [[[-150,-150],[-150,150],[150,150],[150,-150]]];
         pylon_positions = scale_positions(pylon_positions, this.area_width, rot_angle, this.pylon_radius)
-        console.log(pylon_positions)
         for (var i = 0; i < this.n_pylons; i++) {
             var pylon = document.getElementById(`pylon_${i}`);
             

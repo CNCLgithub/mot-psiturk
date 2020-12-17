@@ -24,7 +24,7 @@ var PROBE_BASE_DIFFERENCE = 0.11;
 var SCALE_COMPLETE = false; // users do not need to repeat scaling
 
 var PROLIFIC_ID = "";
-var N_TRIALS = 20;
+var N_TRIALS = 2;
 var START_INSTRUCTION = 0;
 var SKIP_INSTRUCTIONS = true;
 var SKIP_PROLIFIC = true;
@@ -204,15 +204,16 @@ var Experiment = function(condlist) {
 
     // Record the subject's response for a given trial.
     var register_response = function(trialPage, cIdx) {
+        console.log("register_response");
         var rt = new Date().getTime() - starttime;
         var rep = trialPage.retrieveResponse();
         psiTurk.recordTrialData({
             'TrialName': condlist[cIdx],
             'Target': rep[0],
-            'Probe': rep[1],
+            'Spacebar': rep[1],
             'MouseClicks': rep[2],
             'MouseMoves': rep[3],
-            'DifficultyArray': rep[4],
+            'Difficulty': rep[4],
             'ReactionTime': rt,
             'IsInstruction': false,
             'TrialOrder': cIdx

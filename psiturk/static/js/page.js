@@ -19,6 +19,7 @@ class Page {
         this.response_region = document.getElementById("response_region");
         this.query = document.getElementById("query");
         this.reminder = document.getElementById("reminder");
+        this.difficulty_slider_region = document.getElementById("difficulty_slider_region");
         this.difficulty_slider = document.getElementById("difficulty_slider");
         this.nextbutton = document.getElementById("nextbutton");
         this.mediascreen = document.getElementById("mediascreen");
@@ -31,7 +32,8 @@ class Page {
 
         this.query.style.display = 'none';
         this.reminder.style.display = 'none';
-        this.difficulty_slider.style.display = 'none';
+        this.difficulty_slider_region.style.display = 'none';
+        this.difficulty_slider.value = this.difficulty_slider.defaultValue;
         this.query.style.color = 'black';
         this.mediascreen.innerHTML = "";
         this.animation = undefined;
@@ -52,13 +54,14 @@ class Page {
     }
     
     get_difficulty() {
-        return this.difficulty_slider.value
+        console.log("get_difficulty: ", this.difficulty_slider.value);
+        return this.difficulty_slider.value;
     }
 
     retrieveResponse() {
-        var response = [this.animation.get_td(), this.animation.get_spacebar(), this.animation.get_mouseclicks(), this.animation.get_mousemoves(), this.get_difficulty()]
+        var response = [this.animation.get_td(), this.animation.get_spacebar(), this.animation.get_mouseclicks(), this.animation.get_mousemoves(), this.get_difficulty()];
         //console.log(response)
-        return response
+        return response;
     }
 
 
@@ -129,8 +132,7 @@ class Page {
             // if all targets selected, then allow next
             if (animation.get_td().filter(Boolean).length == animation.n_targets) {
                 //self.reminder.style.display = "block";
-                self.difficulty_slider.style.value = 50;
-                self.difficulty_slider.style.display = "block";
+                self.difficulty_slider_region.style.display = "block";
             } else {
                 self.nextbutton.disabled = true;
             }
@@ -195,7 +197,6 @@ class Page {
             CONTRAST = e.target.value*2;
             contrast_img.style.filter = `contrast(${CONTRAST}%)`;
             
-            console.log(CONTRAST);
             self.addResponse();
         }
     }
