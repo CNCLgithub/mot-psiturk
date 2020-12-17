@@ -58,3 +58,17 @@
     border-style: dashed;
     border-color: red;
 }
+
+.pylon {
+    height: 100px;
+    width: 100px;
+    background: radial-gradient(#cacde3, #e6e6e6);
+    border-radius: 50%;
+    display: inline-block;
+
+    position: absolute;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    text-align: center;
+}

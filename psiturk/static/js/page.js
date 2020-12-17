@@ -18,7 +18,8 @@ class Page {
         this.scale_region = document.getElementById("scale_region");
         this.response_region = document.getElementById("response_region");
         this.query = document.getElementById("query");
-        this.probe_reminder = document.getElementById("probe_reminder");
+        this.reminder = document.getElementById("reminder");
+        this.difficulty_slider = document.getElementById("difficulty_slider");
         this.nextbutton = document.getElementById("nextbutton");
         this.mediascreen = document.getElementById("mediascreen");
         this.message = document.getElementById("message");
@@ -29,7 +30,8 @@ class Page {
         this.response_region.style.display = 'none';
 
         this.query.style.display = 'none';
-        this.probe_reminder.style.display = 'none';
+        this.reminder.style.display = 'none';
+        this.difficulty_slider.style.display = 'none';
         this.query.style.color = 'black';
         this.mediascreen.innerHTML = "";
         this.animation = undefined;
@@ -48,9 +50,13 @@ class Page {
         this.addText();
         this.addMedia();
     }
+    
+    get_difficulty() {
+        return this.difficulty_slider.value
+    }
 
     retrieveResponse() {
-        var response = [this.animation.get_td(), this.animation.get_spacebar(), this.animation.get_mouseclicks(), this.animation.get_mousemoves(), this.animation.get_difficulty_array()]
+        var response = [this.animation.get_td(), this.animation.get_spacebar(), this.animation.get_mouseclicks(), this.animation.get_mousemoves(), this.get_difficulty()]
         //console.log(response)
         return response
     }
@@ -122,8 +128,9 @@ class Page {
             animation.click(e, self.mediascreen);
             // if all targets selected, then allow next
             if (animation.get_td().filter(Boolean).length == animation.n_targets) {
-                self.probe_reminder.style.display = "block";
-                self.allowNext();
+                //self.reminder.style.display = "block";
+                self.difficulty_slider.style.value = 50;
+                self.difficulty_slider.style.display = "block";
             } else {
                 self.nextbutton.disabled = true;
             }
@@ -131,6 +138,10 @@ class Page {
         document.onmousemove = function(e) {
             animation.onmousemove(e, self.mediascreen);
         };
+
+        difficulty_slider.oninput = function(e) {
+            self.allowNext();
+        }
     }
 
     clearResponse() {
@@ -244,8 +255,9 @@ class Page {
         var trial_type = this.mediadata[3]; // just showing target designation probe for instructions
 
         var n_dots = 8;
+        var n_pylons = 4;
         var n_probes = probes.length;
-        this.mediascreen.innerHTML = make_animation(n_dots, n_probes, trial_type);
+        this.mediascreen.innerHTML = make_animation(n_dots, n_probes, n_pylons, trial_type);
         this.scaleMediascreen();
 
         var animation = new DotAnimation(scene, rot_angle, probes, trial_type);

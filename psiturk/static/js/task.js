@@ -11,7 +11,7 @@ var psiTurk = new PsiTurk(uniqueId, adServerLoc, mode);
 // Names of elements used in the experiment
 var PROGRESS = "progress";
 var FULL_CONTAINER= "full-container";
-var PAGESIZE = 500;
+var PAGESIZE = 350;
 
 // stuff to do with contrast
 var INIT_CONTRAST = 73; // this is the reference
@@ -26,8 +26,10 @@ var SCALE_COMPLETE = false; // users do not need to repeat scaling
 var PROLIFIC_ID = "";
 var N_TRIALS = 20;
 var START_INSTRUCTION = 0;
-var SKIP_INSTRUCTIONS = false;
-var SKIP_PROLIFIC = false;
+var SKIP_INSTRUCTIONS = true;
+var SKIP_PROLIFIC = true;
+
+var ENABLE_DIFFICULTY_PRESSES = false;
 
 // All pages to be loaded
 var pages = [

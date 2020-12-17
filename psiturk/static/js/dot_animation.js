@@ -13,14 +13,16 @@ var scale_to_pagesize = function(value, area) {
 }
 
 // putting into the correct coordinates
-var scale_positions = function(positions, area, rot_angle) {
+var scale_positions = function(positions, area, rot_angle, y_shift) {
+    console.log(y_shift);
     var scaled_positions = [];
 
     for (var t = 0; t < positions.length; t++) {
         var scaled_positions_t = [];
         for (var i = 0; i < positions[t].length; i++) {
+
             var x = scale_to_pagesize(positions[t][i][0], area);
-            var y = scale_to_pagesize(-positions[t][i][1], area);
+            var y = scale_to_pagesize(-positions[t][i][1]-y_shift, area);
 
             xy = rotate(x, y, rot_angle);
             xy[1] += PAGESIZE/2;
@@ -47,14 +49,17 @@ class DotAnimation {
 		console.log("shortened trial", this.positions);
 	}
         this.area_width = 800;
-        this.scaled_positions = scale_positions(this.positions, this.area_width, rot_angle);
+        this.dot_radius = 20;
+        this.pylon_radius = 50;
+        this.scaled_positions = scale_positions(this.positions, this.area_width, rot_angle, this.dot_radius);
 
         this.k = this.positions.length;
         this.n_dots = this.positions[1].length;
         this.n_dots = 8;
+        this.n_pylons = 4;
         this.n_targets = 4;
 
-        this.dot_radius = 20;
+    
     
         // collecting dots as JS objects
         // and initializing the dots
@@ -69,6 +74,91 @@ class DotAnimation {
             dot.value = false;
             this.dots.push(dot);
         }
+
+
+        // initializing the pylons
+        var pylon_positions = [[[-150,-150],[-150,150],[150,150],[150,-150]]];
+        pylon_positions = scale_positions(pylon_positions, this.area_width, rot_angle, this.pylon_radius)
+        console.log(pylon_positions)
+        for (var i = 0; i < this.n_pylons; i++) {
+            var pylon = document.getElementById(`pylon_${i}`);
+            
+            // scaling the size of the dot
+            pylon.style.width = `${scale_to_pagesize(this.pylon_radius*2, this.area_width)}px`;
+            pylon.style.height = `${scale_to_pagesize(this.pylon_radius*2, this.area_width)}px`;
+
+            anime.set(pylon, {
+                translateX: pylon_positions[0][i][0],
+                translateY: pylon_positions[0][i][1],
+            }, 0)
+        }
+
+
+        // initializing the probe
+        this.probe_placements = probes;
+        this.probe_pad = 1; // how many frames are probed before and after the probed frame
+        this.probe_width = this.dot_radius/2;
+
+        this.probes = [];
+        for (var i = 0; i < probes.length; i++) {
+            var probe = document.getElementById(`probe_${i}`);
+
+            probe.style.width = `${scale_to_pagesize(this.probe_width, this.area_width)}px`;
+            probe.style.height = `${scale_to_pagesize(this.probe_width, this.area_width)}px`;
+             
+            this.probes.push(probe);
+        }
+        
+        // spacebar spacetime array extravaganza
+        this.spacebar = [];
+        this.has_ended = false;
+        this.type = type;
+        this.min_select_distance = scale_to_pagesize(this.dot_radius*4, this.area_width);
+        
+        // further things we record
+        // we record time as class variable when the trial ends
+        this.trial_end_time = 0;
+        // mouse clicks of the form [timestamp, coordinates, dot_index (0 if no dot selected/deselected),
+        // select_deselect (true if selecting, false if deselecting)]
+        this.mouseclicks = [];
+        // mouse moves of the form [timestamp, coordinates]
+        this.mousemoves = [];
+
+        this.difficulty_array = [];
+        this.difficulty = 0.0;
+
+        this.mediascreen = document.getElementById("mediascreen");
+        this.mediascreen.style.borderWidth = `${PAGESIZE/50}px`;
+    }
+
+    play(callback, freeze_time = 2000) {
+        let self = this;
+
+        // timeline allows to control what happens after what
+        var tl = anime.timeline({
+                easing: 'linear',
+        });
+
+        // putting the dot into starting position
+        for (var i = 0; i < this.n_dots; i++) {
+            tl.set(this.dots[i], {
+                translateX: this.scaled_positions[0][i][0],
+                translateY: this.scaled_positions[0][i][1],
+            }, 0)
+        }
+        
+        if (this.type != "just_probe") {
+            var starttime = new Date().getTime();
+
+            var update_difficulty_border = function() {
+                // console.log((new Date().getTime() - starttime), self.difficulty);
+                if (!self.has_ended) {
+                    self.difficulty -= DIFF_DOWN
+                    self.difficulty = Math.max(self.difficulty, 0.0);
+                }
+            }
+        }
+
 
         // initializing the probe
         this.probe_placements = probes;
@@ -171,15 +261,17 @@ class DotAnimation {
             });
             
             // adding spacebar handling on press
-            document.onkeydown = function(event){
-                if (event.keyCode === 32) {
-                    event.preventDefault();
+            if (ENABLE_DIFFICULTY_PRESSES) {
+                document.onkeydown = function(event){
+                    if (event.keyCode === 32) {
+                        event.preventDefault();
 
-                    self.difficulty = Math.min(self.difficulty + DIFF_UP, 1.0);
-                    var time = new Date().getTime() - starttime;
+                        self.difficulty = Math.min(self.difficulty + DIFF_UP, 1.0);
+                        var time = new Date().getTime() - starttime;
 
-                    if (time < freeze_time || self.has_ended) return;
-                    if (self.spacebar.length < 500) self.spacebar.push(time-freeze_time);
+                        if (time < freeze_time || self.has_ended) return;
+                        if (self.spacebar.length < 500) self.spacebar.push(time-freeze_time);
+                    }
                 }
             }
             

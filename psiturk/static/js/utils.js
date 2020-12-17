@@ -71,11 +71,15 @@ var make_mov = function(movname, size) {
     return ret;
 };
 
-var make_animation = function(n_dots, n_probes, trial_type) {
+var make_animation = function(n_dots, n_probes, n_pylons, trial_type) {
     var ret = ``;
+    for (var i=0; i<n_pylons; i++) {
+        ret += `<span class="pylon" id="pylon_${i}"></span>`;
+    }
     for (var i=0; i<n_dots; i++) {
         ret += `<span class="dot" id="dot_${i}"></span>`;
     }
+
     
     // RANDOM FUNCTION TO CALCULATE HOW MUCH 
     // TODO LINEAR, MAYBE NOT THE RIGHT FUNCTION FOR HOW
