@@ -24,7 +24,7 @@ var PROBE_BASE_DIFFERENCE = 0.11;
 var SCALE_COMPLETE = false; // users do not need to repeat scaling
 
 var PROLIFIC_ID = "";
-var N_TRIALS = 2;
+var N_TRIALS = 20;
 var START_INSTRUCTION = 0;
 var SKIP_INSTRUCTIONS = true;
 var SKIP_PROLIFIC = true;

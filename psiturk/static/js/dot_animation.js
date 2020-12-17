@@ -4,7 +4,6 @@ var GRAY = "#bbb";
 var BLACK = "#000000";
 
 var FRAME_DURATION = 41.6667;
-var FRAME_DURATION = 1;
 var DIFF_BORDER_TIME = FRAME_DURATION;
 var DIFF_DOWN = 0.06; // how much difficulty goes down automatically within DIFF_BORDER_TIME
 var DIFF_UP = 0.3; // how much difficulty goes up when SPACEBAR pressed
