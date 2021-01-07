@@ -8,7 +8,7 @@ var scale_to_pagesize = function(value, area) {
 }
 
 // putting into the correct coordinates
-var scale_positions = function(positions, area, rot_angle) {
+var scale_positions = function(positions, area) {
     var scaled_positions = [];
 
     for (var t = 0; t < positions.length; t++) {
@@ -17,7 +17,7 @@ var scale_positions = function(positions, area, rot_angle) {
             var x = scale_to_pagesize(positions[t][i][0], area);
             var y = scale_to_pagesize(-positions[t][i][1], area);
 
-            xy = rotate(x, y, rot_angle);
+            var xy = [x,y];
             xy[1] += PAGESIZE/2;
             scaled_positions_t.push(xy);
         }
@@ -30,25 +30,28 @@ var scale_positions = function(positions, area, rot_angle) {
 
 class DotAnimation {
 
-    constructor(scene = 1, rot_angle = 0, probes = [], type = "normal") {
+    constructor(scene = 1, probes = [], type = "normal") {
         let self = this;
 
         this.scene = scene;
         this.duration = 41.6667;
         //this.duration = 1;
-        this.positions = dataset[scene-1];
+        this.positions = dataset[scene-1]["positions"];
+        this.targets = dataset[scene-1]["aux_data"]["targets"];
+        this.polygons = dataset[scene-1]["aux_data"]["polygon_structure"];
+
 	console.log(type);
 	if (type == "just_movement" || type == "shorter") {
 		this.positions = this.positions.slice(0, 160);	
 		console.log("shortened trial", this.positions);
 	}
         this.area_width = 800;
-        this.scaled_positions = scale_positions(this.positions, this.area_width, rot_angle);
+        this.scaled_positions = scale_positions(this.positions, this.area_width);
 
         this.k = this.positions.length;
         this.n_dots = this.positions[1].length;
         this.n_dots = 8;
-        this.n_targets = 4;
+        this.n_targets = this.targets.filter(Boolean).length;
 
         this.dot_radius = 20;
     
@@ -116,7 +119,7 @@ class DotAnimation {
         
         if (this.type != "just_probe") {
             // indicicating the targets
-            var targets = this.dots.slice(0, this.n_targets)
+            var targets = this.dots.filter((d,i) => this.targets[i]);
             tl.add({
                 targets: targets,
                 backgroundColor: RED,

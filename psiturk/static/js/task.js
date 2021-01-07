@@ -25,8 +25,8 @@ var SCALE_COMPLETE = false; // users do not need to repeat scaling
 
 var PROLIFIC_ID = "";
 var N_TRIALS = 40;
-var START_INSTRUCTION = 0;
-//var SKIP_INSTRUCTIONS = TRUE;
+var START_INSTRUCTION = 20;
+var SKIP_INSTRUCTIONS = true;
 
 // All pages to be loaded
 var pages = [
@@ -45,6 +45,10 @@ psiTurk.preloadPages(pages);
  ****************/
 
 var ProlificID = function(condlist) {
+    if (SKIP_INSTRUCTIONS) {
+        InstructionRunner(condlist);
+        return;
+    }
     while (true) {
         PROLIFIC_ID = prompt("Please enter Prolific ID to proceed:");
         // a small check on length
@@ -115,6 +119,7 @@ var InstructionRunner = function(condlist) {
 // Describes the comprehension check
 var loop = 1;
 var quiz = function(goBack, goNext) {
+    if (SKIP_INSTRUCTIONS) { goNext(); }
     function record_responses() {
         var allRight = true;
         $('select').each(function(i, val) {
@@ -178,10 +183,8 @@ var Experiment = function(condlist) {
         }
         
         var scene = condlist[curIdx][0];
-        var rot_angle = condlist[curIdx][1];
         var probes = condlist[curIdx][2];
         
-        // var pg = new Page("", "movie", filename, true, 0, rot_angle);
         var pg = new Page("", "animation", condlist[curIdx], true, 0);
 
         pg.showProgress(curIdx, condlist.length);

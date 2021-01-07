@@ -228,7 +228,6 @@ class Page {
         // changing to the color of the video background
         this.mediascreen.style.background = '#e6e6e6';
 
-        video.style.transform = `rotate(${this.rot_angle}deg)`;
         this.mediascreen.style.display = 'block';
     }
 
@@ -237,16 +236,15 @@ class Page {
         let self = this;
         
         var scene = this.mediadata[0];
-        var rot_angle = this.mediadata[1];
-        var probes = this.mediadata[2];
-        var trial_type = this.mediadata[3]; // just showing target designation probe for instructions
+        var probes = this.mediadata[1];
+        var trial_type = this.mediadata[2]; // just showing target designation probe for instructions
 
         var n_dots = 8;
         var n_probes = probes.length;
         this.mediascreen.innerHTML = make_animation(n_dots, n_probes, trial_type);
         this.scaleMediascreen();
 
-        var animation = new DotAnimation(scene, rot_angle, probes, trial_type);
+        var animation = new DotAnimation(scene, probes, trial_type);
         this.animation = animation;
         var callback = function() {
             // console.log("animation complete :P");
@@ -256,7 +254,6 @@ class Page {
         // changing to the color of the video background
         this.mediascreen.style.background = '#e6e6e6';
 
-        // video.style.transform = `rotate(${this.rot_angle}deg)`;
         this.mediascreen.style.display = 'block';
 
         this.mediascreen.style.borderStyle = 'solid';
