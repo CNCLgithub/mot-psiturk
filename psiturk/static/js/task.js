@@ -95,8 +95,10 @@ var InstructionRunner = function(condlist) {
 
     var end_instructions = function() {
         // TODO skipping quiz for debugging
-        //currentview = new Experiment(condlist);
-        //return;
+        if (SKIP_INSTRUCTIONS) {
+            currentview = new Experiment(condlist);
+            return;
+        }
 
         psiTurk.finishInstructions();
         quiz(function() {
@@ -119,7 +121,6 @@ var InstructionRunner = function(condlist) {
 // Describes the comprehension check
 var loop = 1;
 var quiz = function(goBack, goNext) {
-    if (SKIP_INSTRUCTIONS) { goNext(); }
     function record_responses() {
         var allRight = true;
         $('select').each(function(i, val) {
@@ -183,8 +184,11 @@ var Experiment = function(condlist) {
         }
         
         var scene = condlist[curIdx][0];
-        var probes = condlist[curIdx][2];
+        var probes = condlist[curIdx][1];
+
+        var mediadata = condlist[curIdx].push("just_td");
         
+        // var pg = new Page("", "animation", condlist[curIdx], true, 0);
         var pg = new Page("", "animation", condlist[curIdx], true, 0);
 
         pg.showProgress(curIdx, condlist.length);

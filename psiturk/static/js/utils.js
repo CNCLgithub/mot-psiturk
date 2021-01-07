@@ -71,8 +71,20 @@ var make_mov = function(movname, size) {
     return ret;
 };
 
-var make_animation = function(n_dots, n_probes, trial_type) {
+var make_animation = function(n_dots, n_probes, trial_type, polygons) {
     var ret = ``;
+    
+    // adding the initial polygon structure indication
+    // (specifying the actual coordinates in dot_animation.js)
+    ret += `<svg id="polygon_svg">`;
+    for (var i=0; i < polygons.length; i++) {
+        // if not a dot, add polygon (i.e. more than one vertice)
+        if (polygons[i] > 1) {
+            ret += `<polyline class="polygon" id="polygon_${i}"></polyline>`;
+        }
+    }
+    ret += `</svg>`;
+
     for (var i=0; i<n_dots; i++) {
         ret += `<span class="dot" id="dot_${i}"></span>`;
     }

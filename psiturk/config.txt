@@ -12,7 +12,7 @@ organization_name = Yale
 browser_exclude_rule = MSIE, mobile, tablet, Safari
 [Database Parameters]
 database_url = sqlite:///participants.db
-table_name = exp2_random_probes
+table_name = exp3_polygons
 [Server Parameters]
 #host = 0.0.0.0
 host = localhost
@@ -28,7 +28,7 @@ secret_key = 'this is my secret key which is hard to guess, i should change this
 #certfile = <path_to.crt>
 #keyfile = <path_to.key>
 [Task Parameters]
-experiment_code_version = 1.1
+experiment_code_version = 1.0
 num_conds = 1
 num_counters = 1
 [Shell Parameters]

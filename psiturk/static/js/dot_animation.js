@@ -4,11 +4,14 @@ var GRAY = "#bbb";
 var BLACK = "#000000";
 
 var scale_to_pagesize = function(value, area) {
+    //console.log("value", value);
+    //console.log("area", area);
+    //console.log("PAGESIZE", PAGESIZE);
     return value/area*PAGESIZE;
 }
 
 // putting into the correct coordinates
-var scale_positions = function(positions, area) {
+var scale_positions = function(positions, area, dot_y_offset) {
     var scaled_positions = [];
 
     for (var t = 0; t < positions.length; t++) {
@@ -18,7 +21,7 @@ var scale_positions = function(positions, area) {
             var y = scale_to_pagesize(-positions[t][i][1], area);
 
             var xy = [x,y];
-            xy[1] += PAGESIZE/2;
+            xy[1] += PAGESIZE/2 + dot_y_offset;
             scaled_positions_t.push(xy);
         }
 
@@ -38,34 +41,43 @@ class DotAnimation {
         //this.duration = 1;
         this.positions = dataset[scene-1]["positions"];
         this.targets = dataset[scene-1]["aux_data"]["targets"];
-        this.polygons = dataset[scene-1]["aux_data"]["polygon_structure"];
+        this.polygon_structure = dataset[scene-1]["aux_data"]["polygon_structure"].filter(x => x > 1);
+        this.n_polygons = this.polygon_structure.length;
+        console.log("n_polygons", this.n_polygons);
 
-	console.log(type);
-	if (type == "just_movement" || type == "shorter") {
-		this.positions = this.positions.slice(0, 160);	
-		console.log("shortened trial", this.positions);
-	}
+        console.log(type);
+        if (type == "just_movement" || type == "shorter") {
+            this.positions = this.positions.slice(0, 160);	
+            console.log("shortened trial", this.positions);
+        }
+
         this.area_width = 800;
-        this.scaled_positions = scale_positions(this.positions, this.area_width);
+        this.dot_radius = 20;
+        this.dot_y_offset = -scale_to_pagesize(this.dot_radius, this.area_width);
+        this.scaled_positions = scale_positions(this.positions, this.area_width, this.dot_y_offset);
 
         this.k = this.positions.length;
         this.n_dots = this.positions[1].length;
         this.n_dots = 8;
         this.n_targets = this.targets.filter(Boolean).length;
 
-        this.dot_radius = 20;
-    
+
+        this.polygons = [];
+        for (var i = 0; i < this.n_polygons; i++) {
+            var pol = document.getElementById(`polygon_${i}`);
+            this.polygons.push(pol);
+        }
 
         // collecting dots as JS objects
         // and initializing the dots
         this.dots = [];
         for (var i = 0; i < this.n_dots; i++) {
             var dot = document.getElementById(`dot_${i}`);
-            
+
             // scaling the size of the dot
             dot.style.width = `${scale_to_pagesize(this.dot_radius*2, this.area_width)}px`;
             dot.style.height = `${scale_to_pagesize(this.dot_radius*2, this.area_width)}px`;
-            
+
             dot.value = false;
             this.dots.push(dot);
         }
@@ -81,16 +93,16 @@ class DotAnimation {
 
             probe.style.width = `${scale_to_pagesize(this.probe_width, this.area_width)}px`;
             probe.style.height = `${scale_to_pagesize(this.probe_width, this.area_width)}px`;
-             
+
             this.probes.push(probe);
         }
-        
+
         // spacebar spacetime array extravaganza
         this.spacebar = [];
         this.has_ended = false;
         this.type = type;
         this.min_select_distance = scale_to_pagesize(this.dot_radius*4, this.area_width);
-        
+
         // further things we record
         // we record time as class variable when the trial ends
         this.trial_end_time = 0;
@@ -106,7 +118,7 @@ class DotAnimation {
 
         // timeline allows to control what happens after what
         var tl = anime.timeline({
-                easing: 'linear',
+            easing: 'linear',
         });
 
         // putting the dot into starting position
@@ -116,15 +128,62 @@ class DotAnimation {
                 translateY: this.scaled_positions[0][i][1],
             }, 0)
         }
-        
+
         if (this.type != "just_probe") {
-            // indicicating the targets
+            // indicating the targets
             var targets = this.dots.filter((d,i) => this.targets[i]);
+            console.log(this.polygons);
+            
+            var points = [];
+            var idx = 0;
+            
+            console.log("polygon_structure", this.polygon_structure);
+            for (var i=0; i < this.polygon_structure.length; i++) {
+
+                // if a dot, then skip
+                if (this.polygon_structure[i] == 1) {
+                    idx++;
+                    continue;
+                }
+
+                var pol_points = '';
+                for (var j=0; j < this.polygon_structure[i]; j++) {
+                    var x = this.scaled_positions[0][idx][0] + PAGESIZE/2;
+                    var y = this.scaled_positions[0][idx][1] - this.dot_y_offset;
+                    pol_points += `${x},${y} `;
+                    idx++;
+                }
+                // last point repeating the first of the polygon
+                var final_idx = idx - this.polygon_structure[i];
+                var x = this.scaled_positions[0][final_idx][0] + PAGESIZE/2;
+                var y = this.scaled_positions[0][final_idx][1] - this.dot_y_offset;
+                pol_points += `${x},${y}`;
+
+                points.push(pol_points);
+            }
+            
+            console.log("points", points);
+
+            for (var i=0; i<this.polygons.length; i++) {
+                tl.add({
+                    targets: this.polygons[i],
+                    points: points[i],
+                    duration: 1,
+                })
+            }
+
             tl.add({
                 targets: targets,
                 backgroundColor: RED,
                 duration: 1,
             })
+
+            //tl.add({
+                //targets: this.polygons,
+                //points: '',
+                //duration: 1,
+            //}, freeze_time)
+
             if (this.type == "just_td") {
                 callback();
                 return;
@@ -136,16 +195,16 @@ class DotAnimation {
                 backgroundColor: GRAY,
                 duration: 1,
             }, freeze_time)
-            
+
             var starttime = new Date().getTime();
-           
+
             // preventing from scrolling on space bar click
             window.addEventListener('keydown', function(e) {
                 if(e.keyCode == 32 && e.target == document.body) {
                     e.preventDefault();
                 }
             });
-            
+
             // adding spacebar handling after release
             document.onkeyup = function(event){
                 if (event.keyCode === 32) {
@@ -155,7 +214,7 @@ class DotAnimation {
 
                     if (time < freeze_time || self.has_ended) return;
                     if (self.spacebar.length < 500) self.spacebar.push(time-freeze_time);
-                    
+
                     var mediascreen = document.getElementById("mediascreen");
                     mediascreen.style.border = 'solid';
                     anime({
@@ -169,7 +228,7 @@ class DotAnimation {
                     //console.log(self.spacebar);
                 }
             };
-            
+
             var end_function = function() {
                 self.has_ended = true;
                 self.trial_end_time = new Date().getTime();
@@ -197,9 +256,8 @@ class DotAnimation {
                 round: 1,
             }, freeze_time);
         }
-        
+
         var probe_y_offset = scale_to_pagesize(self.dot_radius - self.probe_width/2, self.area_width);
-    
 
         for (var i = 0; i < this.probes.length; i++) {
             // preparing the probe opacities and probe placements
@@ -214,10 +272,10 @@ class DotAnimation {
                 translateX: this.scaled_positions[0][dot-1][0],
                 translateY: this.scaled_positions[0][dot-1][1] + probe_y_offset,
             }, 0)
-            
+
             if (this.type == "just_probe") {
                 var indicator = document.getElementById("indicator");
-                
+
                 var indicator_width = scale_to_pagesize(this.dot_radius*4, this.area_width)
                 indicator.style.width = `${indicator_width}px`;
                 indicator.style.height = `${indicator_width}px`;
@@ -235,7 +293,7 @@ class DotAnimation {
                 callback();
                 return;
             }
-            
+
             var start = Math.max(1, t-this.probe_pad);
             var end = Math.min(this.positions.length, t+this.probe_pad);
 
@@ -258,7 +316,7 @@ class DotAnimation {
     get_td() {
         return this.dots.map(dot => dot.value);
     }
-    
+
     get_spacebar() {
         return this.spacebar;
     }
@@ -270,7 +328,7 @@ class DotAnimation {
     get_mousemoves() {
         return this.mousemoves;
     }
-    
+
     get_closest_dot(e, mediascreen) {
         var rect = mediascreen.getBoundingClientRect();
         var x = e.clientX - rect.left; // x position within the element.
@@ -278,7 +336,7 @@ class DotAnimation {
 
         x -= PAGESIZE/2;
         //y -= scale_to_pagesize(this.dot_radius, this.area_width);
-        
+
         var distances = [];
         for (var i = 0; i < this.dots.length; i++) {
             const style = window.getComputedStyle(this.dots[i]);
@@ -286,13 +344,13 @@ class DotAnimation {
             const matrixValues = matrix.match(/matrix.*\((.+)\)/)[1].split(', ')
             const dot_x = matrixValues[4]
             const dot_y = matrixValues[5]
-            
+
             var distance = Math.sqrt(Math.pow(x - dot_x, 2) + Math.pow(y - dot_y, 2));
             distances.push(distance);
         }
 
         // console.log("Left? : " + x + " ; Top? : " + y + ".");
-    
+
         var i = argmin(distances)
         var dot = this.dots[i];
         var min_distance = distances[i];
@@ -306,7 +364,7 @@ class DotAnimation {
         //console.log(e.clientY, rect.top)
         var x = e.clientX - rect.left; // x position within the element.
         var y = e.clientY - rect.top;  // y position within the element.
-        
+
         // clear previous borderStyle
         for (var i = 0; i < this.dots.length; i++) {
             //this.dots[i].style.backgroundColor = this.dots[i].value ? RED : GRAY;

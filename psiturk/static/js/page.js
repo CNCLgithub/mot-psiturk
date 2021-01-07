@@ -39,7 +39,6 @@ class Page {
     // The `callback` argument can be used to handle page progression
     // or subject responses
     showPage(callback) {
-
         // create callback to progress when done
         this.nextbutton.onclick = function() {
             callback();
@@ -204,6 +203,12 @@ class Page {
         this.mediascreen.style.width = `${PAGESIZE}px`;
         this.mediascreen.style.height = `${PAGESIZE}px`;
         this.mediascreen.style.margin = '0 auto';
+
+        // scaling polygon svg inside
+        var polygon_svg = document.getElementById('polygon_svg');
+        polygon_svg.style.width = `${PAGESIZE}px`;
+        polygon_svg.style.height = `${PAGESIZE}px`;
+        polygon_svg.style.margin = '0 auto';
     }
 
     // plays movie
@@ -241,7 +246,8 @@ class Page {
 
         var n_dots = 8;
         var n_probes = probes.length;
-        this.mediascreen.innerHTML = make_animation(n_dots, n_probes, trial_type);
+        var polygons = dataset[scene-1]["aux_data"]["polygon_structure"];
+        this.mediascreen.innerHTML = make_animation(n_dots, n_probes, trial_type, polygons);
         this.scaleMediascreen();
 
         var animation = new DotAnimation(scene, probes, trial_type);
