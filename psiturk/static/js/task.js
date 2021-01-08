@@ -24,7 +24,7 @@ var PROBE_BASE_DIFFERENCE = 0.11;
 var SCALE_COMPLETE = false; // users do not need to repeat scaling
 
 var PROLIFIC_ID = "";
-var N_TRIALS = 40;
+var N_TRIALS = 33;
 var START_INSTRUCTION = 20;
 var SKIP_INSTRUCTIONS = true;
 
@@ -186,7 +186,7 @@ var Experiment = function(condlist) {
         var scene = condlist[curIdx][0];
         var probes = condlist[curIdx][1];
 
-        var mediadata = condlist[curIdx].push("just_td");
+        //var mediadata = condlist[curIdx].push("just_td");
         
         // var pg = new Page("", "animation", condlist[curIdx], true, 0);
         var pg = new Page("", "animation", condlist[curIdx], true, 0);

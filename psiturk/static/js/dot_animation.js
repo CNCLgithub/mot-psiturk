@@ -4,9 +4,6 @@ var GRAY = "#bbb";
 var BLACK = "#000000";
 
 var scale_to_pagesize = function(value, area) {
-    //console.log("value", value);
-    //console.log("area", area);
-    //console.log("PAGESIZE", PAGESIZE);
     return value/area*PAGESIZE;
 }
 
@@ -132,7 +129,6 @@ class DotAnimation {
         if (this.type != "just_probe") {
             // indicating the targets
             var targets = this.dots.filter((d,i) => this.targets[i]);
-            console.log(this.polygons);
             
             var points = [];
             var idx = 0;
@@ -178,11 +174,11 @@ class DotAnimation {
                 duration: 1,
             })
 
-            //tl.add({
-                //targets: this.polygons,
-                //points: '',
-                //duration: 1,
-            //}, freeze_time)
+            tl.add({
+                targets: this.polygons,
+                points: '',
+                duration: 1,
+            }, freeze_time)
 
             if (this.type == "just_td") {
                 callback();

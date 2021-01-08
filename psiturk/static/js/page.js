@@ -121,7 +121,7 @@ class Page {
             animation.click(e, self.mediascreen);
             // if all targets selected, then allow next
             if (animation.get_td().filter(Boolean).length == animation.n_targets) {
-                self.probe_reminder.style.display = "block";
+                // self.probe_reminder.style.display = "block";
                 self.allowNext();
             } else {
                 self.nextbutton.disabled = true;
