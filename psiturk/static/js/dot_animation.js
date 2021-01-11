@@ -39,6 +39,7 @@ class DotAnimation {
         this.positions = dataset[scene-1]["positions"];
         this.targets = dataset[scene-1]["aux_data"]["targets"];
         this.polygon_structure = dataset[scene-1]["aux_data"]["polygon_structure"].filter(x => x > 1);
+        console.log("polygon_structure", this.polygon_structure);
         this.n_polygons = this.polygon_structure.length;
         console.log("n_polygons", this.n_polygons);
 
@@ -55,7 +56,8 @@ class DotAnimation {
 
         this.k = this.positions.length;
         this.n_dots = this.positions[1].length;
-        this.n_dots = 8;
+        console.log("n_dots", this.n_dots)
+        // this.n_dots = 8;
         this.n_targets = this.targets.filter(Boolean).length;
 
 

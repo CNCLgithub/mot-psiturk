@@ -244,9 +244,9 @@ class Page {
         var probes = this.mediadata[1];
         var trial_type = this.mediadata[2]; // just showing target designation probe for instructions
 
-        var n_dots = 8;
         var n_probes = probes.length;
         var polygons = dataset[scene-1]["aux_data"]["polygon_structure"];
+        var n_dots = polygons.reduce((a,b) => a+b, 0) // summing in JS :)
         this.mediascreen.innerHTML = make_animation(n_dots, n_probes, trial_type, polygons);
         this.scaleMediascreen();
 
