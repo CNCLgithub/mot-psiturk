@@ -24,7 +24,7 @@ var PROBE_BASE_DIFFERENCE = 0.11;
 var SCALE_COMPLETE = false; // users do not need to repeat scaling
 
 var PROLIFIC_ID = "";
-var N_TRIALS = 66;
+var N_TRIALS = 72;
 var START_INSTRUCTION = 20;
 var SKIP_INSTRUCTIONS = true;
 
@@ -343,7 +343,7 @@ $(window).load(function() {
             success: function(data) {
                 console.log("condition", condition);
                 condlist = data[condition];
-    		condlist = condlist.slice(0, N_TRIALS);
+    		    condlist = condlist.slice(0, N_TRIALS);
             	console.log(condlist);
                 load_dataset(condlist);
             },

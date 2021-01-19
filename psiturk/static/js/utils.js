@@ -72,16 +72,17 @@ var make_mov = function(movname, size) {
 };
 
 var make_animation = function(n_dots, n_probes, trial_type, polygons) {
+    console.log("make_animation start");
+    console.log("polygons: ", polygons);
+
     var ret = ``;
     
     // adding the initial polygon structure indication
     // (specifying the actual coordinates in dot_animation.js)
     ret += `<svg id="polygon_svg">`;
-    for (var i=0; i < polygons.length; i++) {
-        // if not a dot, add polygon (i.e. more than one vertice)
-        if (polygons[i] > 1) {
-            ret += `<polyline class="polygon" id="polygon_${i}"></polyline>`;
-        }
+    var real_polygons = polygons.filter(x => x > 1); 
+    for (var i=0; i < real_polygons.length; i++) {
+        ret += `<polyline class="polygon" id="polygon_${i}"></polyline>`;
     }
     ret += `</svg>`;
 
@@ -107,6 +108,7 @@ var make_animation = function(n_dots, n_probes, trial_type, polygons) {
     if (trial_type == "just_probe") {
         ret += `<span class="probe-indicator" id="indicator"></span>`;
     }
+    console.log("make_animation end");
     return ret;
 };
 
@@ -186,4 +188,18 @@ function isMobileTablet(){
             check = true;
     })(navigator.userAgent||navigator.vendor||window.opera);
     return check;
+}
+
+
+function updateQuery(n_selected, n_targets) {
+        var query = `
+                <b>
+                    Select the <span style="color:#e60000">targets <span class="dot" style="background-color:#e60000; position: relative; height: 20px; width: 20px"></span></span>.<br>${n_selected}/${n_targets} dots selected.<br>
+                    <span style="color: gray; display: none" id="probe_reminder">
+                        (remember to hit SPACEBAR whenever you see a probe <span class="probe" style="position: relative; opacity: 1.0; height: 10px; width: 10px"></span> during the movement)
+                    </span>
+                <b>
+        `
+            
+        document.getElementById("query").innerHTML = query;
 }

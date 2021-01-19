@@ -32,15 +32,16 @@ class DotAnimation {
 
     constructor(scene = 1, probes = [], type = "normal") {
         let self = this;
+        this.has_ended = false;
 
         this.scene = scene;
         this.duration = 41.6667;
         //this.duration = 1;
         this.positions = dataset[scene-1]["positions"];
         this.targets = dataset[scene-1]["aux_data"]["targets"];
-        this.polygon_structure = dataset[scene-1]["aux_data"]["polygon_structure"].filter(x => x > 1);
+        this.polygon_structure = dataset[scene-1]["aux_data"]["polygon_structure"];
         console.log("polygon_structure", this.polygon_structure);
-        this.n_polygons = this.polygon_structure.length;
+        this.n_polygons = this.polygon_structure.filter(x=>x>1).length;
         console.log("n_polygons", this.n_polygons);
 
         console.log(type);
@@ -59,6 +60,7 @@ class DotAnimation {
         console.log("n_dots", this.n_dots)
         // this.n_dots = 8;
         this.n_targets = this.targets.filter(Boolean).length;
+        updateQuery(0, this.n_targets);
 
 
         this.polygons = [];
@@ -98,7 +100,6 @@ class DotAnimation {
 
         // spacebar spacetime array extravaganza
         this.spacebar = [];
-        this.has_ended = false;
         this.type = type;
         this.min_select_distance = scale_to_pagesize(this.dot_radius*4, this.area_width);
 
@@ -135,7 +136,6 @@ class DotAnimation {
             var points = [];
             var idx = 0;
             
-            console.log("polygon_structure", this.polygon_structure);
             for (var i=0; i < this.polygon_structure.length; i++) {
 
                 // if a dot, then skip
@@ -159,8 +159,6 @@ class DotAnimation {
 
                 points.push(pol_points);
             }
-            
-            console.log("points", points);
 
             for (var i=0; i<this.polygons.length; i++) {
                 tl.add({
@@ -175,7 +173,8 @@ class DotAnimation {
                 backgroundColor: RED,
                 duration: 1,
             })
-
+            
+            console.log(this.polygons);
             tl.add({
                 targets: this.polygons,
                 points: '',
@@ -223,7 +222,6 @@ class DotAnimation {
                         direction: 'alternate',
                     })
 
-                    //console.log(self.spacebar);
                 }
             };
 
@@ -295,12 +293,9 @@ class DotAnimation {
             var start = Math.max(1, t-this.probe_pad);
             var end = Math.min(this.positions.length, t+this.probe_pad);
 
-            //console.log(start, end);
             for (var j = start; j <= end; j++) {
                 probe_opacities[j] = 1.0;
             }
-
-            //console.log(probe_opacities);
 
             tl.add({
                 targets: this.probes[i],
@@ -347,8 +342,6 @@ class DotAnimation {
             distances.push(distance);
         }
 
-        // console.log("Left? : " + x + " ; Top? : " + y + ".");
-
         var i = argmin(distances)
         var dot = this.dots[i];
         var min_distance = distances[i];
@@ -357,6 +350,10 @@ class DotAnimation {
     }
 
     onmousemove(e, mediascreen) {
+        // if animation hasn't ended yet, then don't do anything
+        // TODO still throws error :'(
+        if (!this.has_ended) { return; }
+
         var rect = mediascreen.getBoundingClientRect();
         //console.log(e.clientX, rect.left)
         //console.log(e.clientY, rect.top)
@@ -387,7 +384,7 @@ class DotAnimation {
             dot.style.borderColor = '#ff8593';
         }
     }
-
+    
     click(e, mediascreen) {
         var time = new Date().getTime() - this.trial_end_time;
 
@@ -412,6 +409,7 @@ class DotAnimation {
 
             dot.value = (!dot.value);
             dot.style.backgroundColor = dot.value ? RED : GRAY;
+            updateQuery(this.get_td().filter(Boolean).length, this.n_targets);
         } else {
             console.log("can't select more than ", this.n_targets);
         }
