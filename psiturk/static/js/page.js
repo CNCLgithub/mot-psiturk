@@ -112,6 +112,18 @@ class Page {
             this.nextbutton.style.display = "block";
         });
     }
+    
+    checkTargetsSelected(animation) {
+        let self = this;
+
+        // if all targets selected, then allow next
+        if (animation.get_td().filter(Boolean).length == animation.n_targets) {
+            // self.probe_reminder.style.display = "block";
+            self.allowNext();
+        } else {
+            self.nextbutton.disabled = true;
+        }
+    }
 
     // The form will automatically enable the next button
     enableResponse(animation) {
@@ -119,16 +131,12 @@ class Page {
         
         this.mediascreen.onclick = function(e) {
             animation.click(e, self.mediascreen);
-            // if all targets selected, then allow next
-            if (animation.get_td().filter(Boolean).length == animation.n_targets) {
-                // self.probe_reminder.style.display = "block";
-                self.allowNext();
-            } else {
-                self.nextbutton.disabled = true;
-            }
+            self.checkTargetsSelected(animation);
         };
         document.onmousemove = function(e) {
+            setLeftButtonState(e);
             animation.onmousemove(e, self.mediascreen);
+            self.checkTargetsSelected(animation);
         };
     }
 
@@ -245,7 +253,7 @@ class Page {
         var trial_type = this.mediadata[2]; // just showing target designation probe for instructions
 
         var n_probes = probes.length;
-        var polygons = dataset[scene-1]["aux_data"]["polygon_structure"];
+        var polygons = dataset[scene-1]["aux_data"]["scene_structure"];
         var n_dots = polygons.reduce((a,b) => a+b, 0) // summing in JS :)
         this.mediascreen.innerHTML = make_animation(n_dots, n_probes, trial_type, polygons);
         this.scaleMediascreen();

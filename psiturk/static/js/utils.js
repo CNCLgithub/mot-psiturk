@@ -203,3 +203,12 @@ function updateQuery(n_selected, n_targets) {
             
         document.getElementById("query").innerHTML = query;
 }
+
+var leftMouseButtonOnlyDown = false;
+
+function setLeftButtonState(e) {
+  leftMouseButtonOnlyDown = e.buttons === undefined 
+    ? e.which === 1 
+    : e.buttons === 1;
+}
+
