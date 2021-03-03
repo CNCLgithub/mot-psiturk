@@ -141,8 +141,8 @@ class Page {
     }
 
     clearResponse() {
-        // var buttons = ["td_yes", "td_no", "pr_yes", "pr_no"];
-        // buttons.map(x => document.getElementById(x).checked = false);
+        document.onmousemove = function(e) {return;};
+        this.mediascreen.onclick = function(e) {return;};
     }
 
     scalePage() {
@@ -247,7 +247,7 @@ class Page {
     // plays animation
     showAnimation() {
         let self = this;
-        
+
         var scene = this.mediadata[0];
         var probes = this.mediadata[1];
         var trial_type = this.mediadata[2]; // just showing target designation probe for instructions
@@ -261,7 +261,6 @@ class Page {
         var animation = new DotAnimation(scene, probes, trial_type);
         this.animation = animation;
         var callback = function() {
-            // console.log("animation complete :P");
             self.addResponse(animation);
         };
 
