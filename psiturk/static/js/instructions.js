@@ -4,7 +4,7 @@
 // 3: Any media needed (can be an empty string)
 // 4: Whether to show the response div and what to show (false/"td"/"pr")
 
-var EXP_DURATION = 25;
+var EXP_DURATION = 20;
 var N_TRIALS = 30;
 var RED = "#eb3434";
 
@@ -69,8 +69,8 @@ var instructions = [
     ],
     [
         `At the end of each instance of the task, you need to select the <span style="color:#e60000"><b>targets</b></span> <span class="query-dot"></span> by clicking on the dots with your mouse.<br>` + 
-        `To select a bunch of targets faster, you can hold down the left mouse key and "draw" over the targets with the cursor.<br>` +
-        `If you make a mistake in your selection, you can deselect by clicking/drawing on the dots.<br>` +
+        `To select a bunch of targets faster, you can hold down the left mouse key and drag your cursor over the targets.<br>` +
+        `If you make a mistake in your selection, you can deselect by clicking on the dots.<br>` +
         `When you hover over the dots, you will be able to see which dot you're selecting/deselecting by a pink border around the dot.<br>` +
         `You need to select all targets to be able to progress -- it will be indicated how many targets you still need to select at the bottom of the screen.<br>` +
         `If you lost track of some of the targets, just make your best guess as to which dots are targets.<br>` +

@@ -12,10 +12,10 @@ organization_name = Yale
 browser_exclude_rule = MSIE, mobile, tablet, Safari
 [Database Parameters]
 database_url = sqlite:///participants.db
-table_name = exp3_polygons
+table_name = exp3_polygons_live
 [Server Parameters]
-#host = 0.0.0.0
-host = localhost
+host = 0.0.0.0
+#host = localhost
 port = 22367
 cutoff_time = 30
 logfile = server.log
