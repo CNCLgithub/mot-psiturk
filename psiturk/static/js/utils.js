@@ -55,9 +55,10 @@ const sleep = milliseconds => {
  ********************/
 
 var make_img = function(imgname, size) {
-    var r = "<image id=\"img\" "
-    r += `class="movieobj" src="static/data/${imgname}" alt="Movie" style="height: auto; width: ${size}px">`
-    return r
+    var ret = `<svg id="polygon_svg"></svg>`;
+    ret += "<image id=\"img\" "
+    ret += `class="movieobj" src="static/data/${imgname}" alt="Movie" style="height: auto; width: ${size}px">`
+    return ret
 };
 
 var make_mov = function(movname, size) {

@@ -5,7 +5,7 @@ class Page {
     /*******************
      * Public Methods  *
      *******************/
-    constructor(text, mediatype, mediadata, show_response, next_delay) {
+    constructor(text, mediatype, mediadata, show_response, next_delay, instruction=false) {
 
         // page specific variables
         this.text = text;
@@ -13,6 +13,7 @@ class Page {
         this.mediadata = mediadata;
         this.show_response = show_response;
         this.next_delay = next_delay; // delay for showing next button in seconds
+        this.instruction = instruction;
 
         // html elements
         this.scale_region = document.getElementById("scale_region");
@@ -163,8 +164,8 @@ class Page {
 
             slider_value.oninput = function(e) {
                 PAGESIZE = (e.target.value / 50.0) * 500;
-                scale_img.width = `${PAGESIZE}px`;
-                scale_img.style.width = `${PAGESIZE}px`;
+                scale_img.width = `${0.75*PAGESIZE}px`;
+                scale_img.style.width = `${0.75*PAGESIZE}px`;
                 self.scaleMediascreen();
                 self.addResponse();
                 SCALE_COMPLETE = true;
@@ -253,12 +254,14 @@ class Page {
         var trial_type = this.mediadata[2]; // just showing target designation probe for instructions
 
         var n_probes = probes.length;
-        var polygons = dataset[scene-1]["aux_data"]["scene_structure"];
+        var current_dataset = this.instruction ? instruction_dataset : dataset;
+        var polygons = current_dataset[scene-1]["aux_data"]["scene_structure"];
+
         var n_dots = polygons.reduce((a,b) => a+b, 0) // summing in JS :)
         this.mediascreen.innerHTML = make_animation(n_dots, n_probes, trial_type, polygons);
         this.scaleMediascreen();
 
-        var animation = new DotAnimation(scene, probes, trial_type);
+        var animation = new DotAnimation(scene, probes, trial_type, this.instruction);
         this.animation = animation;
         var callback = function() {
             self.addResponse(animation);

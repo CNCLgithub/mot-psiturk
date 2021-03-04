@@ -30,16 +30,17 @@ var scale_positions = function(positions, area, dot_y_offset) {
 
 class DotAnimation {
 
-    constructor(scene = 1, probes = [], type = "normal") {
+    constructor(scene = 1, probes = [], type = "normal", instruction = false) {
         let self = this;
         this.has_ended = false;
 
         this.scene = scene;
         this.duration = 41.6667;
         //this.duration = 1;
-        this.positions = dataset[scene-1]["positions"];
-        this.targets = dataset[scene-1]["aux_data"]["targets"];
-        this.scene_structure = dataset[scene-1]["aux_data"]["scene_structure"];
+        var current_dataset = instruction ? instruction_dataset : dataset;
+        this.positions = current_dataset[scene-1]["positions"];
+        this.targets = current_dataset[scene-1]["aux_data"]["targets"];
+        this.scene_structure = current_dataset[scene-1]["aux_data"]["scene_structure"];
         this.n_polygons = this.scene_structure.filter(x=>x>1).length;
 
         if (type == "just_movement" || type == "shorter") {
@@ -174,16 +175,17 @@ class DotAnimation {
                 duration: 1,
             })
             
-            tl.add({
-                targets: this.polygons,
-                points: '',
-                duration: 1,
-            }, freeze_time)
 
             if (this.type == "just_td") {
                 callback();
                 return;
             }
+
+            tl.add({
+                targets: this.polygons,
+                points: '',
+                duration: 1,
+            }, freeze_time)
 
             // removing indication
             tl.add({
@@ -203,6 +205,7 @@ class DotAnimation {
 
             // adding spacebar handling after release
             document.onkeyup = function(event){
+                return; // disabling for this experiment (no probes)
                 if (event.keyCode === 32) {
                     event.preventDefault();
 

@@ -25,8 +25,8 @@ var SCALE_COMPLETE = false; // users do not need to repeat scaling
 
 var PROLIFIC_ID = "";
 var N_TRIALS = 30;
-var START_INSTRUCTION = 20;
-var SKIP_INSTRUCTIONS = true;
+var START_INSTRUCTION = 0;
+var SKIP_INSTRUCTIONS = false;
 
 // All pages to be loaded
 var pages = [
@@ -82,7 +82,7 @@ var InstructionRunner = function(condlist) {
 
         if (i < ninstruct) {
             // constructing Page using the the instructions.js
-            var page = new Page(...instructions[i]);
+            var page = new Page(...instructions[i], true);
 
             page.showPage(function() {
                 page.clearResponse();
@@ -188,7 +188,6 @@ var Experiment = function(condlist) {
 
         //var mediadata = condlist[curIdx].push("just_td");
         
-        // var pg = new Page("", "animation", condlist[curIdx], true, 0);
         var pg = new Page("", "animation", condlist[curIdx], true, 0);
 
         pg.showProgress(curIdx, condlist.length);
@@ -310,9 +309,32 @@ var currentview;
 
 // madness TODO fix
 var dataset;
+var instruction_dataset;
 
 $(window).load(function() {
     
+    // TODO this is horrible how can we make it nicer
+    function load_instruction_dataset(condlist) {
+        $.ajax({
+            dataType: 'json',
+            url: "static/data/instruction_dataset.json",
+            async: false,
+            success: function(data) {
+                instruction_dataset = data;
+                console.log("instruction_dataset", instruction_dataset);
+                ProlificID(condlist);
+            },
+            error: function() {
+                setTimeout(500, do_load);
+            },
+            failure: function() {
+                setTimeout(500, do_load)
+            }
+        });
+
+
+    }
+
     function load_dataset(condlist) {
         $.ajax({
             dataType: 'json',
@@ -321,8 +343,7 @@ $(window).load(function() {
             success: function(data) {
                 dataset = data;
                 console.log("dataset", dataset);
-                //InstructionRunner(condlist);
-                ProlificID(condlist);
+                load_instruction_dataset(condlist);
             },
             error: function() {
                 setTimeout(500, do_load);
