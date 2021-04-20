@@ -34,6 +34,9 @@ class Page {
         this.query.style.color = 'black';
         this.mediascreen.innerHTML = "";
         this.animation = undefined;
+
+        this.response_slider = document.getElementById("response_slider");
+        this.response_slider_clicked = false;
     }
 
     // Loads content to the page
@@ -50,7 +53,9 @@ class Page {
     }
 
     retrieveResponse() {
-        var response = [this.animation.get_td(), this.animation.get_spacebar(), this.animation.get_mouseclicks(), this.animation.get_mousemoves()]
+        var response = [this.animation.get_td(), this.animation.get_spacebar(),
+            this.animation.get_mouseclicks(), this.animation.get_mousemoves(),
+            this.response_slider.value]
         //console.log(response)
         return response
     }
@@ -114,11 +119,13 @@ class Page {
         });
     }
     
-    checkTargetsSelected(animation) {
+    checkAllSelected(animation) {
         let self = this;
+        
+        var targets_selected = animation.get_td().filter(Boolean).length == animation.n_targets;
 
         // if all targets selected, then allow next
-        if (animation.get_td().filter(Boolean).length == animation.n_targets) {
+        if (targets_selected && self.response_slider_clicked) {
             // self.probe_reminder.style.display = "block";
             self.allowNext();
         } else {
@@ -132,18 +139,23 @@ class Page {
         
         this.mediascreen.onclick = function(e) {
             animation.click(e, self.mediascreen);
-            self.checkTargetsSelected(animation);
+            self.checkAllSelected(animation);
+        };
+        this.response_slider.onclick = function(e) {
+            self.response_slider_clicked = true;
+            self.checkAllSelected(animation);
         };
         document.onmousemove = function(e) {
             setLeftButtonState(e);
             animation.onmousemove(e, self.mediascreen);
-            self.checkTargetsSelected(animation);
+            //self.checkAllSelected(animation); NO NEED FOR THIS?
         };
     }
 
     clearResponse() {
         document.onmousemove = function(e) {return;};
         this.mediascreen.onclick = function(e) {return;};
+        this.response_slider.value = 50;
     }
 
     scalePage() {
@@ -287,6 +299,7 @@ class Page {
     showEmpty() {
         this.addResponse();
     }
+
     showProgress(cur_idx, out_of) {
         this.progress.innerHTML = (cur_idx + 1) + " / " + (out_of);
     };

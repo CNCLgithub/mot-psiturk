@@ -17,16 +17,14 @@ var PAGESIZE = 500;
 var INIT_CONTRAST = 73; // this is the reference
 var CONTRAST = INIT_CONTRAST; // this is what we'll register from user
 var DOT_COLOR = 180; // this is the color of the dot
-//var PROBE_BASE_DIFFERENCE = 0.07;
-//var PROBE_BASE_DIFFERENCE = 0.15;
 var PROBE_BASE_DIFFERENCE = 0.11;
 
 var SCALE_COMPLETE = false; // users do not need to repeat scaling
 
 var PROLIFIC_ID = "";
-var N_TRIALS = 30;
-var START_INSTRUCTION = 0;
-var SKIP_INSTRUCTIONS = false;
+var N_TRIALS = 25;
+var START_INSTRUCTION = 20;
+var SKIP_INSTRUCTIONS = true;
 
 // All pages to be loaded
 var pages = [
@@ -216,6 +214,7 @@ var Experiment = function(condlist) {
             'Probe': rep[1],
             'MouseClicks': rep[2],
             'MouseMoves': rep[3],
+            'Difficulty': rep[4],
             'ReactionTime': rt,
             'IsInstruction': false,
             'TrialOrder': cIdx
