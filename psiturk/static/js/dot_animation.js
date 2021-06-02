@@ -36,13 +36,11 @@ class DotAnimation {
 
         this.scene = scene;
         this.duration = 41.6667;
-        //this.duration = 1;
         var current_dataset = instruction ? instruction_dataset : dataset;
         this.positions = current_dataset[scene-1]["positions"];
         this.targets = current_dataset[scene-1]["aux_data"]["targets"];
-        this.scene_structure = current_dataset[scene-1]["aux_data"]["scene_structure"];
-        this.n_polygons = this.scene_structure.filter(x=>x>1).length;
-
+        
+        // sometimes shortened trial for instructions
         if (type == "just_movement" || type == "shorter") {
             this.positions = this.positions.slice(0, 160);	
             console.log("shortened trial", this.positions);
@@ -55,16 +53,8 @@ class DotAnimation {
 
         this.k = this.positions.length;
         this.n_dots = this.positions[1].length;
-        // this.n_dots = 8;
         this.n_targets = this.targets.filter(Boolean).length;
         updateQuery(0, this.n_targets);
-
-
-        this.polygons = [];
-        for (var i = 0; i < this.n_polygons; i++) {
-            var pol = document.getElementById(`polygon_${i}`);
-            this.polygons.push(pol);
-        }
 
         // collecting dots as JS objects
         // and initializing the dots
@@ -133,41 +123,6 @@ class DotAnimation {
         if (this.type != "just_probe") {
             // indicating the targets
             var targets = this.dots.filter((d,i) => this.targets[i]);
-            
-            var points = [];
-            var idx = 0;
-            
-            for (var i=0; i < this.scene_structure.length; i++) {
-
-                // if a dot, then skip
-                if (this.scene_structure[i] == 1) {
-                    idx++;
-                    continue;
-                }
-
-                var pol_points = '';
-                for (var j=0; j < this.scene_structure[i]; j++) {
-                    var x = this.scaled_positions[0][idx][0] + PAGESIZE/2;
-                    var y = this.scaled_positions[0][idx][1] - this.dot_y_offset;
-                    pol_points += `${x},${y} `;
-                    idx++;
-                }
-                // last point repeating the first of the polygon
-                var final_idx = idx - this.scene_structure[i];
-                var x = this.scaled_positions[0][final_idx][0] + PAGESIZE/2;
-                var y = this.scaled_positions[0][final_idx][1] - this.dot_y_offset;
-                pol_points += `${x},${y}`;
-
-                points.push(pol_points);
-            }
-
-            for (var i=0; i<this.polygons.length; i++) {
-                tl.add({
-                    targets: this.polygons[i],
-                    points: points[i],
-                    duration: 1,
-                })
-            }
 
             tl.add({
                 targets: targets,
@@ -175,17 +130,11 @@ class DotAnimation {
                 duration: 1,
             })
             
-
+            // if we just want to show what target designation looks like, return
             if (this.type == "just_td") {
                 callback();
                 return;
             }
-
-            tl.add({
-                targets: this.polygons,
-                points: '',
-                duration: 1,
-            }, freeze_time)
 
             // removing indication
             tl.add({

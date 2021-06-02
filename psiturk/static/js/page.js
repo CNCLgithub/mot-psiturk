@@ -267,10 +267,10 @@ class Page {
 
         var n_probes = probes.length;
         var current_dataset = this.instruction ? instruction_dataset : dataset;
-        var polygons = current_dataset[scene-1]["aux_data"]["scene_structure"];
+        var targets = current_dataset[scene-1]["aux_data"]["targets"];
+        var n_dots = targets.length;
 
-        var n_dots = polygons.reduce((a,b) => a+b, 0) // summing in JS :)
-        this.mediascreen.innerHTML = make_animation(n_dots, n_probes, trial_type, polygons);
+        this.mediascreen.innerHTML = make_animation(n_dots, n_probes, trial_type, targets);
         this.scaleMediascreen();
 
         var animation = new DotAnimation(scene, probes, trial_type, this.instruction);

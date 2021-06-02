@@ -330,8 +330,6 @@ $(window).load(function() {
                 setTimeout(500, do_load)
             }
         });
-
-
     }
 
     function load_dataset(condlist) {
