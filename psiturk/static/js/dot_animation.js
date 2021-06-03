@@ -36,6 +36,7 @@ class DotAnimation {
 
         this.scene = scene;
         this.duration = 41.6667;
+        //this.duration = 1.0;
         var current_dataset = instruction ? instruction_dataset : dataset;
         this.positions = current_dataset[scene-1]["positions"];
         this.targets = current_dataset[scene-1]["aux_data"]["targets"];

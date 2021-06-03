@@ -5,28 +5,27 @@
             <span id="qspan">Move the slider to match the width of your card</span>
             <input id="scale_slider" type="range" min="0" max="100" default="50" width="1500"/>
         </div>
-	<br>
 
     <div id="mediascreen">
+    	<br>
         <svg id="polygon_svg">
         </svg>
     </div>
 
 
     <div id="register" style="margin: 0 auto">
-		<hr />
         <div id ="response_region" style="background-color: white; display: none; margin=auto; align-self:center; text-align:center">
-            <span id="query">
+            <hr />
+            <span id="target_response_region">
                 <b>
                     0/n <span style="color:#e60000">targets <span class="dot" style="background-color:#e60000; position: relative; height: 20px; width: 20px"> selected</span></span>.<br>
                     <span style="color: gray; display: none" id="probe_reminder">
                         (remember to hit SPACEBAR whenever you see a probe <span class="probe" style="position: relative; opacity: 1.0; height: 10px; width: 10px"></span> during the movement)
                     </span>
-                <b>
+                    <b>
             </span>
 
-
-            <div style="width:auto; margin:auto; text-align:center">
+            <div id="effort_response_region" style="width:auto; margin:auto; text-align:center">
                 <span id="qspan">How hard was it to track all 4 targets? </span>
                 <br>
                 <input id="response_slider" type="range" min="0" max="100" default="50" style="width:100%; margin:auto;"/>
@@ -36,14 +35,15 @@
             </div>
         </div>
 
-		    <hr />
-		    <div id="centerdiv">
-			    <button id="nextbutton" class="incenterdiv btn btn-success btn-lg" disabled>Next</button>
-			    <br>
-				<hr />
-				<span id="progress" class="incenterdiv" style="margin-top: 15px;">0/0</span>
-				<br>
-				<button id="reloadbutton" class="incenterdiv btn btn-success btn-med" style="display: none;">Reload Movie</button>
-		    </div>
-	  </div>
+            <div id="centerdiv">
+                <button id="nextbutton" class="incenterdiv btn btn-success btn-lg" disabled>Next</button>
+                <hr />
+                <!--<br>-->
+            </div>
+
+            <span id="progress" class="incenterdiv" style="margin-top: 15px;"></span>
+            <!--<br>-->
+            <!--<button id="reloadbutton" class="incenterdiv btn btn-success btn-med" style="display: none;">Reload Movie</button>-->
+
+    </div>
 </div>

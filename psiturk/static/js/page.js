@@ -6,7 +6,7 @@ class Page {
      * Public Methods  *
      *******************/
     constructor(text, mediatype, mediadata, show_response, next_delay, instruction=false) {
-
+        
         // page specific variables
         this.text = text;
         this.mediatype = mediatype;
@@ -18,7 +18,9 @@ class Page {
         // html elements
         this.scale_region = document.getElementById("scale_region");
         this.response_region = document.getElementById("response_region");
-        this.query = document.getElementById("query");
+        this.target_response_region = document.getElementById("target_response_region");
+        this.effort_response_region = document.getElementById("effort_response_region");
+
         this.probe_reminder = document.getElementById("probe_reminder");
         this.nextbutton = document.getElementById("nextbutton");
         this.mediascreen = document.getElementById("mediascreen");
@@ -29,9 +31,11 @@ class Page {
         this.nextbutton.style.display = 'none';
         this.response_region.style.display = 'none';
 
-        this.query.style.display = 'none';
+        this.target_response_region.style.display = 'none';
+        this.target_response_region.style.color = 'black';
+        this.effort_response_region.style.display = 'none';
+
         this.probe_reminder.style.display = 'none';
-        this.query.style.color = 'black';
         this.mediascreen.innerHTML = "";
         this.animation = undefined;
 
@@ -94,15 +98,15 @@ class Page {
     };
 
 
-    addResponse(animation = undefined) {
+    addResponse() {
         this.response_region.style.display = 'block';
-
+        
         // if no response required, then simply allow to go further
         if (this.show_response == false) {
             this.allowNext();
         } else {
-            this.query.style.display = 'block';
-            this.enableResponse(animation);
+            this.target_response_region.style.display = 'block';
+            this.enableTargetResponse();
         }
     }
 
@@ -112,50 +116,59 @@ class Page {
         // TODO debugging purposes
         //this.nextbutton.disabled = false;
         //this.nextbutton.style.display = "block";
-
-        sleep(this.next_delay*1000).then(() => {
+        
+        var delay = SKIP_INSTRUCTIONS ? 0 : this.next_delay*1000;
+        sleep(delay).then(() => {
             this.nextbutton.disabled = false;
             this.nextbutton.style.display = "block";
         });
     }
     
-    checkAllSelected(animation) {
+    checkAllSelected() {
+        console.log("checkAllSelected");
         let self = this;
         
-        var targets_selected = animation.get_td().filter(Boolean).length == animation.n_targets;
+        var targets_selected = self.animation.get_td().filter(Boolean).length == self.animation.n_targets;
+    
+        // if all targets selected, then allow effort response
+        if (targets_selected) {
+            console.log("targets_selected");
+            self.effort_response_region.style.display = 'block';
 
-        // if all targets selected, then allow next
-        if (targets_selected && self.response_slider_clicked) {
-            // self.probe_reminder.style.display = "block";
-            self.allowNext();
-        } else {
-            self.nextbutton.disabled = true;
+            // if effort clicked allow next
+            if (self.response_slider_clicked) {
+                self.allowNext();
+            } else {
+                self.nextbutton.disabled = true;
+            }
         }
+        console.log("checkAllSelected done");
     }
 
     // The form will automatically enable the next button
-    enableResponse(animation) {
+    enableTargetResponse() {
         let self = this;
         
         this.mediascreen.onclick = function(e) {
-            animation.click(e, self.mediascreen);
-            self.checkAllSelected(animation);
+            self.animation.click(e, self.mediascreen);
+            self.checkAllSelected();
         };
         this.response_slider.onclick = function(e) {
             self.response_slider_clicked = true;
-            self.checkAllSelected(animation);
+            self.checkAllSelected();
         };
         document.onmousemove = function(e) {
             setLeftButtonState(e);
-            animation.onmousemove(e, self.mediascreen);
-            //self.checkAllSelected(animation); NO NEED FOR THIS?
+            self.animation.onmousemove(e, self.mediascreen);
         };
     }
 
     clearResponse() {
+        console.log("clearResponse");
         document.onmousemove = function(e) {return;};
         this.mediascreen.onclick = function(e) {return;};
         this.response_slider.value = 50;
+        console.log("clearResponse done");
     }
 
     scalePage() {
@@ -273,10 +286,9 @@ class Page {
         this.mediascreen.innerHTML = make_animation(n_dots, n_probes, trial_type, targets);
         this.scaleMediascreen();
 
-        var animation = new DotAnimation(scene, probes, trial_type, this.instruction);
-        this.animation = animation;
+        this.animation = new DotAnimation(scene, probes, trial_type, this.instruction);
         var callback = function() {
-            self.addResponse(animation);
+            self.addResponse();
         };
 
         // changing to the color of the video background
@@ -288,7 +300,7 @@ class Page {
         this.mediascreen.style.borderColor = 'rgba(0, 0, 0, .0)';
         
         var freeze_time = trial_type == "just_movement" ? 0 : 2000;
-        animation.play(callback, freeze_time);
+        this.animation.play(callback, freeze_time);
     }
 
     showImage() {

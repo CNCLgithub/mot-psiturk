@@ -202,7 +202,7 @@ function updateQuery(n_selected, n_targets) {
                 <b>
         `
             
-        document.getElementById("query").innerHTML = query;
+        document.getElementById("target_response_region").innerHTML = query;
 }
 
 var leftMouseButtonOnlyDown = false;
