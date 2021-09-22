@@ -55,9 +55,10 @@ const sleep = milliseconds => {
  ********************/
 
 var make_img = function(imgname, size) {
-    var r = "<image id=\"img\" "
-    r += `class="movieobj" src="static/data/${imgname}" alt="Movie" style="height: auto; width: ${size}px">`
-    return r
+    var ret = `<svg id="polygon_svg"></svg>`;
+    ret += "<image id=\"img\" "
+    ret += `class="movieobj" src="static/data/${imgname}" alt="Movie" style="height: auto; width: ${size}px">`
+    return ret
 };
 
 var make_mov = function(movname, size) {
@@ -71,8 +72,21 @@ var make_mov = function(movname, size) {
     return ret;
 };
 
-var make_animation = function(n_dots, n_probes, trial_type) {
+var make_animation = function(n_dots, n_probes, trial_type, polygons) {
+    console.log("make_animation start");
+    console.log("polygons: ", polygons);
+
     var ret = ``;
+    
+    // adding the initial polygon structure indication
+    // (specifying the actual coordinates in dot_animation.js)
+    ret += `<svg id="polygon_svg">`;
+    var real_polygons = polygons.filter(x => x > 1); 
+    for (var i=0; i < real_polygons.length; i++) {
+        ret += `<polyline class="polygon" id="polygon_${i}"></polyline>`;
+    }
+    ret += `</svg>`;
+
     for (var i=0; i<n_dots; i++) {
         ret += `<span class="dot" id="dot_${i}"></span>`;
     }
@@ -95,6 +109,7 @@ var make_animation = function(n_dots, n_probes, trial_type) {
     if (trial_type == "just_probe") {
         ret += `<span class="probe-indicator" id="indicator"></span>`;
     }
+    console.log("make_animation end");
     return ret;
 };
 
@@ -175,3 +190,26 @@ function isMobileTablet(){
     })(navigator.userAgent||navigator.vendor||window.opera);
     return check;
 }
+
+
+function updateQuery(n_selected, n_targets) {
+        var query = `
+                <b>
+                    Select the <span style="color:#e60000">targets <span class="dot" style="background-color:#e60000; position: relative; height: 20px; width: 20px"></span></span>.<br>${n_selected}/${n_targets} dots selected.<br>
+                    <span style="color: gray; display: none" id="probe_reminder">
+                        (remember to hit SPACEBAR whenever you see a probe <span class="probe" style="position: relative; opacity: 1.0; height: 10px; width: 10px"></span> during the movement)
+                    </span>
+                <b>
+        `
+            
+        document.getElementById("target_response_region").innerHTML = query;
+}
+
+var leftMouseButtonOnlyDown = false;
+
+function setLeftButtonState(e) {
+  leftMouseButtonOnlyDown = e.buttons === undefined 
+    ? e.which === 1 
+    : e.buttons === 1;
+}
+

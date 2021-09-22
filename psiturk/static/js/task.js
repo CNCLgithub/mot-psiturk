@@ -17,20 +17,18 @@ var PAGESIZE = 500;
 var INIT_CONTRAST = 73; // this is the reference
 var CONTRAST = INIT_CONTRAST; // this is what we'll register from user
 var DOT_COLOR = 180; // this is the color of the dot
-//var PROBE_BASE_DIFFERENCE = 0.07;
-//var PROBE_BASE_DIFFERENCE = 0.15;
 var PROBE_BASE_DIFFERENCE = 0.11;
 
 var SCALE_COMPLETE = false; // users do not need to repeat scaling
 
 var PROLIFIC_ID = "";
-var N_TRIALS = 40;
-var START_INSTRUCTION = 0;
-//var SKIP_INSTRUCTIONS = TRUE;
+var N_TRIALS = 65;
+var START_INSTRUCTION = 20;
+var SKIP_INSTRUCTIONS = true;
 
 // All pages to be loaded
 var pages = [
-    "instructions.html",
+    //"instructions.html",
     "quiz.html",
     "restart.html",
     "stage.html",
@@ -45,6 +43,10 @@ psiTurk.preloadPages(pages);
  ****************/
 
 var ProlificID = function(condlist) {
+    if (SKIP_INSTRUCTIONS) {
+        InstructionRunner(condlist);
+        return;
+    }
     while (true) {
         PROLIFIC_ID = prompt("Please enter Prolific ID to proceed:");
         // a small check on length
@@ -66,7 +68,8 @@ var ProlificID = function(condlist) {
  ****************/
 
 var InstructionRunner = function(condlist) {
-    psiTurk.showPage('instructions.html');
+    // psiTurk.showPage('instructions.html');
+    psiTurk.showPage('stage.html');
 
     var start_instruction_page = START_INSTRUCTION;
     var nTrials = condlist.length;
@@ -78,7 +81,7 @@ var InstructionRunner = function(condlist) {
 
         if (i < ninstruct) {
             // constructing Page using the the instructions.js
-            var page = new Page(...instructions[i]);
+            var page = new Page(...instructions[i], true);
 
             page.showPage(function() {
                 page.clearResponse();
@@ -91,8 +94,10 @@ var InstructionRunner = function(condlist) {
 
     var end_instructions = function() {
         // TODO skipping quiz for debugging
-        //currentview = new Experiment(condlist);
-        //return;
+        if (SKIP_INSTRUCTIONS) {
+            currentview = new Experiment(condlist);
+            return;
+        }
 
         psiTurk.finishInstructions();
         quiz(function() {
@@ -178,10 +183,10 @@ var Experiment = function(condlist) {
         }
         
         var scene = condlist[curIdx][0];
-        var rot_angle = condlist[curIdx][1];
-        var probes = condlist[curIdx][2];
+        var probes = condlist[curIdx][1];
+
+        //var mediadata = condlist[curIdx].push("just_td");
         
-        // var pg = new Page("", "movie", filename, true, 0, rot_angle);
         var pg = new Page("", "animation", condlist[curIdx], true, 0);
 
         pg.showProgress(curIdx, condlist.length);
@@ -210,6 +215,7 @@ var Experiment = function(condlist) {
             'Probe': rep[1],
             'MouseClicks': rep[2],
             'MouseMoves': rep[3],
+            'Difficulty': rep[4],
             'ReactionTime': rt,
             'IsInstruction': false,
             'TrialOrder': cIdx
@@ -303,9 +309,30 @@ var currentview;
 
 // madness TODO fix
 var dataset;
+var instruction_dataset;
 
 $(window).load(function() {
     
+    // TODO this is horrible how can we make it nicer
+    function load_instruction_dataset(condlist) {
+        $.ajax({
+            dataType: 'json',
+            url: "static/data/instruction_dataset.json",
+            async: false,
+            success: function(data) {
+                instruction_dataset = data;
+                console.log("instruction_dataset", instruction_dataset);
+                ProlificID(condlist);
+            },
+            error: function() {
+                setTimeout(500, do_load);
+            },
+            failure: function() {
+                setTimeout(500, do_load)
+            }
+        });
+    }
+
     function load_dataset(condlist) {
         $.ajax({
             dataType: 'json',
@@ -314,8 +341,7 @@ $(window).load(function() {
             success: function(data) {
                 dataset = data;
                 console.log("dataset", dataset);
-                //InstructionRunner(condlist);
-                ProlificID(condlist);
+                load_instruction_dataset(condlist);
             },
             error: function() {
                 setTimeout(500, do_load);
@@ -336,7 +362,7 @@ $(window).load(function() {
             success: function(data) {
                 console.log("condition", condition);
                 condlist = data[condition];
-    		condlist = condlist.slice(0, N_TRIALS);
+    		    condlist = condlist.slice(0, N_TRIALS);
             	console.log(condlist);
                 load_dataset(condlist);
             },

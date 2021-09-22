@@ -8,7 +8,7 @@ var scale_to_pagesize = function(value, area) {
 }
 
 // putting into the correct coordinates
-var scale_positions = function(positions, area, rot_angle) {
+var scale_positions = function(positions, area, dot_y_offset) {
     var scaled_positions = [];
 
     for (var t = 0; t < positions.length; t++) {
@@ -17,8 +17,8 @@ var scale_positions = function(positions, area, rot_angle) {
             var x = scale_to_pagesize(positions[t][i][0], area);
             var y = scale_to_pagesize(-positions[t][i][1], area);
 
-            xy = rotate(x, y, rot_angle);
-            xy[1] += PAGESIZE/2;
+            var xy = [x,y];
+            xy[1] += PAGESIZE/2 + dot_y_offset;
             scaled_positions_t.push(xy);
         }
 
@@ -30,39 +30,43 @@ var scale_positions = function(positions, area, rot_angle) {
 
 class DotAnimation {
 
-    constructor(scene = 1, rot_angle = 0, probes = [], type = "normal") {
+    constructor(scene = 1, probes = [], type = "normal", instruction = false) {
         let self = this;
+        this.has_ended = false;
 
         this.scene = scene;
         this.duration = 41.6667;
-        //this.duration = 1;
-        this.positions = dataset[scene-1];
-	console.log(type);
-	if (type == "just_movement" || type == "shorter") {
-		this.positions = this.positions.slice(0, 160);	
-		console.log("shortened trial", this.positions);
-	}
-        this.area_width = 800;
-        this.scaled_positions = scale_positions(this.positions, this.area_width, rot_angle);
+        //this.duration = 1.0;
+        var current_dataset = instruction ? instruction_dataset : dataset;
+        this.positions = current_dataset[scene-1]["positions"];
+        this.targets = current_dataset[scene-1]["aux_data"]["targets"];
+        
+        // sometimes shortened trial for instructions
+        if (type == "just_movement" || type == "shorter") {
+            this.positions = this.positions.slice(0, 160);	
+            console.log("shortened trial", this.positions);
+        }
+
+        this.area_width = 1200;
+        this.dot_radius = 20;
+        this.dot_y_offset = -scale_to_pagesize(this.dot_radius, this.area_width);
+        this.scaled_positions = scale_positions(this.positions, this.area_width, this.dot_y_offset);
 
         this.k = this.positions.length;
         this.n_dots = this.positions[1].length;
-        this.n_dots = 8;
-        this.n_targets = 4;
-
-        this.dot_radius = 20;
-    
+        this.n_targets = this.targets.filter(Boolean).length;
+        updateQuery(0, this.n_targets);
 
         // collecting dots as JS objects
         // and initializing the dots
         this.dots = [];
         for (var i = 0; i < this.n_dots; i++) {
             var dot = document.getElementById(`dot_${i}`);
-            
+
             // scaling the size of the dot
             dot.style.width = `${scale_to_pagesize(this.dot_radius*2, this.area_width)}px`;
             dot.style.height = `${scale_to_pagesize(this.dot_radius*2, this.area_width)}px`;
-            
+
             dot.value = false;
             this.dots.push(dot);
         }
@@ -78,16 +82,15 @@ class DotAnimation {
 
             probe.style.width = `${scale_to_pagesize(this.probe_width, this.area_width)}px`;
             probe.style.height = `${scale_to_pagesize(this.probe_width, this.area_width)}px`;
-             
+
             this.probes.push(probe);
         }
-        
+
         // spacebar spacetime array extravaganza
         this.spacebar = [];
-        this.has_ended = false;
         this.type = type;
-        this.min_select_distance = scale_to_pagesize(this.dot_radius*4, this.area_width);
-        
+        this.min_select_distance = scale_to_pagesize(this.dot_radius*3, this.area_width);
+
         // further things we record
         // we record time as class variable when the trial ends
         this.trial_end_time = 0;
@@ -96,6 +99,10 @@ class DotAnimation {
         this.mouseclicks = [];
         // mouse moves of the form [timestamp, coordinates]
         this.mousemoves = [];
+        
+        // while mouse is down, track which dots have been visited
+        // to not allow (de)selecting the same dot continuously
+        this.dots_visited_while_down = [];
     }
 
     play(callback, freeze_time = 2000) {
@@ -103,7 +110,7 @@ class DotAnimation {
 
         // timeline allows to control what happens after what
         var tl = anime.timeline({
-                easing: 'linear',
+            easing: 'linear',
         });
 
         // putting the dot into starting position
@@ -113,15 +120,18 @@ class DotAnimation {
                 translateY: this.scaled_positions[0][i][1],
             }, 0)
         }
-        
+
         if (this.type != "just_probe") {
-            // indicicating the targets
-            var targets = this.dots.slice(0, this.n_targets)
+            // indicating the targets
+            var targets = this.dots.filter((d,i) => this.targets[i]);
+
             tl.add({
                 targets: targets,
                 backgroundColor: RED,
                 duration: 1,
             })
+            
+            // if we just want to show what target designation looks like, return
             if (this.type == "just_td") {
                 callback();
                 return;
@@ -133,18 +143,19 @@ class DotAnimation {
                 backgroundColor: GRAY,
                 duration: 1,
             }, freeze_time)
-            
+
             var starttime = new Date().getTime();
-           
+
             // preventing from scrolling on space bar click
             window.addEventListener('keydown', function(e) {
                 if(e.keyCode == 32 && e.target == document.body) {
                     e.preventDefault();
                 }
             });
-            
+
             // adding spacebar handling after release
             document.onkeyup = function(event){
+                return; // disabling for this experiment (no probes)
                 if (event.keyCode === 32) {
                     event.preventDefault();
 
@@ -152,7 +163,7 @@ class DotAnimation {
 
                     if (time < freeze_time || self.has_ended) return;
                     if (self.spacebar.length < 500) self.spacebar.push(time-freeze_time);
-                    
+
                     var mediascreen = document.getElementById("mediascreen");
                     mediascreen.style.border = 'solid';
                     anime({
@@ -163,10 +174,9 @@ class DotAnimation {
                         direction: 'alternate',
                     })
 
-                    //console.log(self.spacebar);
                 }
             };
-            
+
             var end_function = function() {
                 self.has_ended = true;
                 self.trial_end_time = new Date().getTime();
@@ -194,9 +204,8 @@ class DotAnimation {
                 round: 1,
             }, freeze_time);
         }
-        
+
         var probe_y_offset = scale_to_pagesize(self.dot_radius - self.probe_width/2, self.area_width);
-    
 
         for (var i = 0; i < this.probes.length; i++) {
             // preparing the probe opacities and probe placements
@@ -211,10 +220,10 @@ class DotAnimation {
                 translateX: this.scaled_positions[0][dot-1][0],
                 translateY: this.scaled_positions[0][dot-1][1] + probe_y_offset,
             }, 0)
-            
+
             if (this.type == "just_probe") {
                 var indicator = document.getElementById("indicator");
-                
+
                 var indicator_width = scale_to_pagesize(this.dot_radius*4, this.area_width)
                 indicator.style.width = `${indicator_width}px`;
                 indicator.style.height = `${indicator_width}px`;
@@ -232,16 +241,13 @@ class DotAnimation {
                 callback();
                 return;
             }
-            
+
             var start = Math.max(1, t-this.probe_pad);
             var end = Math.min(this.positions.length, t+this.probe_pad);
 
-            //console.log(start, end);
             for (var j = start; j <= end; j++) {
                 probe_opacities[j] = 1.0;
             }
-
-            //console.log(probe_opacities);
 
             tl.add({
                 targets: this.probes[i],
@@ -255,7 +261,7 @@ class DotAnimation {
     get_td() {
         return this.dots.map(dot => dot.value);
     }
-    
+
     get_spacebar() {
         return this.spacebar;
     }
@@ -267,15 +273,14 @@ class DotAnimation {
     get_mousemoves() {
         return this.mousemoves;
     }
-    
-    get_closest_dot(e, mediascreen) {
+
+    get_select_dots(e, mediascreen) {
         var rect = mediascreen.getBoundingClientRect();
         var x = e.clientX - rect.left; // x position within the element.
         var y = e.clientY - rect.top;  // y position within the element.
 
         x -= PAGESIZE/2;
-        //y -= scale_to_pagesize(this.dot_radius, this.area_width);
-        
+
         var distances = [];
         for (var i = 0; i < this.dots.length; i++) {
             const style = window.getComputedStyle(this.dots[i]);
@@ -283,30 +288,33 @@ class DotAnimation {
             const matrixValues = matrix.match(/matrix.*\((.+)\)/)[1].split(', ')
             const dot_x = matrixValues[4]
             const dot_y = matrixValues[5]
-            
+
             var distance = Math.sqrt(Math.pow(x - dot_x, 2) + Math.pow(y - dot_y, 2));
             distances.push(distance);
         }
-
-        // console.log("Left? : " + x + " ; Top? : " + y + ".");
+        
+        var dot_indices = distances.map((_, i) => i);
     
-        var i = argmin(distances)
-        var dot = this.dots[i];
-        var min_distance = distances[i];
+        // removing indices of dots that are far away from the mouse
+        var dot_indices_remove = dot_indices.filter(i => distances[i] > 1.5*this.min_select_distance);
+        this.dots_visited_while_down = this.dots_visited_while_down.filter(x => !dot_indices_remove.includes(x));
 
-        return [dot, min_distance, [x,y-PAGESIZE/2], i];
+        var dot_indices_select = dot_indices.filter(i => distances[i] < this.min_select_distance);
+        
+        return dot_indices_select.map(i => [this.dots[i], distances[i], [x,y-PAGESIZE/2], i])
     }
 
     onmousemove(e, mediascreen) {
+        // if animation hasn't ended yet, then don't do anything
+        // TODO still throws error :'(
+        if (!this.has_ended) { return; }
+
         var rect = mediascreen.getBoundingClientRect();
-        //console.log(e.clientX, rect.left)
-        //console.log(e.clientY, rect.top)
         var x = e.clientX - rect.left; // x position within the element.
         var y = e.clientY - rect.top;  // y position within the element.
-        
+
         // clear previous borderStyle
         for (var i = 0; i < this.dots.length; i++) {
-            //this.dots[i].style.backgroundColor = this.dots[i].value ? RED : GRAY;
             this.dots[i].style.border = 'none';
         }
 
@@ -318,44 +326,63 @@ class DotAnimation {
         var time = new Date().getTime() - this.trial_end_time;
         this.mousemoves.push([time, [x-PAGESIZE/2, y-PAGESIZE/2]]);
 
-        var values = this.get_closest_dot(e, mediascreen);
-        var distance = values[1];
-        //console.log(distance);
-        if (distance <= this.min_select_distance) {
-            //console.log('distance small enough');
-            var dot = values[0];
+        var values = this.get_select_dots(e, mediascreen);
+        for (var i = 0; i < values.length; i++) {
+            var dot = values[i][0];
+            var dot_index = values[i][3];
+
             dot.style.border = '2px solid'
             dot.style.borderColor = '#ff8593';
+
+            if (leftMouseButtonOnlyDown) {
+                if (!this.dots_visited_while_down.includes(dot_index)) {
+                    this.select_deselect(dot, dot_index);
+                    this.dots_visited_while_down.push(dot_index);
+                }
+            } else {
+                this.dots_visited_while_down = [];
+            }
         }
     }
-
-    click(e, mediascreen) {
-        var time = new Date().getTime() - this.trial_end_time;
-
-        var values = this.get_closest_dot(e, mediascreen);
-        var distance = values[1];
-        var coordinates = values[2];
-
-        var select_deselect = false;
-        // dot_index = 0 means that no dot was selected or deselected
-        var dot_index = 0;
-
-        if (distance > this.min_select_distance) {
-            this.mouseclicks.push([time, coordinates, dot_index, select_deselect]);
-            return;
-        }
-        var dot = values[0];
-
+   
+    // returns whether the dot was selected or deselected
+    select_deselect(dot, dot_index) {
         if (this.get_td().filter(Boolean).length < this.n_targets || dot.value == true) {
-            // true if selecting the dot, false if deselecting
-            select_deselect = (!dot.value);
-            dot_index = values[3] + 1;
-
             dot.value = (!dot.value);
             dot.style.backgroundColor = dot.value ? RED : GRAY;
+            updateQuery(this.get_td().filter(Boolean).length, this.n_targets);
+
+            // true if selecting the dot, false if deselecting
+            return !dot.value
         } else {
             console.log("can't select more than ", this.n_targets);
         }
-        this.mouseclicks.push([time, coordinates, dot_index, select_deselect]);
+
+    }
+
+    click(e, mediascreen) {
+        if (!this.has_ended) { return; }
+
+        var time = new Date().getTime() - this.trial_end_time;
+
+        var select_dots_values = this.get_select_dots(e, mediascreen);
+        if (select_dots_values.length == 0) return;
+
+        // getting the minimum distance dot from the select dots
+        var distances = select_dots_values.map(v => v[1]);
+        var values = select_dots_values[argmin(distances)];
+
+        var distance = values[1];
+        var coordinates = values[2];
+        var selected_or_deselected = false;
+
+        var dot = values[0];
+        var dot_index = values[3];
+        if (!this.dots_visited_while_down.includes(dot_index)) {
+            selected_or_deselected = this.select_deselect(dot, dot_index);
+            this.dots_visited_while_down.push(dot_index);
+        }
+
+        this.mouseclicks.push([time, coordinates, dot_index, selected_or_deselected]);
     }
 }

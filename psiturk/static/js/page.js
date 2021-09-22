@@ -5,19 +5,22 @@ class Page {
     /*******************
      * Public Methods  *
      *******************/
-    constructor(text, mediatype, mediadata, show_response, next_delay) {
-
+    constructor(text, mediatype, mediadata, show_response, next_delay, instruction=false) {
+        
         // page specific variables
         this.text = text;
         this.mediatype = mediatype;
         this.mediadata = mediadata;
         this.show_response = show_response;
         this.next_delay = next_delay; // delay for showing next button in seconds
+        this.instruction = instruction;
 
         // html elements
         this.scale_region = document.getElementById("scale_region");
         this.response_region = document.getElementById("response_region");
-        this.query = document.getElementById("query");
+        this.target_response_region = document.getElementById("target_response_region");
+        this.effort_response_region = document.getElementById("effort_response_region");
+
         this.probe_reminder = document.getElementById("probe_reminder");
         this.nextbutton = document.getElementById("nextbutton");
         this.mediascreen = document.getElementById("mediascreen");
@@ -28,18 +31,22 @@ class Page {
         this.nextbutton.style.display = 'none';
         this.response_region.style.display = 'none';
 
-        this.query.style.display = 'none';
+        this.target_response_region.style.display = 'none';
+        this.target_response_region.style.color = 'black';
+        this.effort_response_region.style.display = 'none';
+
         this.probe_reminder.style.display = 'none';
-        this.query.style.color = 'black';
         this.mediascreen.innerHTML = "";
         this.animation = undefined;
+
+        this.response_slider = document.getElementById("response_slider");
+        this.response_slider_clicked = false;
     }
 
     // Loads content to the page
     // The `callback` argument can be used to handle page progression
     // or subject responses
     showPage(callback) {
-
         // create callback to progress when done
         this.nextbutton.onclick = function() {
             callback();
@@ -50,7 +57,9 @@ class Page {
     }
 
     retrieveResponse() {
-        var response = [this.animation.get_td(), this.animation.get_spacebar(), this.animation.get_mouseclicks(), this.animation.get_mousemoves()]
+        var response = [this.animation.get_td(), this.animation.get_spacebar(),
+            this.animation.get_mouseclicks(), this.animation.get_mousemoves(),
+            this.response_slider.value]
         //console.log(response)
         return response
     }
@@ -89,15 +98,15 @@ class Page {
     };
 
 
-    addResponse(animation = undefined) {
+    addResponse() {
         this.response_region.style.display = 'block';
-
+        
         // if no response required, then simply allow to go further
         if (this.show_response == false) {
             this.allowNext();
         } else {
-            this.query.style.display = 'block';
-            this.enableResponse(animation);
+            this.target_response_region.style.display = 'block';
+            this.enableTargetResponse();
         }
     }
 
@@ -107,35 +116,59 @@ class Page {
         // TODO debugging purposes
         //this.nextbutton.disabled = false;
         //this.nextbutton.style.display = "block";
-
-        sleep(this.next_delay*1000).then(() => {
+        
+        var delay = SKIP_INSTRUCTIONS ? 0 : this.next_delay*1000;
+        sleep(delay).then(() => {
             this.nextbutton.disabled = false;
             this.nextbutton.style.display = "block";
         });
     }
-
-    // The form will automatically enable the next button
-    enableResponse(animation) {
+    
+    checkAllSelected() {
+        console.log("checkAllSelected");
         let self = this;
         
-        this.mediascreen.onclick = function(e) {
-            animation.click(e, self.mediascreen);
-            // if all targets selected, then allow next
-            if (animation.get_td().filter(Boolean).length == animation.n_targets) {
-                self.probe_reminder.style.display = "block";
+        var targets_selected = self.animation.get_td().filter(Boolean).length == self.animation.n_targets;
+    
+        // if all targets selected, then allow effort response
+        if (targets_selected) {
+            console.log("targets_selected");
+            self.effort_response_region.style.display = 'block';
+
+            // if effort clicked allow next
+            if (self.response_slider_clicked) {
                 self.allowNext();
             } else {
                 self.nextbutton.disabled = true;
             }
+        }
+        console.log("checkAllSelected done");
+    }
+
+    // The form will automatically enable the next button
+    enableTargetResponse() {
+        let self = this;
+        
+        this.mediascreen.onclick = function(e) {
+            self.animation.click(e, self.mediascreen);
+            self.checkAllSelected();
+        };
+        this.response_slider.onclick = function(e) {
+            self.response_slider_clicked = true;
+            self.checkAllSelected();
         };
         document.onmousemove = function(e) {
-            animation.onmousemove(e, self.mediascreen);
+            setLeftButtonState(e);
+            self.animation.onmousemove(e, self.mediascreen);
         };
     }
 
     clearResponse() {
-        // var buttons = ["td_yes", "td_no", "pr_yes", "pr_no"];
-        // buttons.map(x => document.getElementById(x).checked = false);
+        console.log("clearResponse");
+        document.onmousemove = function(e) {return;};
+        this.mediascreen.onclick = function(e) {return;};
+        this.response_slider.value = 50;
+        console.log("clearResponse done");
     }
 
     scalePage() {
@@ -156,8 +189,8 @@ class Page {
 
             slider_value.oninput = function(e) {
                 PAGESIZE = (e.target.value / 50.0) * 500;
-                scale_img.width = `${PAGESIZE}px`;
-                scale_img.style.width = `${PAGESIZE}px`;
+                scale_img.width = `${0.75*PAGESIZE}px`;
+                scale_img.style.width = `${0.75*PAGESIZE}px`;
                 self.scaleMediascreen();
                 self.addResponse();
                 SCALE_COMPLETE = true;
@@ -204,6 +237,12 @@ class Page {
         this.mediascreen.style.width = `${PAGESIZE}px`;
         this.mediascreen.style.height = `${PAGESIZE}px`;
         this.mediascreen.style.margin = '0 auto';
+
+        // scaling polygon svg inside
+        var polygon_svg = document.getElementById('polygon_svg');
+        polygon_svg.style.width = `${PAGESIZE}px`;
+        polygon_svg.style.height = `${PAGESIZE}px`;
+        polygon_svg.style.margin = '0 auto';
     }
 
     // plays movie
@@ -228,42 +267,40 @@ class Page {
         // changing to the color of the video background
         this.mediascreen.style.background = '#e6e6e6';
 
-        video.style.transform = `rotate(${this.rot_angle}deg)`;
         this.mediascreen.style.display = 'block';
     }
 
     // plays animation
     showAnimation() {
         let self = this;
-        
-        var scene = this.mediadata[0];
-        var rot_angle = this.mediadata[1];
-        var probes = this.mediadata[2];
-        var trial_type = this.mediadata[3]; // just showing target designation probe for instructions
 
-        var n_dots = 8;
+        var scene = this.mediadata[0];
+        var probes = this.mediadata[1];
+        var trial_type = this.mediadata[2]; // just showing target designation probe for instructions
+
         var n_probes = probes.length;
-        this.mediascreen.innerHTML = make_animation(n_dots, n_probes, trial_type);
+        var current_dataset = this.instruction ? instruction_dataset : dataset;
+        var targets = current_dataset[scene-1]["aux_data"]["targets"];
+        var n_dots = targets.length;
+
+        this.mediascreen.innerHTML = make_animation(n_dots, n_probes, trial_type, targets);
         this.scaleMediascreen();
 
-        var animation = new DotAnimation(scene, rot_angle, probes, trial_type);
-        this.animation = animation;
+        this.animation = new DotAnimation(scene, probes, trial_type, this.instruction);
         var callback = function() {
-            // console.log("animation complete :P");
-            self.addResponse(animation);
+            self.addResponse();
         };
 
         // changing to the color of the video background
         this.mediascreen.style.background = '#e6e6e6';
 
-        // video.style.transform = `rotate(${this.rot_angle}deg)`;
         this.mediascreen.style.display = 'block';
 
         this.mediascreen.style.borderStyle = 'solid';
         this.mediascreen.style.borderColor = 'rgba(0, 0, 0, .0)';
         
         var freeze_time = trial_type == "just_movement" ? 0 : 2000;
-        animation.play(callback, freeze_time);
+        this.animation.play(callback, freeze_time);
     }
 
     showImage() {
@@ -274,6 +311,7 @@ class Page {
     showEmpty() {
         this.addResponse();
     }
+
     showProgress(cur_idx, out_of) {
         this.progress.innerHTML = (cur_idx + 1) + " / " + (out_of);
     };
