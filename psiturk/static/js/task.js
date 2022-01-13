@@ -22,8 +22,8 @@ var PROBE_BASE_DIFFERENCE = 0.11;
 var SCALE_COMPLETE = false; // users do not need to repeat scaling
 
 var PROLIFIC_ID = "";
-var N_TRIALS = 65;
-var START_INSTRUCTION = 20;
+var N_TRIALS = 60;
+var START_INSTRUCTION = 12;
 var SKIP_INSTRUCTIONS = true;
 
 // All pages to be loaded
@@ -44,7 +44,8 @@ psiTurk.preloadPages(pages);
 
 var ProlificID = function(condlist) {
     if (SKIP_INSTRUCTIONS) {
-        InstructionRunner(condlist);
+        psiTurk.finishInstructions();
+        currentview = new Experiment(condlist);
         return;
     }
     while (true) {
@@ -81,7 +82,7 @@ var InstructionRunner = function(condlist) {
 
         if (i < ninstruct) {
             // constructing Page using the the instructions.js
-            var page = new Page(...instructions[i], true);
+            var page = new Page(...instructions[i], instruction = true);
 
             page.showPage(function() {
                 page.clearResponse();
@@ -181,20 +182,11 @@ var Experiment = function(condlist) {
         if (curIdx === condlist.length) {
             end_experiment();
         }
-        
-        var scene = condlist[curIdx][0];
-        var probes = condlist[curIdx][1];
-
-        //var mediadata = condlist[curIdx].push("just_td");
-        
         var pg = new Page("", "animation", condlist[curIdx], true, 0);
-
         pg.showProgress(curIdx, condlist.length);
         // `Page` will record the subject responce when "next" is clicked
         // and go to the next trial
-
         starttime = new Date().getTime();
-
         pg.showPage(
             function() {
                 register_response(pg, curIdx);
@@ -209,7 +201,7 @@ var Experiment = function(condlist) {
     var register_response = function(trialPage, cIdx) {
         var rt = new Date().getTime() - starttime;
         var rep = trialPage.retrieveResponse();
-        psiTurk.recordTrialData({
+        var fmt_rep = {
             'TrialName': condlist[cIdx],
             'Target': rep[0],
             'Probe': rep[1],
@@ -219,7 +211,9 @@ var Experiment = function(condlist) {
             'ReactionTime': rt,
             'IsInstruction': false,
             'TrialOrder': cIdx
-        });
+        };
+        console.log("Formatted response", fmt_rep);
+        psiTurk.recordTrialData(fmt_rep);
     };
 
     var end_experiment = function() {
@@ -336,7 +330,7 @@ $(window).load(function() {
     function load_dataset(condlist) {
         $.ajax({
             dataType: 'json',
-            url: "static/data/dataset.json",
+            url: "static/data/exp2_probes.json",
             async: false,
             success: function(data) {
                 dataset = data;
@@ -362,8 +356,7 @@ $(window).load(function() {
             success: function(data) {
                 console.log("condition", condition);
                 condlist = data[condition];
-    		    condlist = condlist.slice(0, N_TRIALS);
-            	console.log(condlist);
+                condlist = condlist.slice(0, N_TRIALS);
                 load_dataset(condlist);
             },
             error: function() {

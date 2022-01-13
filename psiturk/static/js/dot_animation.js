@@ -37,7 +37,9 @@ class DotAnimation {
         this.scene = scene;
         this.duration = 41.6667;
         //this.duration = 1.0;
-        var current_dataset = instruction ? instruction_dataset : dataset;
+        // TODO: make me pretty xD
+        // var current_dataset = instruction ? instruction_dataset : dataset;
+        var current_dataset = dataset;
         this.positions = current_dataset[scene-1]["positions"];
         this.targets = current_dataset[scene-1]["aux_data"]["targets"];
         
@@ -155,7 +157,7 @@ class DotAnimation {
 
             // adding spacebar handling after release
             document.onkeyup = function(event){
-                return; // disabling for this experiment (no probes)
+                // return; // disabling for this experiment (no probes)
                 if (event.keyCode === 32) {
                     event.preventDefault();
 

@@ -60,7 +60,7 @@ class Page {
         var response = [this.animation.get_td(), this.animation.get_spacebar(),
             this.animation.get_mouseclicks(), this.animation.get_mousemoves(),
             this.response_slider.value]
-        //console.log(response)
+        console.log("retrieveResponse", response)
         return response
     }
 
@@ -133,14 +133,15 @@ class Page {
         // if all targets selected, then allow effort response
         if (targets_selected) {
             console.log("targets_selected");
-            self.effort_response_region.style.display = 'block';
-
+            // self.effort_response_region.style.display = 'block';
+            self.probe_reminder.style.display = "block";
+            self.allowNext();
             // if effort clicked allow next
-            if (self.response_slider_clicked) {
-                self.allowNext();
-            } else {
-                self.nextbutton.disabled = true;
-            }
+            // if (self.response_slider_clicked) {
+            //     self.allowNext();
+            // } else {
+            //     self.nextbutton.disabled = true;
+            // }
         }
         console.log("checkAllSelected done");
     }
@@ -275,13 +276,17 @@ class Page {
         let self = this;
 
         var scene = this.mediadata[0];
-        var probes = this.mediadata[1];
-        var trial_type = this.mediadata[2]; // just showing target designation probe for instructions
+        var probes = this.instruction ? this.mediadata[1] : this.mediadata[2];
+        var trial_type = this.instruction ? this.mediadata[2] : "normal";
 
         var n_probes = probes.length;
-        var current_dataset = this.instruction ? instruction_dataset : dataset;
+        // var current_dataset = this.instruction ? instruction_dataset : dataset;
+        var current_dataset = dataset;
         var targets = current_dataset[scene-1]["aux_data"]["targets"];
         var n_dots = targets.length;
+
+        console.log("mediadata", this.mediadata);
+        console.log("probes", probes);
 
         this.mediascreen.innerHTML = make_animation(n_dots, n_probes, trial_type, targets);
         this.scaleMediascreen();

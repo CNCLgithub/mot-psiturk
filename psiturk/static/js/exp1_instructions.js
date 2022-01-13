@@ -5,7 +5,7 @@
 // 4: Whether to show the response div and what to show (false/"td"/"pr")
 
 var EXP_DURATION = 30;
-var N_TRIALS = 40;
+var N_TRIALS = 65;
 var RED = "#eb3434";
 
 var instructions = [
@@ -52,58 +52,69 @@ var instructions = [
     //],
     [
         "In this task, you will observe a series of dots move on the screen.<br>",
-        "animation", [1, [], "just_movement"], false, 2
+        "animation", [2, [], "just_movement"], false, 2
     ],
     // image with target labels (blue)
     [
-        "At the beginning of each instance of the task, you will see <b>4</b> of the <b>8</b> dots highlighted in red "+
+        "At the beginning of each instance of the task, you will see some dots highlighted in red "+
         `designating them as <span style="color:${RED};"><b>targets</b></span> <span class="query-dot"></span>.<br>` +
         "Shortly after, the red indication will dissapear and the dots will begin to move.<br>" +
-        "Your main task is to keep track of the targets as they move.<br>" +
+        "Your task is to keep track of the targets as they move.<br>" +
         "Click <b>Next</b> to see an example of a dynamic scene with targets.",
-        "animation", [2,  [], "just_td"], false, 3
+        "animation", [2, [], "just_td"], false, 3
     ],
     [
         "",
-        "animation", [3,  [], "shorter"], false, 0
+        "animation", [2, [], "shorter"], false, 0
     ],
     [
-        `At the end of each instance of the task, you need to select the <span style="color:#e60000"><b>4 targets</b></span> <span class="query-dot"></span> by clicking on the dots with your mouse.<br>` +
-        `If you make a mistake in your selection, you can deselect by clicking on the dot again.<br>` +
+        `At the end of each instance of the task, you need to select the <span style="color:#e60000"><b>targets</b></span> <span class="query-dot"></span> by clicking on the dots with your mouse.<br>` + 
+        //`To select a bunch of targets faster, you can hold down the left mouse key and drag your cursor over the targets.<br>` +
+        `If you make a mistake in your selection, you can deselect by clicking on the dots.<br>` +
         `When you hover over the dots, you will be able to see which dot you're selecting/deselecting by a pink border around the dot.<br>` +
-        `You need to select all 4 targets to be able to progress. If you lost track of some of the targets, just make your best guess as to which dots are targets.<br>` +
+        //`You need to select all 4 targets to be able to progress -- it will be indicated how many targets you still need to select at the bottom of the screen.<br>` +
+        `You need to select all 4 targets to be able to progress.<br>` +
+        `If you lost track of some of the targets, just make your best guess as to which dots are targets.<br>` +
+        `Importantly, after selecting the targets, you also need to <i>indicate how hard it was to track all 4 targets</i> by adjusting the slider that will appear below the screen.<br>` +
         "Click <b>Next</b> to give it a try.",
-        "", "", false, 3
+        "", "", false, 5
     ],
     [
         "",
-        "animation", [6, [], "shorter"], true, 0
+        "animation", [3, 0, [], "shorter"], true, 0
     ],
-    [
-        `Sometimes during movement there will be probes <span class="query-probe"></span>, i.e. a very dim small square may appear for a very short time on one of the dots as illustrated below.`,
-        "animation", [2,  [[1, 0]], "just_probe"], false, 3
-    ],
-    [
-        `Whenever you see a probe, you have to press <b>SPACEBAR</b> immediately to indicate that you detected the probe <span class="query-probe"></span>.<br>` +
-        `We recommend that you keep one of your fingers on SPACEBAR throughout the experiment, so that you can press it immediately after seeing the probe.<br>` +
-        `When you press SPACEBAR, a black border will appear to indicate that your press has been registered.<br>` +
-        `The following scene will have a couple of probes - try to spot them and press SPACEBAR when you see them!<br>` +
-        "Click <b>Next</b> to give it a try.",
-        "", "", false, 2
-    ],
-    [
-        "",
-        "animation", [5, [[1, 48], [2, 140], [4, 104], [3, 80]], "shorter"], false, 0
-    ],
+    //[
+        //`Sometimes during movement there will be probes <span class="query-probe"></span>, i.e. a very dim small square may appear for a very short time on one of the dots as illustrated below.`,
+        //"animation", [2, 0, [[1, 0]], "just_probe"], false, 3
+    //],
+    //[
+        //`Whenever you see a probe, you have to press <b>SPACEBAR</b> immediately to indicate that you detected the probe <span class="query-probe"></span>.<br>` +
+        //`We recommend that you keep one of your fingers on SPACEBAR throughout the experiment, so that you can press it immediately after seeing the probe.<br>` +
+        //`When you press SPACEBAR, a black border will appear to indicate that your press has been registered.<br>` +
+        //`The following scene will have a couple of probes - try to spot them and press SPACEBAR when you see them!<br>` + 
+        //"Click <b>Next</b> to give it a try.",
+        //"", "", false, 2
+    //],
+    //[
+        //"",
+        //"animation", [5, 0, [[1, 48], [2, 140], [4, 104], [3, 80]], "shorter"], false, 0
+    //],
     [
         `Remember, the <i>main task</i> is to correctly identify the <span style="color:#e60000"><b>4 targets</b></span> <span class="query-dot"></span>.<br>` +
-        `The secondary task is to immediately press <b>SPACEBAR</b> whenever you see a probe <span class="query-probe"></span>.<br>` +
-        "Click <b>Next</b> to try doing the task (pressing SPACEBAR for probes and indicating targets at the end).",
+        `The <i>secondary task</i> is to indicate how hard it was to track all 4 targets.<br>`,
+        "", "", false, 3
+    ],
+    [
+        "Click <b>Next</b> to try two more instances of the task.",
         "", "", false, 3
     ],
     [
         "",
-        "animation", [7, [[1, 66], [2, 180], [3, 240], [1, 330], [4, 300]], "normal"], true, 0
+        "animation", [1, [], "normal"], true, 0
+    ],
+    [
+        "",
+        "animation", [4, [], "normal"], true, 0
     ],
     [
         `Please maintain this arm-length distance from your monitor for the duration of this experiment (${EXP_DURATION-10}-${EXP_DURATION-5} minutes).`,
