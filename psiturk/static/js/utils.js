@@ -74,7 +74,6 @@ var make_mov = function(movname, size) {
 
 var make_animation = function(n_dots, n_probes, trial_type, polygons) {
     console.log("make_animation start");
-    console.log("polygons: ", polygons);
 
     var ret = ``;
     
@@ -100,8 +99,6 @@ var make_animation = function(n_dots, n_probes, trial_type, polygons) {
 
     var pb_c = DOT_COLOR * (1.0 - PROBE_DIFFERENCE);
     
-    console.log(DOT_COLOR, pb_c);
-
     for (var i=0; i<n_probes; i++) {
         ret += `<span class="probe" id="probe_${i}" style="background-color: rgb(${pb_c}, ${pb_c}, ${pb_c})"></span>`;
     }
